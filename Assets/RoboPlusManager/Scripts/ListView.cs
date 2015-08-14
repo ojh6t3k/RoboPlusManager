@@ -63,6 +63,8 @@ public class ListView : MonoBehaviour
 				_selectedItem.selected = false;
 
 			_selectedItem = value;
+			if(_selectedItem != null)
+				_selectedItem.selected = true;
 
 			if(changed == true)
 				OnChangedSelection.Invoke();
