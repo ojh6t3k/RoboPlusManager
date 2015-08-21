@@ -1,0 +1,275 @@
+fileFormatVersion: 2
+guid: 9e297ff103913384f8f23ec3ed8fedc2
+timeCreated: 1440140850
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: USA
+    21300002: France
+    21300004: Canada
+    21300006: Germerny
+    21300008: China
+    21300010: Italy
+    21300012: England
+    21300014: Greece
+    21300016: International_8
+    21300018: International_9
+    21300020: International_10
+    21300022: Japan
+    21300024: Turkey
+    21300026: Korea
+    21300028: International_14
+    21300030: International_15
+    21300032: Brazil
+    21300034: International_17
+    21300036: International_18
+    21300038: International_19
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: USA
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 253
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: France
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 253
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Canada
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 253
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Germerny
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 253
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: China
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 253
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Italy
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 174
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: England
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 174
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Greece
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 174
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_8
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 174
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_9
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 174
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_10
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 95
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Japan
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 94
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Turkey
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 95
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Korea
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 95
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_14
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 95
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_15
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 16
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Brazil
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 16
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_17
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 16
+        width: 69
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_18
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 16
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: International_19
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 15
+        width: 69
+        height: 70
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
