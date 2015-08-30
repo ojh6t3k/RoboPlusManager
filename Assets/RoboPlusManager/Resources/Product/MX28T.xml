@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Product key="MX28T" name="MX-28T" type="DXL">
+	<Firmware version="10"></Firmware>
+	<Calibration version="3"></Calibration>
+	<Protocol version="2.0"></Protocol>
+	<ControlTable>
+		<Item key="TestIcon_9" name="LED" address="25" access="rw" type="ram" bytes="1" default="0" range="0, 1" ui="LED"></Item>
+	</ControlTable>
+</Product>
+

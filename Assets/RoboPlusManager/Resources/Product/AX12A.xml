@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Product key="AX12A" name="AX-12A" type="DXL">
+	<Firmware version="28"></Firmware>
+	<Protocol version="1.0"></Protocol>
+	<ControlTable>
+		<Item key="TestIcon_8" name="LED" address="25" access="rw" type="ram" bytes="1" default="0" range="0, 1" ui="LED"></Item>
+	</ControlTable>
+</Product>
+
