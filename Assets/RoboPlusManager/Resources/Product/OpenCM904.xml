@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Product key="OpenCM904" name="OpenCM 9.04" type="CM">
+	<Firmware version="1.196"></Firmware>
+	<Protocol version="2.0"></Protocol>
+	<ControlTable>
+		<Item icon="TestIcon_7" name="Button" address="26" access="r" rom="false" type="byte" ui="Keypad" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="TxData" address="59" access="w" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxData" address="61" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxArrived" address="63" access="r" rom="false" type="byte" ui="Bool" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Print" address="51" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="PrintNewLine" address="55" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Timer" address="71" access="rw" rom="false" type="byte" ui="Time" default="0" param="0~255" unit="0.128"></Item>
+		<Item icon="TestIcon_7" name="Timer2" address="73" access="rw" rom="false" type="word" ui="Time" default="0" param="0~65535" unit="0.001"></Item>
+		<Item icon="TestIcon_7" name="RandomValue" address="77" access="rw" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxLED" address="79" access="rw" rom="false" type="byte" ui="Bool" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionIndex" address="93" access="rw" rom="false" type="byte" ui="MotionIndex" default="0" param="0,1~254,255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionStatus" address="93" access="r" rom="false" type="byte" ui="Bool" default="0" param="0,1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionLED" address="93" access="rw" rom="false" type="byte" ui="Bool" default="0" param="0,1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset0" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset1" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset2" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset3" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset4" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset5" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset6" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset7" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset8" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset9" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset10" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset11" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset12" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset13" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset14" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset15" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset16" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset17" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset18" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset19" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset20" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset21" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset22" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset23" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset24" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset25" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="AuxInput1" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput2" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput3" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput4" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput2" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput3" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+	</ControlTable>
+</Product>
+

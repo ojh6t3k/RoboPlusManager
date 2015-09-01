@@ -3,38 +3,38 @@
 	<Firmware version="1.196"></Firmware>
 	<Protocol version="2.0"></Protocol>
 	<ControlTable>
-		<Item icon="TestIcon_7" name="StartButtonCount" address="25" access="r" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="MyRobotID" address="30" access="r" rom="false" type="word" ui="ID" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="DestRobotID" address="32" access="rw" rom="true" type="word" ui="ID" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="RC100Chanel" address="36" access="rw" rom="true" type="byte" ui="Channel" default="0" range="0~8,255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="Print" address="51" access="w" rom="false" type="int16" ui="Value" default="0" range="-32768~32767" unit="1"></Item>
-		<Item icon="TestIcon_7" name="PrintNewLine" address="55" access="w" rom="false" type="int16" ui="Value" default="0" range="-32768~32767" unit="1"></Item>
-		<Item icon="TestIcon_7" name="TxData" address="59" access="w" rom="false" type="word" ui="Value" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="RxData" address="61" access="r" rom="false" type="word" ui="Value" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="RxArrived" address="63" access="r" rom="false" type="byte" ui="Bool" default="0" range="0~1" unit="1"></Item>
-		<Item icon="TestIcon_7" name="Timer" address="73" access="rw" rom="false" type="byte" ui="Time" default="0" range="0~255" unit="0.128"></Item>
-		<Item icon="TestIcon_7" name="Timer2" address="74" access="rw" rom="false" type="word" ui="Time" default="0" range="0~65535" unit="0.001"></Item>
-		<Item icon="TestIcon_7" name="SleepTimer" address="76" access="rw" rom="false" type="word" ui="Time" default="0" range="0~255" unit="60"></Item>
-		<Item icon="TestIcon_7" name="RandomValue" address="77" access="rw" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="BuzzerIndex" address="84" access="rw" rom="false" type="byte" ui="Buzzer" default="0" range="0~15,0~26" unit="1"></Item>
-		<Item icon="TestIcon_7" name="BuzzerTime" address="85" access="rw" rom="false" type="byte" ui="BuzzerTime" default="1" range="1~50,255" unit="0.1"></Item>
-		<Item icon="TestIcon_7" name="ClapCount" address="86" access="rw" rom="false" type="byte" ui="Value2" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="ClapCounting" address="87" access="r" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="RightIRSensor" address="91" access="r" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="LeftIRSensor" address="93" access="r" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="CenterIRSensor" address="95" access="r" rom="false" type="byte" ui="Value" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="MotorSpeed1" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" range="0~2047" unit="0.0976"></Item>
-		<Item icon="TestIcon_7" name="MotorSpeed2" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" range="0~2047" unit="0.0976"></Item>
-		<Item icon="TestIcon_7" name="ServoMode3" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="ServoPos3" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" range="0~1023" unit="0.292"></Item>
-		<Item icon="TestIcon_7" name="ServoSpeed3" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" range="0~2047" unit="0.0976"></Item>
-		<Item icon="TestIcon_7" name="ServoMode4" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" range="0~255" unit="1"></Item>
-		<Item icon="TestIcon_7" name="ServoPos4" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" range="0~1023" unit="0.292"></Item>
-		<Item icon="TestIcon_7" name="ServoSpeed4" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" range="0~2047" unit="0.0976"></Item>
-		<Item icon="TestIcon_7" name="AuxInput3" address="95" access="r" rom="false" type="word" ui="Value" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="AuxInput4" address="95" access="r" rom="false" type="word" ui="Value" default="0" range="0~65535" unit="1"></Item>
-		<Item icon="TestIcon_7" name="AuxOutput3" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" range="0~1" unit="1"></Item>
-		<Item icon="TestIcon_7" name="AuxOutput4" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" range="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="StartButtonCount" address="25" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MyRobotID" address="30" access="r" rom="false" type="word" ui="ID" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="DestRobotID" address="32" access="rw" rom="true" type="word" ui="ID" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RC100Chanel" address="36" access="rw" rom="true" type="byte" ui="List" default="0" param="0~8,255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Print" address="51" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="PrintNewLine" address="55" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="TxData" address="59" access="w" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxData" address="61" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxArrived" address="63" access="r" rom="false" type="byte" ui="Bool" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Timer" address="73" access="rw" rom="false" type="byte" ui="Time" default="0" param="0~255" unit="0.128"></Item>
+		<Item icon="TestIcon_7" name="Timer2" address="74" access="rw" rom="false" type="word" ui="Time" default="0" param="0~65535" unit="0.001"></Item>
+		<Item icon="TestIcon_7" name="SleepTimer" address="76" access="rw" rom="false" type="word" ui="Time" default="0" param="0~255" unit="60"></Item>
+		<Item icon="TestIcon_7" name="RandomValue" address="77" access="rw" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="BuzzerIndex" address="84" access="rw" rom="false" type="byte" ui="Buzzer" default="0" param="0~15,0~26" unit="1"></Item>
+		<Item icon="TestIcon_7" name="BuzzerTime" address="85" access="rw" rom="false" type="byte" ui="BuzzerTime" default="1" param="1~50,255" unit="0.1"></Item>
+		<Item icon="TestIcon_7" name="ClapCount" address="86" access="rw" rom="false" type="byte" ui="Value2" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ClapCounting" address="87" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RightIRSensor" address="91" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="LeftIRSensor" address="93" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="CenterIRSensor" address="95" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotorSpeed1" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="MotorSpeed2" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode3" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos3" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed3" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode4" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos4" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed4" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="AuxInput3" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput4" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput3" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput4" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
 	</ControlTable>
 </Product>
 

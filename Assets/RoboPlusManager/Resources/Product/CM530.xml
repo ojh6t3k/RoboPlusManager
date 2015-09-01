@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Product key="CM530" name="CM-530" type="CM">
+	<Firmware version="1.196"></Firmware>
+	<Protocol version="1.0"></Protocol>
+	<ControlTable>
+		<Item icon="TestIcon_7" name="TxData" address="26" access="w" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxData" address="28" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RxArrived" address="30" access="r" rom="false" type="byte" ui="Bool" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxLED" address="31" access="rw" rom="false" type="byte" ui="Bool" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Button" address="32" access="r" rom="false" type="byte" ui="Keypad" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Timer" address="33" access="rw" rom="false" type="byte" ui="Time" default="0" param="0~255" unit="0.128"></Item>
+		<Item icon="TestIcon_7" name="Timer2" address="42" access="rw" rom="false" type="word" ui="Time" default="0" param="0~65535" unit="0.001"></Item>
+		<Item icon="TestIcon_7" name="MyRobotID" address="36" access="r" rom="false" type="word" ui="ID" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="DestRobotID" address="34" access="rw" rom="true" type="word" ui="ID" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="Print" address="37" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="PrintNewLine" address="38" access="w" rom="false" type="int16" ui="Value" default="0" param="-32768~32767" unit="1"></Item>
+		<Item icon="TestIcon_7" name="BuzzerIndex" address="54" access="rw" rom="false" type="byte" ui="Buzzer" default="0" param="0~15,0~26" unit="1"></Item>
+		<Item icon="TestIcon_7" name="BuzzerTime" address="55" access="rw" rom="false" type="byte" ui="BuzzerTime" default="1" param="1~50,255" unit="0.1"></Item>
+		<Item icon="TestIcon_7" name="ClapCount" address="56" access="rw" rom="false" type="byte" ui="Value2" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ClapCounting" address="58" access="r" rom="false" type="byte" ui="Value" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="RC100Chanel" address="59" access="rw" rom="true" type="byte" ui="List" default="0" param="0~8,255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionIndex" address="93" access="rw" rom="false" type="byte" ui="MotionIndex" default="0" param="0,1~254,255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionStatus" address="93" access="r" rom="false" type="byte" ui="Bool" default="0" param="0,1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset0" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset1" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset2" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset3" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset4" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset5" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset6" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset7" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset8" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset9" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset10" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset11" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset12" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset13" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset14" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset15" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset16" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset17" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset18" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset19" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset20" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset21" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset22" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset23" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset24" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="MotionOffset25" address="93" access="rw" rom="false" type="int16" ui="JointOffset" default="0" param="-512~512" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoMode1" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos1" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed1" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode2" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos2" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed2" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode3" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos3" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed3" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode4" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos4" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed4" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode5" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos5" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed5" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="ServoMode6" address="95" access="rw" rom="false" type="byte" ui="ServoMode" default="0" param="0~255" unit="1"></Item>
+		<Item icon="TestIcon_7" name="ServoPos6" address="95" access="rw" rom="false" type="word" ui="ServoPos" default="0" param="0~1023" unit="0.292"></Item>
+		<Item icon="TestIcon_7" name="ServoSpeed6" address="95" access="rw" rom="false" type="word" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976"></Item>
+		<Item icon="TestIcon_7" name="AuxInput1" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput2" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput3" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput4" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput5" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxInput6" address="95" access="r" rom="false" type="word" ui="Value" default="0" param="0~65535" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput1" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput2" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput3" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput4" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput5" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+		<Item icon="TestIcon_7" name="AuxOutput6" address="95" access="rw" rom="false" type="byte" ui="AuxOutput" default="0" param="0~1" unit="1"></Item>
+	</ControlTable>
+</Product>
+

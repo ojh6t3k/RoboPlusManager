@@ -7,29 +7,35 @@ using System.Xml;
 using System.IO;
 
 [Serializable]
+public class UIInfo
+{
+	public string name;
+	public int defaultValue;
+	public int value;
+	public float unit;
+	public string[] parameters;
+}
+
+[Serializable]
 public class ControlItemInfo
 {
-	public string key;
 	public string name;
 	public Sprite icon;
 	public int address;
 	public bool accessRead;
 	public bool accessWrite;
 	public bool isROM;
-	public int bytes;
-	public int defaultValue;
-	public int minValue;
-	public int maxValue;
-	public int value;
-	public string uiType;
+	public string type;
+	public UIInfo ui;
 }
 
 [Serializable]
 public class ProductInfo
 {
-	public string key;
 	public string name;
+	public string key;
 	public string type;
+	public int model;
 	public Sprite image;
 	public TextAsset firmware;
 	public float firmwareVersion;
@@ -79,6 +85,13 @@ public class ProductManager : MonoBehaviour
 				product.key = xmlEle.Attributes["key"].Value;
 				product.name = xmlEle.Attributes["name"].Value;
 				product.type = xmlEle.Attributes["type"].Value;
+				try
+				{
+					product.model = int.Parse(xmlEle.Attributes["model"].Value);
+				}
+				catch(Exception)
+				{
+				}
 				product.image = Resources.Load<Sprite>("Product/Image/" + product.key);
 
 				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Firmware");
@@ -102,18 +115,19 @@ public class ProductManager : MonoBehaviour
 				for(int j=0; j<xmlNodes.Count; j++)
 				{
 					ControlItemInfo item = new ControlItemInfo();
-					item.key = xmlNodes[j].Attributes["key"].Value;
-					item.name = xmlNodes[j].Attributes["name"].Value;
+					string stringValue = xmlNodes[j].Attributes["icon"].Value;
 					for(int n=0; n<icons.Length; n++)
 					{
-						if(icons[n].name.Equals(item.key) == true)
+						if(icons[n].name.Equals(stringValue) == true)
 						{
 							item.icon = icons[n];
 							break;
 						}
 					}
+					item.name = xmlNodes[j].Attributes["name"].Value;
+
 					item.address = int.Parse(xmlNodes[j].Attributes["address"].Value);
-					string stringValue = xmlNodes[j].Attributes["access"].Value;
+					stringValue = xmlNodes[j].Attributes["access"].Value;
 					if(stringValue.Equals("r") == true)
 					{
 						item.accessRead = true;
@@ -134,17 +148,14 @@ public class ProductManager : MonoBehaviour
 						item.accessRead = false;
 						item.accessWrite = false;
 					}
-					stringValue = xmlNodes[j].Attributes["type"].Value;
-					if(stringValue.Equals("rom") == true)
-						item.isROM = true;
-					else if(stringValue.Equals("ram") == true)
-						item.isROM = false;
-					item.bytes = int.Parse(xmlNodes[j].Attributes["bytes"].Value);
-					item.defaultValue = int.Parse(xmlNodes[j].Attributes["default"].Value);
-					string[] token = xmlNodes[j].Attributes["range"].Value.Split(new char[] { ',' });
-					item.minValue = int.Parse(token[0]);
-					item.maxValue = int.Parse(token[1]);
-					item.uiType = xmlNodes[j].Attributes["ui"].Value;
+					item.isROM = bool.Parse(xmlNodes[j].Attributes["rom"].Value);
+					item.type = xmlNodes[j].Attributes["type"].Value;
+					UIInfo uiInfo = new UIInfo();
+					uiInfo.name = xmlNodes[j].Attributes["ui"].Value;
+					uiInfo.defaultValue = int.Parse(xmlNodes[j].Attributes["default"].Value);
+					uiInfo.parameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
+					uiInfo.unit = float.Parse(xmlNodes[j].Attributes["unit"].Value);
+					item.ui = uiInfo;
 
 					items.Add(item);
 				}
