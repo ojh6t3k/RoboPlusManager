@@ -12,7 +12,7 @@ namespace HutongGames.PlayMaker.Actions
 		public ListView listView;
 		public ListItem listItem;
 		public Sprite sprite;
-		public FsmString text;
+		public FsmString[] textList;
 		public FsmObject data;
 		
 		public override void Reset()
@@ -20,7 +20,7 @@ namespace HutongGames.PlayMaker.Actions
 			listView = null;
 			listItem = null;
 			sprite = null;
-			text = new FsmString { UseVariable = true };
+			textList = null;
 			data = new FsmObject { UseVariable = true };
 		}
 		
@@ -30,15 +30,17 @@ namespace HutongGames.PlayMaker.Actions
 			
 			if(listView != null)
 			{
-				string t = null;
-				if(!text.IsNone)
-					t = text.Value;
-				
-				UnityEngine.Object o = null;
+				ListItem item = GameObject.Instantiate(listItem);
+				item.image.sprite = sprite;
+				for(int i=0; i<textList.Length; i++)
+				{
+					if(!textList[i].IsNone)
+						item.textList[i].text = textList[i].Value;
+				}
 				if(!data.IsNone)
-					o = data.Value;
+					item.data = data.Value;
 				
-				listView.InsertItem(listItem, sprite, t, o);
+				listView.InsertItem(item);
 			}
 			
 			Finish();

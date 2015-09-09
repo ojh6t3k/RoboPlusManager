@@ -88,7 +88,7 @@ public class ListView : MonoBehaviour
 		_selectedItem = null;
 	}
 
-	public void AddItem(ListItem item, Sprite image, string text, Object data)
+	public void AddItem(ListItem item)
 	{
 		if(item == null)
 		{
@@ -96,28 +96,20 @@ public class ListView : MonoBehaviour
 			return;
 		}
 
-		_createdItem = GameObject.Instantiate(item);
+		_createdItem = item;
 		_createdItem.transform.SetParent(itemPanel.transform);
 		_createdItem.transform.localScale = Vector3.one;
 		_createdItem.owner = this;
-		if(_createdItem.image != null)
-		{
-			if(image != null)
-				_createdItem.image.sprite = image;
-		}
-		if(_createdItem.text != null)
-			_createdItem.text.text = text;
-		_createdItem.data = data;
 		_itemNum++;
 	}
 
-	public void InsertItem(ListItem item, Sprite image, string text, Object data)
+	public void InsertItem(ListItem item)
 	{
 		if(_selectedItem == null)
 			return;
 
 		int index = _selectedItem.index;
-		AddItem(item, image, text, data);
+		AddItem(item);
 		if(_createdItem != null)
 			_createdItem.transform.SetSiblingIndex(index);
 	}

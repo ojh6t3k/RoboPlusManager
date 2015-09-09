@@ -24,6 +24,7 @@ public class LanguageInfo
 public class LocalizationManager : MonoBehaviour
 {
 	public TextAsset table;
+	public string newLineText = "{/n}";
 	public Image uiImage;
 	public Text uiText;
 	public LanguageInfo[] languages;
@@ -80,7 +81,7 @@ public class LocalizationManager : MonoBehaviour
 			foreach(LanguageInfo lang in languages)
 			{
 				if(lang.table != null)
-					lang.table.Add(tokens[0], tokens[lang.index]);
+					lang.table.Add(tokens[0], tokens[lang.index].Replace(newLineText, Environment.NewLine));
 			}
 		}
 

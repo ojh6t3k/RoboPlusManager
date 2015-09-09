@@ -5,6 +5,8 @@ using System;
 using System.Text;
 using System.Xml;
 using System.IO;
+using UnityEngine.UI;
+
 
 [Serializable]
 public class UIInfo

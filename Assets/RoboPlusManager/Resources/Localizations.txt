@@ -1,5 +1,5 @@
 key	eng	kor	jpn	zho	fre	deu
 Language	English	한국어	日本語	中国	français	Deutsch
 Test1	Hello	안녕하세요.	こんにちは	您好	Bonjour	Hallo
-Test2	Nice to meet you.	반갑습니다.	始めまして。	很高兴认识你。	Enchanté de faire votre connaissance.	Nett, dich zu treffen.
-Test3	Translation Test	번역 테스트	翻訳テスト	翻译测试	Essai de traduction	Übersetzung Test
+Test2	Nice to meet you.{/n}See you next .	반갑습니다.{/n}다음에 봅시다.	始めまして。{/n}あなたの隣を参照してください。	很高兴认识你。{/n}再见。	Enchanté de faire votre connaissance.{/n}À la prochaine.	Nett, dich zu treffen.{/n}Bis zum nächsten.
+Test3	A total of {0:d} {1:d} the people	총 {0:d}중에 {1:d}명	合計{0:d} {1:d}人	共有{0:d} {1:d}人	Un total de {0:d} {1:d} les personnes	Eine Gesamtzahl von {0:d} {1:d} die Menschen

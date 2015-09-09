@@ -8,8 +8,8 @@ public class ListItem : MonoBehaviour, IPointerClickHandler
 {
 	public ListView owner;
 	public Image image;
-	public Text text;
-	public Object data;
+	public Text[] textList;
+	public System.Object data;
 
 	private Toggle _toggle;
 
