@@ -12,7 +12,9 @@ public class ProductUITest : MonoBehaviour
 	public Image uiModelImage;
 	public ListView uiControlTable;
 	public ListItem uiControlItem;
-	public ListItem uiControlItem2;
+	public Text uiControlInfo;
+	public ControlUIManager uiManager;
+
 
 	// Use this for initialization
 	void Start ()
@@ -43,7 +45,7 @@ public class ProductUITest : MonoBehaviour
 		uiModelImage.sprite = product.image;
 
 		StringBuilder info = new StringBuilder();
-		info.AppendLine("[Manifest]");
+		info.AppendLine(string.Format("-Key: {0}", product.key));
 		info.AppendLine(string.Format("-Type: {0}", product.type));
 		info.AppendLine(string.Format("-Model: {0:d}", product.model));
 		info.AppendLine(string.Format("-Protocol: v{0:f}", product.protocolVersion));
@@ -58,20 +60,47 @@ public class ProductUITest : MonoBehaviour
 		uiModelInfo.text = info.ToString();
 
 		uiControlTable.ClearItem();
+		uiControlInfo.text = "";
+		uiManager.selectedUI = null;
+
 		ControlItemInfo[] table = product.controlTable;
 		for(int i=0; i<table.Length; i++)
 		{
-			ListItem item = null;
-			if(table[i].type.Equals("dword") == true)
-				item = GameObject.Instantiate(uiControlItem2);
-			else
-				item = GameObject.Instantiate(uiControlItem);
+			ListItem item = GameObject.Instantiate(uiControlItem);
 			item.image.sprite = table[i].icon;
 			item.textList[0].text = table[i].name;
-			item.textList[1].text = table[i].ui.value.ToString();
-			item.data = table[i].ui;
+			item.textList[1].text = table[i].value.ToString();
+			item.data = table[i];
 
 			uiControlTable.AddItem(item);
 		}
+	}
+
+	public void SelectControlItem()
+	{
+		ListItem selectedControl = uiControlTable.selectedItem;
+		if(selectedControl == null)
+			return;
+
+		ControlItemInfo controlItem = (ControlItemInfo)selectedControl.data;
+		
+		StringBuilder info = new StringBuilder();
+		info.AppendLine(string.Format("-Address: {0:d}", controlItem.address));
+		string sValue = "";
+		if(controlItem.accessRead == true)
+			sValue += "r";
+		if(controlItem.accessWrite == true)
+			sValue += "w";
+		info.AppendLine(string.Format("-Access: {0}", sValue));
+		if(controlItem.isROM == true)
+			sValue = "ROM";
+		else
+			sValue = "RAM";
+		info.AppendLine(string.Format("-Memory: {0}", sValue));
+		info.AppendLine(string.Format("-Type: {0}", controlItem.type));
+
+		uiControlInfo.text = info.ToString();
+
+		uiManager.selectedUI = controlItem;
 	}
 }

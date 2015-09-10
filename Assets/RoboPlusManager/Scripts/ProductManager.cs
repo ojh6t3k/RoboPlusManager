@@ -9,16 +9,6 @@ using UnityEngine.UI;
 
 
 [Serializable]
-public class UIInfo
-{
-	public string name;
-	public int defaultValue;
-	public int value;
-	public float unit;
-	public string[] parameters;
-}
-
-[Serializable]
 public class ControlItemInfo
 {
 	public string name;
@@ -28,7 +18,12 @@ public class ControlItemInfo
 	public bool accessWrite;
 	public bool isROM;
 	public string type;
-	public UIInfo ui;
+	public string uiName;
+	public int defaultValue;
+	public int value;
+	public float unit;
+	public string unitFormat;
+	public string[] uiParameters;
 }
 
 [Serializable]
@@ -152,12 +147,25 @@ public class ProductManager : MonoBehaviour
 					}
 					item.isROM = bool.Parse(xmlNodes[j].Attributes["rom"].Value);
 					item.type = xmlNodes[j].Attributes["type"].Value;
-					UIInfo uiInfo = new UIInfo();
-					uiInfo.name = xmlNodes[j].Attributes["ui"].Value;
-					uiInfo.defaultValue = int.Parse(xmlNodes[j].Attributes["default"].Value);
-					uiInfo.parameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
-					uiInfo.unit = float.Parse(xmlNodes[j].Attributes["unit"].Value);
-					item.ui = uiInfo;
+					item.uiName = xmlNodes[j].Attributes["ui"].Value;
+					item.defaultValue = int.Parse(xmlNodes[j].Attributes["default"].Value);
+					item.uiParameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
+					try
+					{
+						item.unit = float.Parse(xmlNodes[j].Attributes["unit"].Value);
+					}
+					catch(Exception)
+					{
+						item.unit = 1.0f;
+					}
+					try
+					{
+						item.unitFormat = xmlNodes[j].Attributes["format"].Value;
+					}
+					catch(Exception)
+					{
+						item.unitFormat = null;
+					}
 
 					items.Add(item);
 				}
@@ -165,9 +173,8 @@ public class ProductManager : MonoBehaviour
 
 				products.Add(product);
 			}
-			catch(Exception e)
+			catch(Exception)
 			{
-			//	Debug.Log(e);
 			}
 		}
 

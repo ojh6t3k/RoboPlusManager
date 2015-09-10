@@ -77,6 +77,8 @@ public class ListView : MonoBehaviour
 
 	public void ClearItem()
 	{
+		_selectedItem = null;
+
 		List<GameObject> list = new List<GameObject>();
 		foreach(Transform item in itemPanel.transform)
 			list.Add(item.gameObject);
@@ -85,7 +87,6 @@ public class ListView : MonoBehaviour
 			GameObject.DestroyImmediate(list[i]);
 
 		_itemNum = 0;
-		_selectedItem = null;
 	}
 
 	public void AddItem(ListItem item)
