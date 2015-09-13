@@ -12,18 +12,33 @@ using UnityEngine.UI;
 public class ControlItemInfo
 {
 	public string name;
-	public Sprite icon;
 	public int address;
 	public bool accessRead;
 	public bool accessWrite;
 	public bool isROM;
-	public string type;
-	public string uiName;
+	public int bytes;
 	public int defaultValue;
-	public int value;
-	public float unit;
-	public string unitFormat;
+}
+
+[Serializable]
+public class ControlUIInfo
+{
+	public string name;
+	public Sprite icon;
+	public string uiClass;
 	public string[] uiParameters;
+	public ControlItemInfo[] uiItems;
+
+	public ControlItemInfo GetUIItem(string name)
+	{
+		foreach(ControlItemInfo item in uiItems)
+		{
+			if(item.name.Equals(name))
+				return item;
+		}
+
+		return null;
+	}
 }
 
 [Serializable]
@@ -39,7 +54,7 @@ public class ProductInfo
 	public TextAsset calibration;
 	public float calibrationVersion;
 	public float protocolVersion;
-	public ControlItemInfo[] controlTable;
+	public ControlUIInfo[] uiList;
 }
 
 public class ProductManager : MonoBehaviour
@@ -89,87 +104,85 @@ public class ProductManager : MonoBehaviour
 				catch(Exception)
 				{
 				}
-				product.image = Resources.Load<Sprite>("Product/Image/" + product.key);
-
-				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Firmware");
 				product.firmware = Resources.Load<TextAsset>("Product/Firmware/" + product.key);
-				product.firmwareVersion = float.Parse(xmlEle.Attributes["version"].Value);
-
-				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Protocol");
-				product.protocolVersion = float.Parse(xmlEle.Attributes["version"].Value);
+				if(product.firmware != null)
+					product.firmwareVersion = float.Parse(xmlEle.Attributes["version"].Value);
 
 				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Calibration");
 				if(xmlEle != null)
 				{
 					product.calibration = Resources.Load<TextAsset>("Product/Calibration/" + product.key);
-					product.calibrationVersion = float.Parse(xmlEle.Attributes["version"].Value);
+					if(product.calibration != null)
+						product.calibrationVersion = float.Parse(xmlEle.Attributes["version"].Value);
 				}
 
-				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/ControlTable");
+				product.image = Resources.Load<Sprite>("Product/Image/" + product.key);
 
-				List<ControlItemInfo> items = new List<ControlItemInfo>();
-				XmlNodeList xmlNodes = xmlEle.SelectNodes("/Product/ControlTable/Item");
+				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Control");
+				product.protocolVersion = float.Parse(xmlEle.Attributes["protocol"].Value);
+
+				List<ControlUIInfo> uis = new List<ControlUIInfo>();
+				XmlNodeList xmlNodes = xmlEle.SelectNodes("./UI");
 				for(int j=0; j<xmlNodes.Count; j++)
 				{
-					ControlItemInfo item = new ControlItemInfo();
+					ControlUIInfo ui = new ControlUIInfo();
 					string stringValue = xmlNodes[j].Attributes["icon"].Value;
 					for(int n=0; n<icons.Length; n++)
 					{
 						if(icons[n].name.Equals(stringValue) == true)
 						{
-							item.icon = icons[n];
+							ui.icon = icons[n];
 							break;
 						}
 					}
-					item.name = xmlNodes[j].Attributes["name"].Value;
-
-					item.address = int.Parse(xmlNodes[j].Attributes["address"].Value);
-					stringValue = xmlNodes[j].Attributes["access"].Value;
-					if(stringValue.Equals("r") == true)
-					{
-						item.accessRead = true;
-						item.accessWrite = false;
-					}
-					else if(stringValue.Equals("w") == true)
-					{
-						item.accessRead = false;
-						item.accessWrite = true;
-					}
-					else if(stringValue.Equals("rw") == true)
-					{
-						item.accessRead = true;
-						item.accessWrite = true;
-					}
-					else
-					{
-						item.accessRead = false;
-						item.accessWrite = false;
-					}
-					item.isROM = bool.Parse(xmlNodes[j].Attributes["rom"].Value);
-					item.type = xmlNodes[j].Attributes["type"].Value;
-					item.uiName = xmlNodes[j].Attributes["ui"].Value;
-					item.defaultValue = int.Parse(xmlNodes[j].Attributes["default"].Value);
-					item.uiParameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
+					ui.name = xmlNodes[j].Attributes["name"].Value;
+					ui.uiClass = xmlNodes[j].Attributes["class"].Value;
 					try
 					{
-						item.unit = float.Parse(xmlNodes[j].Attributes["unit"].Value);
+						ui.uiParameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
 					}
 					catch(Exception)
 					{
-						item.unit = 1.0f;
-					}
-					try
-					{
-						item.unitFormat = xmlNodes[j].Attributes["format"].Value;
-					}
-					catch(Exception)
-					{
-						item.unitFormat = null;
 					}
 
-					items.Add(item);
+					List<ControlItemInfo> items = new List<ControlItemInfo>();
+					XmlNodeList xmlNodes2 = xmlNodes[j].SelectNodes("./Item");
+					for(int k=0; k<xmlNodes2.Count; k++)
+					{
+						ControlItemInfo item = new ControlItemInfo();
+						item.name = xmlNodes2[k].Attributes["name"].Value;
+						item.address = int.Parse(xmlNodes2[k].Attributes["address"].Value);
+						stringValue = xmlNodes2[k].Attributes["access"].Value;
+						if(stringValue.Equals("r") == true)
+						{
+							item.accessRead = true;
+							item.accessWrite = false;
+						}
+						else if(stringValue.Equals("w") == true)
+						{
+							item.accessRead = false;
+							item.accessWrite = true;
+						}
+						else if(stringValue.Equals("rw") == true)
+						{
+							item.accessRead = true;
+							item.accessWrite = true;
+						}
+						else
+						{
+							item.accessRead = false;
+							item.accessWrite = false;
+						}
+						item.isROM = bool.Parse(xmlNodes2[k].Attributes["save"].Value);
+						item.bytes = int.Parse(xmlNodes2[k].Attributes["byte"].Value);
+						item.defaultValue = int.Parse(xmlNodes2[k].Attributes["default"].Value);
+
+						items.Add(item);
+					}
+					ui.uiItems = items.ToArray();
+					uis.Add(ui);
 				}
-				product.controlTable = items.ToArray();
+				product.uiList = uis.ToArray();
 
 				products.Add(product);
 			}

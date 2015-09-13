@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Product key="AX12A" name="AX-12A" type="DXL" model="12">
-	<Firmware version="28"></Firmware>
-	<Protocol version="1.0"></Protocol>
-	<ControlTable>
-		<Item icon="TestIcon_7" name="ModelNumber" address="0" access="r" rom="true" type="uint16" ui="ValueUI" default="0" param="0~65535"></Item>
-		<Item icon="TestIcon_7" name="Version" address="2" access="r" rom="true" type="uint8" ui="ValueUI" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="ID" address="3" access="rw" rom="true" type="uint8" ui="ValueUI" default="0" param="0~253"></Item>
-		<Item icon="TestIcon_7" name="Baudrate" address="4" access="rw" rom="true" type="uint8" ui="Baudrate" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="ReturnDelay" address="5" access="rw" rom="true" type="uint8" ui="ValueUI" default="0" param="0~254" unit="2" format="{0:f0} usec"></Item>
-		<Item icon="TestIcon_7" name="CWAngleLimit" address="6" access="rw" rom="true" type="uint16" ui="ValueUI" default="0" param="0~1023" unit="0.292" format="{0:f2} °"></Item>
-		<Item icon="TestIcon_7" name="CCWAngleLimit" address="8" access="rw" rom="true" type="uint16" ui="ValueUI" default="0" param="0~1023" unit="0.292" format="{0:f2} °"></Item>
-		<Item icon="TestIcon_7" name="TemperatureLimit" address="11" access="rw" rom="true" type="uint8" ui="ValueUI" default="0" param="0~255" unit="1" format="{0:f0} ℃"></Item>
-		<Item icon="TestIcon_7" name="VoltageLimit" address="12" access="rw" rom="true" type="uint16" ui="ValueUI" default="0" param="0~255" unit="0.1" format="{0:f1} V"></Item>
-		<Item icon="TestIcon_7" name="MaxTorque" address="14" access="rw" rom="true" type="uint16" ui="ValueUI" default="0" param="0~1023" unit="0.0976" format="{0:f1} %"></Item>
-		<Item icon="TestIcon_7" name="ReturnLevel" address="16" access="rw" rom="true" type="uint8" ui="List" default="0" param="0~2"></Item>
-		<Item icon="TestIcon_7" name="AlramLED" address="17" access="rw" rom="true" type="uint8" ui="AlramFlag" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="AlramShutdown" address="18" access="rw" rom="true" type="uint8" ui="AlramFlag" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="TorqueEnable" address="24" access="rw" rom="false" type="uint8" ui="Bool" default="0" param="0~1"></Item>
-		<Item icon="TestIcon_7" name="LED" address="25" access="rw" rom="false" type="uint8" ui="Bool" default="0" param="0~1"></Item>
-		<Item icon="TestIcon_7" name="CWMargin" address="26" access="rw" rom="false" type="uint8" ui="ValueUI" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="CCWMargin" address="27" access="rw" rom="false" type="uint8" ui="ValueUI" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="CWSlope" address="28" access="rw" rom="false" type="uint8" ui="ValueUI" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="CCWSlope" address="29" access="rw" rom="false" type="uint8" ui="ValueUI" default="0" param="0~255"></Item>
-		<Item icon="TestIcon_7" name="GoalPosition" address="30" access="rw" rom="false" type="uint16" ui="Angle" default="512" param="0~1023" unit="0.292" format="{0:f2} °"></Item>
-		<Item icon="TestIcon_7" name="MovingSpeed" address="32" access="rw" rom="false" type="uint16" ui="MotorSpeed" default="0" param="0~2047" unit="0.0976" format="{0:f1} %"></Item>
-		<Item icon="TestIcon_7" name="TorqueLimit" address="34" access="rw" rom="false" type="uint16" ui="Percent" default="0" param="0~1023"></Item>
-		<Item icon="TestIcon_7" name="PresentPosition" address="36" access="r" rom="false" type="uint16" ui="Angle" default="0" param="0~1024" unit="0.292" format="{0:f2} °"></Item>
-		<Item icon="TestIcon_7" name="PresentSpeed" address="38" access="r" rom="false" type="uint16" ui="MotorSpeed" default="0" param="0~1024" unit="0.0976" format="{0:f1} %"></Item>
-		<Item icon="TestIcon_7" name="PresentLoad" address="40" access="r" rom="false" type="uint16" ui="Load" default="0" param="0~1023"></Item>
-		<Item icon="TestIcon_7" name="Voltage" address="42" access="r" rom="false" type="uint8" ui="Voltage" default="0" param="0~255" unit="0.1" format="{0:f1} V"></Item>
-		<Item icon="TestIcon_7" name="Temperature" address="43" access="r" rom="false" type="uint8" ui="Temperature" default="0" param="0~255" unit="1" format="{0:f0} ℃"></Item>
-		<Item icon="TestIcon_7" name="Registered" address="44" access="r" rom="false" type="uint8" ui="Bool" default="0" param="0~1"></Item>
-		<Item icon="TestIcon_7" name="Moving" address="46" access="r" rom="false" type="uint8" ui="Bool" default="0" param="0~1"></Item>
-		<Item icon="TestIcon_7" name="Lock" address="47" access="rw" rom="false" type="uint8" ui="Bool" default="0" param="0~1"></Item>
-		<Item icon="TestIcon_7" name="Punch" address="48" access="rw" rom="false" type="uint16" ui="ValueUI" default="0" param="0~65535"></Item>
-	</ControlTable>
+<Product key="AX12A" name="AX-12A" type="DXL" model="12" version="28">
+	<Control protocol="1.0">
+		<UI icon="TestIcon_7" name="Information" class="InformationUI">
+			<Item name="ModelNumber" address="0" access="r" save="true" byte="2" default="12"></Item>
+			<Item name="Version" address="2" access="r" save="true" byte="1" default="28"></Item>
+		</UI>
+		<UI icon="TestIcon_7" name="Communication" class="CommunicationUI">
+			<Item name="ID" address="3" access="rw" save="true" byte="1" default="1"></Item>
+			<Item name="Baudrate" address="4" access="rw" save="true" byte="1" default="1"></Item>
+			<Item name="ReturnDelay" address="5" access="rw" save="true" byte="1" default="0"></Item>
+			<Item name="ReturnLevel" address="16" access="rw" save="true" byte="1" default="2"></Item>
+		</UI>
+		<UI icon="TestIcon_7" name="Alarm" class="AlarmUI" param="10~99,50~250">
+			<Item name="TemperatureHighLimit" address="11" access="rw" save="true" byte="1" default="23"></Item>
+			<Item name="VoltageLowLimit" address="12" access="rw" save="true" byte="1" default="50"></Item>
+			<Item name="VoltageHighLimit" address="13" access="rw" save="true" byte="1" default="250"></Item>
+			<Item name="AlramLED" address="17" access="rw" save="true" byte="1" default="0"></Item>
+			<Item name="AlramShutdown" address="18" access="rw" save="true" byte="1" default="0"></Item>
+			<Item name="Voltage" address="42" access="r" save="false" byte="1" default="0"></Item>
+			<Item name="Temperature" address="43" access="r" save="false" byte="1" default="0"></Item>
+		</UI>
+		<UI icon="TestIcon_7" name="Control" class="Dxl1UI" param="0~1023,512,-150~150">
+			<Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0"></Item>
+			<Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="1023"></Item>
+			<Item name="MaxTorque" address="14" access="rw" save="true" byte="2" default="1023"></Item>
+			<Item name="TorqueEnable" address="24" access="rw" save="false" byte="1" default="0"></Item>
+			<Item name="CWMargin" address="26" access="rw" save="false" byte="1" default="0"></Item>
+			<Item name="CCWMargin" address="27" access="rw" save="false" byte="1" default="0"></Item>
+			<Item name="CWSlope" address="28" access="rw" save="false" byte="1" default="32"></Item>
+			<Item name="CCWSlope" address="29" access="rw" save="false" byte="1" default="32"></Item>
+			<Item name="GoalPosition" address="30" access="rw" save="false" byte="2" default="512"></Item>
+			<Item name="MovingSpeed" address="32" access="rw" save="false" byte="2" default="0"></Item>
+			<Item name="TorqueLimit" address="34" access="rw" save="false" byte="2" default="0"></Item>
+			<Item name="PresentPosition" address="36" access="r" save="false" byte="2" default="512"></Item>
+			<Item name="PresentSpeed" address="38" access="r" save="false" byte="2" default="0"></Item>
+			<Item name="PresentLoad" address="40" access="r" save="false" byte="2" default="0"></Item>
+			<Item name="Moving" address="46" access="r" save="false" byte="1" default="0"></Item>
+			<Item name="Punch" address="48" access="rw" save="false" byte="2" default="0"></Item>
+		</UI>
+		<UI icon="TestIcon_7" name="Etc" class="EtcUI">		
+			<Item name="LED" address="25" access="rw" save="false" byte="1" default="0"></Item>		
+			<Item name="Registered" address="44" access="r" save="false" byte="1" default="0"></Item>		
+			<Item name="Lock" address="47" access="rw" save="false" byte="1" default="0"></Item>
+		</UI>
+	</Control>
 </Product>
 

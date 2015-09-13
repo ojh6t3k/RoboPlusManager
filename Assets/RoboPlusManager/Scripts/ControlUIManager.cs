@@ -20,7 +20,7 @@ public class ControlUIManager : MonoBehaviour
 
 	}
 
-	public ControlItemInfo selectedUI
+	public ControlUIInfo selectedUI
 	{
 		get
 		{
@@ -40,7 +40,7 @@ public class ControlUIManager : MonoBehaviour
 			{
 				foreach(ControlUI ui in uiList)
 				{
-					if(ui.uiName.Equals(value.uiName) == true)
+					if(ui.uiClass.Equals(value.uiClass) == true)
 					{
 						ui.active = true;
 						ui.uiInfo = value;

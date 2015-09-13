@@ -12,7 +12,6 @@ public class ProductUITest : MonoBehaviour
 	public Image uiModelImage;
 	public ListView uiControlTable;
 	public ListItem uiControlItem;
-	public Text uiControlInfo;
 	public ControlUIManager uiManager;
 
 
@@ -60,47 +59,26 @@ public class ProductUITest : MonoBehaviour
 		uiModelInfo.text = info.ToString();
 
 		uiControlTable.ClearItem();
-		uiControlInfo.text = "";
 		uiManager.selectedUI = null;
 
-		ControlItemInfo[] table = product.controlTable;
+		ControlUIInfo[] table = product.uiList;
 		for(int i=0; i<table.Length; i++)
 		{
 			ListItem item = GameObject.Instantiate(uiControlItem);
 			item.image.sprite = table[i].icon;
 			item.textList[0].text = table[i].name;
-			item.textList[1].text = table[i].value.ToString();
 			item.data = table[i];
 
 			uiControlTable.AddItem(item);
 		}
 	}
 
-	public void SelectControlItem()
+	public void SelectControlUI()
 	{
 		ListItem selectedControl = uiControlTable.selectedItem;
 		if(selectedControl == null)
 			return;
 
-		ControlItemInfo controlItem = (ControlItemInfo)selectedControl.data;
-		
-		StringBuilder info = new StringBuilder();
-		info.AppendLine(string.Format("-Address: {0:d}", controlItem.address));
-		string sValue = "";
-		if(controlItem.accessRead == true)
-			sValue += "r";
-		if(controlItem.accessWrite == true)
-			sValue += "w";
-		info.AppendLine(string.Format("-Access: {0}", sValue));
-		if(controlItem.isROM == true)
-			sValue = "ROM";
-		else
-			sValue = "RAM";
-		info.AppendLine(string.Format("-Memory: {0}", sValue));
-		info.AppendLine(string.Format("-Type: {0}", controlItem.type));
-
-		uiControlInfo.text = info.ToString();
-
-		uiManager.selectedUI = controlItem;
+		uiManager.selectedUI = (ControlUIInfo)selectedControl.data;
 	}
 }

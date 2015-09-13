@@ -9,21 +9,10 @@ public class ControlUI : UIBehaviour
 	public RectTransform uiReset;
 	public RectTransform uiSave;
 
-	protected int defaultValue;
-	protected float unit;
-
-	private ControlItemInfo _uiInfo;
+	private ControlUIInfo _uiInfo;
 	private bool _active = false;
 
 	public virtual void OnUpdateUIInfo() {}
-	public virtual int Value
-	{
-		get
-		{
-			return 0;
-		}
-		set	{}
-	}
 	public virtual void Reset()	{}
 
 
@@ -32,7 +21,7 @@ public class ControlUI : UIBehaviour
 		active = _active;
 	}
 
-	public string uiName
+	public string uiClass
 	{
 		get
 		{
@@ -53,7 +42,7 @@ public class ControlUI : UIBehaviour
 		}
 	}
 
-	public ControlItemInfo uiInfo
+	public ControlUIInfo uiInfo
 	{
 		get
 		{
