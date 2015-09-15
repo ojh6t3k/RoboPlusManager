@@ -7,7 +7,7 @@ public class DefaultUI : ControlUI
 {
 	public Text uiText;
 
-	public override void OnUpdateUIInfo()
+	protected override void OnUpdateUIInfo()
 	{
 		ControlUIInfo info = uiInfo;
 		if(info != null)
@@ -28,13 +28,9 @@ public class DefaultUI : ControlUI
 				content.AppendLine(string.Format("-Item[{0:d}]", i));
 				content.AppendLine(string.Format("  >Name: {0}", info.uiItems[i].name));
 				content.AppendLine(string.Format("  >Address: {0:d}", info.uiItems[i].address));
-				if(info.uiItems[i].accessRead && info.uiItems[i].accessWrite)
-					content.AppendLine("  >Access: rw");
-				else if(info.uiItems[i].accessRead && !info.uiItems[i].accessWrite)
-					content.AppendLine("  >Access: r");
-				else if(!info.uiItems[i].accessRead && info.uiItems[i].accessWrite)
-					content.AppendLine("  >Access: w");
-				content.AppendLine(string.Format("  >Byte Number: {0:d}", info.uiItems[i].bytes));
+                content.AppendLine(string.Format("  >Access: {0}", info.uiItems[i].access.ToString()));
+                content.AppendLine(string.Format("  >Savable: {0}", info.uiItems[i].savable.ToString()));
+                content.AppendLine(string.Format("  >Byte Number: {0:d}", info.uiItems[i].bytes));
 				content.AppendLine(string.Format("  >Default: {0:d}", info.uiItems[i].defaultValue));
 			}
 			uiText.text = content.ToString();

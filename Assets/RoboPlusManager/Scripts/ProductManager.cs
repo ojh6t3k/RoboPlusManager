@@ -1,23 +1,31 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Text;
 using System.Xml;
-using System.IO;
-using UnityEngine.UI;
 
 
 [Serializable]
 public class ControlItemInfo
 {
+    public enum ACCESS
+    {
+        R,
+        RW,
+        W
+    }
+
 	public string name;
 	public int address;
-	public bool accessRead;
-	public bool accessWrite;
-	public bool isROM;
+	public ACCESS access;
+	public bool savable;
 	public int bytes;
 	public int defaultValue;
+	public int Value;
+
+	public void Reset()
+	{
+		Value = defaultValue;
+	}
 }
 
 [Serializable]
@@ -51,6 +59,7 @@ public class ProductInfo
 	public Sprite image;
 	public TextAsset firmware;
 	public float firmwareVersion;
+    public int firmwareAddress;
 	public TextAsset calibration;
 	public float calibrationVersion;
 	public float protocolVersion;
@@ -106,7 +115,17 @@ public class ProductManager : MonoBehaviour
 				}
 				product.firmware = Resources.Load<TextAsset>("Product/Firmware/" + product.key);
 				if(product.firmware != null)
-					product.firmwareVersion = float.Parse(xmlEle.Attributes["version"].Value);
+                {
+                    xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Firmware");
+                    product.firmwareVersion = float.Parse(xmlEle.Attributes["version"].Value);
+                    try
+                    {
+                        product.firmwareAddress = Convert.ToInt32(xmlEle.Attributes["address"].Value, 16);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
 
 				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Calibration");
 				if(xmlEle != null)
@@ -149,35 +168,39 @@ public class ProductManager : MonoBehaviour
 					XmlNodeList xmlNodes2 = xmlNodes[j].SelectNodes("./Item");
 					for(int k=0; k<xmlNodes2.Count; k++)
 					{
-						ControlItemInfo item = new ControlItemInfo();
-						item.name = xmlNodes2[k].Attributes["name"].Value;
-						item.address = int.Parse(xmlNodes2[k].Attributes["address"].Value);
-						stringValue = xmlNodes2[k].Attributes["access"].Value;
-						if(stringValue.Equals("r") == true)
-						{
-							item.accessRead = true;
-							item.accessWrite = false;
-						}
-						else if(stringValue.Equals("w") == true)
-						{
-							item.accessRead = false;
-							item.accessWrite = true;
-						}
-						else if(stringValue.Equals("rw") == true)
-						{
-							item.accessRead = true;
-							item.accessWrite = true;
-						}
-						else
-						{
-							item.accessRead = false;
-							item.accessWrite = false;
-						}
-						item.isROM = bool.Parse(xmlNodes2[k].Attributes["save"].Value);
-						item.bytes = int.Parse(xmlNodes2[k].Attributes["byte"].Value);
-						item.defaultValue = int.Parse(xmlNodes2[k].Attributes["default"].Value);
+                        int count = 1;
+                        try
+                        {
+                            count = int.Parse(xmlNodes2[k].Attributes["continue"].Value);
+                        }
+                        catch(Exception)
+                        {
 
-						items.Add(item);
+                        }
+
+                        for (int l=0; l<count; l++)
+                        {
+                            ControlItemInfo item = new ControlItemInfo();
+                            item.name = xmlNodes2[k].Attributes["name"].Value;
+                            item.address = int.Parse(xmlNodes2[k].Attributes["address"].Value);
+                            stringValue = xmlNodes2[k].Attributes["access"].Value;
+                            if (stringValue.Equals("r") == true)
+                                item.access = ControlItemInfo.ACCESS.R;
+                            else if (stringValue.Equals("w") == true)
+                                item.access = ControlItemInfo.ACCESS.W;
+                            else if (stringValue.Equals("rw") == true)
+                                item.access = ControlItemInfo.ACCESS.RW;
+                            item.savable = bool.Parse(xmlNodes2[k].Attributes["save"].Value);
+                            item.bytes = int.Parse(xmlNodes2[k].Attributes["byte"].Value);
+                            item.defaultValue = int.Parse(xmlNodes2[k].Attributes["default"].Value);
+                            item.Reset();
+
+                            if(l > 0)
+                                item.name += string.Format("_{0:d}", l);
+                            item.address += (l * item.bytes);
+
+                            items.Add(item);
+                        }                 
 					}
 					ui.uiItems = items.ToArray();
 					uis.Add(ui);

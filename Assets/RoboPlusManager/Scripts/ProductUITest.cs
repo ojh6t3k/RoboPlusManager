@@ -51,8 +51,9 @@ public class ProductUITest : MonoBehaviour
 		if(product.firmware == null)
 			info.AppendLine("-Not support firmware");
 		else
-			info.AppendLine(string.Format("-Firmware: v{0:f}", product.firmwareVersion));
-		if(product.calibration == null)
+            info.AppendLine(string.Format("-Firmware: v{0:f}, addr({1:x})", product.firmwareVersion, product.firmwareAddress));
+
+        if (product.calibration == null)
 			info.AppendLine("-Not support calibration");
 		else
 			info.AppendLine(string.Format("-Calibration: v{0:f}", product.calibrationVersion));

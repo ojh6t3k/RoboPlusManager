@@ -15,6 +15,10 @@ public class ListView : MonoBehaviour
 	private ListItem _createdItem;
 	private ListItem _selectedItem;
 
+	void Awake()
+	{
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -45,6 +49,10 @@ public class ListView : MonoBehaviour
 
 	public ListItem selectedItem
 	{
+		get
+		{
+			return _selectedItem;
+		}
 		set
 		{
 			bool changed = false;
@@ -69,9 +77,23 @@ public class ListView : MonoBehaviour
 			if(changed == true)
 				OnChangedSelection.Invoke();
 		}
+	}
+
+	public int selectedIndex
+	{
 		get
 		{
-			return _selectedItem;
+			if(_selectedItem == null)
+				return -1;
+
+			return _selectedItem.index;
+		}
+		set
+		{
+			if(value < 0 || value >= itemCount)
+				return;
+
+			selectedItem = itemPanel.transform.GetChild(value).GetComponent<ListItem>();
 		}
 	}
 

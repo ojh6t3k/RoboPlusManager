@@ -6,6 +6,7 @@ using System.Text;
 
 public class CommunicationUI : ControlUI
 {
+	public Button uiSave;
 	public UpdownValue uiBaudrate;
 	public UpdownValue uiID;
 	public UpdownValue uiReturnDelay;
@@ -42,11 +43,13 @@ public class CommunicationUI : ControlUI
 
 	void Start()
 	{
-		uiBaudrate.OnChangedValue.AddListener(DisplayBPS);
-		uiReturnDelay.OnChangedValue.AddListener(DisplayDelayTime);
+		uiBaudrate.OnChangedValue.AddListener(OnChangedBaudrate);
+		uiID.OnChangedValue.AddListener(OnChangedID);
+		uiReturnDelay.OnChangedValue.AddListener(OnChangedReturnDelay);
+		uiReturnLevel.OnChangedSelection.AddListener(OnChangedReturnLevel);
 	}
 	
-	public override void OnUpdateUIInfo()
+	protected override void OnUpdateUIInfo()
 	{
 		ControlUIInfo info = uiInfo;
 		
@@ -60,26 +63,48 @@ public class CommunicationUI : ControlUI
 		uiBaudrate.unitValue = 1;
 		uiBaudrate.format = "f0";
 		uiBaudrate.initValue = (float)_baudrate.defaultValue;
-		uiBaudrate.Value = (float)_baudrate.defaultValue;
-		DisplayBPS();
+		uiBaudrate.Value = (float)_baudrate.Value;
 
 		uiID.minValue = 0;
 		uiID.maxValue = 253;
 		uiID.unitValue = 1;
 		uiID.format = "f0";
 		uiID.initValue = (float)_id.defaultValue;
-		uiID.Value = (float)_id.defaultValue;
+		uiID.Value = (float)_id.Value;
 
 		uiReturnDelay.minValue = 0;
 		uiReturnDelay.maxValue = 254;
 		uiReturnDelay.unitValue = 1;
 		uiReturnDelay.format = "f0";
 		uiReturnDelay.initValue = (float)_returnDelay.defaultValue;
-		uiReturnDelay.Value = (float)_returnDelay.defaultValue;
-		DisplayDelayTime();
+		uiReturnDelay.Value = (float)_returnDelay.Value;
+
+		uiReturnLevel.selectedIndex = _returnLevel.Value;
+
+		OnChangedBaudrate();
+		OnChangedReturnDelay();
+		uiSave.interactable = false;
 	}
 
-	private void DisplayBPS()
+	public override void Reset()
+	{
+		_baudrate.Reset();
+		_id.Reset();
+		_returnDelay.Reset();
+		_returnLevel.Reset();
+
+		uiBaudrate.Value = (float)_baudrate.Value;
+		uiID.Value = (float)_id.Value;
+		uiReturnDelay.Value = (float)_returnDelay.Value;
+		uiReturnLevel.selectedIndex = _returnLevel.Value;
+	}
+
+	public override void Save()
+	{
+		uiSave.interactable = false;
+	}
+
+	private void OnChangedBaudrate()
 	{
 		float curBps = 2000000f / (uiBaudrate.Value + 1f);
 		string dispText = string.Format("{0:f0} bps", curBps);
@@ -109,11 +134,28 @@ public class CommunicationUI : ControlUI
 			dispText += string.Format(" ({0:f0}, {1:f2} %)", similarBps[0], Mathf.Abs(1f - curBps / similarBps[0]));
 		}
 
+		_baudrate.Value = (int)uiBaudrate.Value;
 		uiBPS.text = dispText;
+		uiSave.interactable = true;
 	}
 
-	private void DisplayDelayTime()
+	private void OnChangedID()
+	{
+		_id.Value = (int)uiID.Value;
+		uiSave.interactable = true;
+	}
+
+	private void OnChangedReturnDelay()
 	{
 		uiDelayTime.text = string.Format("{0:f0} usec", uiReturnDelay.Value * 2f);
+
+		_returnDelay.Value = (int)uiReturnDelay.Value;
+		uiSave.interactable = true;
+	}
+
+	private void OnChangedReturnLevel()
+	{
+		_returnLevel.Value = uiReturnLevel.selectedIndex;
+		uiSave.interactable = true;
 	}
 }

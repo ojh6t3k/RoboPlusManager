@@ -11,7 +11,7 @@ public class InformationUI : ControlUI
 	private ControlItemInfo _modelNumber;
 	private ControlItemInfo _version;
 	
-	public override void OnUpdateUIInfo()
+	protected override void OnUpdateUIInfo()
 	{
 		ControlUIInfo info = uiInfo;
 

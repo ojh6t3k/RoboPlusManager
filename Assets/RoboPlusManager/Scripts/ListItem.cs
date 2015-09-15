@@ -13,10 +13,13 @@ public class ListItem : MonoBehaviour, IPointerClickHandler
 
 	private Toggle _toggle;
 
+	void Awake()
+	{
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
-		_toggle = GetComponent<Toggle>();
 	}
 	
 	// Update is called once per frame
@@ -33,21 +36,27 @@ public class ListItem : MonoBehaviour, IPointerClickHandler
 		}
 	}
 
+	// This property is for ListView
 	public bool selected
 	{
-		set
-		{
-			_toggle.isOn = value;
-		}
 		get
 		{
+			if(_toggle == null)
+				_toggle = GetComponent<Toggle>();
+
 			return _toggle.isOn;
+		}
+		set
+		{
+			if(_toggle == null)
+				_toggle = GetComponent<Toggle>();
+
+			_toggle.isOn = value;
 		}
 	}
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		_toggle.isOn = true;
 		owner.selectedItem = this;
 	}
 }

@@ -6,14 +6,12 @@ using UnityEngine.UI;
 
 public class ControlUI : UIBehaviour
 {
-	public RectTransform uiReset;
-	public RectTransform uiSave;
-
 	private ControlUIInfo _uiInfo;
 	private bool _active = false;
 
-	public virtual void OnUpdateUIInfo() {}
+	protected virtual void OnUpdateUIInfo() {}
 	public virtual void Reset()	{}
+	public virtual void Save()	{}
 
 
 	void Awake()
@@ -53,10 +51,5 @@ public class ControlUI : UIBehaviour
 			_uiInfo = value;
 			OnUpdateUIInfo();
 		}
-	}
-
-	public void SaveROM()
-	{
-
 	}
 }
