@@ -8,10 +8,13 @@ public class CommunicationUI : ControlUI
 {
 	public Button uiSave;
 	public UpdownValue uiBaudrate;
-	public UpdownValue uiID;
+    public Dropdown uiBaudrate2;
+    public UpdownValue uiID;
 	public UpdownValue uiReturnDelay;
-	public ListView uiReturnLevel;
-	public Text uiBPS;
+	public Toggle uiReturnLevel0;
+    public Toggle uiReturnLevel1;
+    public Toggle uiReturnLevel2;
+    public Text uiBPS;
 	public Text uiDelayTime;
 
 	private ControlItemInfo _baudrate;
@@ -43,10 +46,6 @@ public class CommunicationUI : ControlUI
 
 	void Start()
 	{
-		uiBaudrate.OnChangedValue.AddListener(OnChangedBaudrate);
-		uiID.OnChangedValue.AddListener(OnChangedID);
-		uiReturnDelay.OnChangedValue.AddListener(OnChangedReturnDelay);
-		uiReturnLevel.OnChangedSelection.AddListener(OnChangedReturnLevel);
 	}
 	
 	protected override void OnUpdateUIInfo()
@@ -56,55 +55,85 @@ public class CommunicationUI : ControlUI
 		_baudrate = info.GetUIItem("Baudrate");
 		_id = info.GetUIItem("ID");
 		_returnDelay = info.GetUIItem("ReturnDelay");
-		_returnLevel = info.GetUIItem("ReturnLevel");
+		_returnLevel = info.GetUIItem("ReturnLevel");		
 
-		uiBaudrate.minValue = 0;
-		uiBaudrate.maxValue = 254;
-		uiBaudrate.unitValue = 1;
-		uiBaudrate.format = "f0";
-		uiBaudrate.initValue = (float)_baudrate.defaultValue;
-		uiBaudrate.Value = (float)_baudrate.Value;
-
-		uiID.minValue = 0;
-		uiID.maxValue = 253;
+		uiID.minValue = _id.minValue;
+		uiID.maxValue = _id.maxValue;
 		uiID.unitValue = 1;
 		uiID.format = "f0";
-		uiID.initValue = (float)_id.defaultValue;
-		uiID.Value = (float)_id.Value;
+		uiID.Value = _id.value;
 
-		uiReturnDelay.minValue = 0;
-		uiReturnDelay.maxValue = 254;
+		uiReturnDelay.minValue = _returnDelay.minValue;
+		uiReturnDelay.maxValue = _returnDelay.maxValue;
 		uiReturnDelay.unitValue = 1;
 		uiReturnDelay.format = "f0";
-		uiReturnDelay.initValue = (float)_returnDelay.defaultValue;
-		uiReturnDelay.Value = (float)_returnDelay.Value;
+		uiReturnDelay.Value = _returnDelay.value;
+        OnChangedReturnDelay();
 
-		uiReturnLevel.selectedIndex = _returnLevel.Value;
+        if (_returnLevel.value == 0)
+            uiReturnLevel0.isOn = true;
+        else if(_returnLevel.value == 1)
+            uiReturnLevel1.isOn = true;
+        else if (_returnLevel.value == 2)
+            uiReturnLevel2.isOn = true;
 
-		OnChangedBaudrate();
-		OnChangedReturnDelay();
+        if(info.version == 1)
+        {
+            uiBaudrate.gameObject.SetActive(true);
+            uiBPS.gameObject.SetActive(true);
+            uiBaudrate2.gameObject.SetActive(false);
+
+            uiBaudrate.minValue = _baudrate.minValue;
+            uiBaudrate.maxValue = _baudrate.maxValue;
+            uiBaudrate.unitValue = 1;
+            uiBaudrate.format = "f0";
+            uiBaudrate.Value = _baudrate.value;
+            OnChangedBaudrate();
+        }
+        else if(info.version == 2)
+        {
+            uiBaudrate.gameObject.SetActive(false);
+            uiBPS.gameObject.SetActive(false);
+            uiBaudrate2.gameObject.SetActive(true);
+
+            uiBaudrate2.value = _baudrate.value;
+        }		
+		
 		uiSave.interactable = false;
 	}
 
-	public override void Reset()
+	public void OnReset()
 	{
 		_baudrate.Reset();
 		_id.Reset();
 		_returnDelay.Reset();
 		_returnLevel.Reset();
 
-		uiBaudrate.Value = (float)_baudrate.Value;
-		uiID.Value = (float)_id.Value;
-		uiReturnDelay.Value = (float)_returnDelay.Value;
-		uiReturnLevel.selectedIndex = _returnLevel.Value;
-	}
+		uiID.Value = _id.value;
+		uiReturnDelay.Value = _returnDelay.value;
+        if (_returnLevel.value == 0)
+            uiReturnLevel0.isOn = true;
+        else if (_returnLevel.value == 1)
+            uiReturnLevel1.isOn = true;
+        else if (_returnLevel.value == 2)
+            uiReturnLevel2.isOn = true;
 
-	public override void Save()
+        if (uiInfo.version == 1)
+        {
+            uiBaudrate.Value = _baudrate.value;
+        }
+        else if (uiInfo.version == 2)
+        {
+            uiBaudrate2.value = _baudrate.value;
+        }
+    }
+
+	public void OnSave()
 	{
 		uiSave.interactable = false;
 	}
 
-	private void OnChangedBaudrate()
+    public void OnChangedBaudrate()
 	{
 		float curBps = 2000000f / (uiBaudrate.Value + 1f);
 		string dispText = string.Format("{0:f0} bps", curBps);
@@ -134,28 +163,41 @@ public class CommunicationUI : ControlUI
 			dispText += string.Format(" ({0:f0}, {1:f2} %)", similarBps[0], Mathf.Abs(1f - curBps / similarBps[0]));
 		}
 
-		_baudrate.Value = (int)uiBaudrate.Value;
+		_baudrate.value = (int)uiBaudrate.Value;
 		uiBPS.text = dispText;
 		uiSave.interactable = true;
 	}
 
-	private void OnChangedID()
+    public void OnChangedBaudrate2()
+    {
+        _baudrate.value = uiBaudrate2.value;
+
+        uiSave.interactable = true;
+    }
+
+    public void OnChangedID()
 	{
-		_id.Value = (int)uiID.Value;
+		_id.value = (int)uiID.Value;
 		uiSave.interactable = true;
 	}
 
-	private void OnChangedReturnDelay()
+    public void OnChangedReturnDelay()
 	{
 		uiDelayTime.text = string.Format("{0:f0} usec", uiReturnDelay.Value * 2f);
 
-		_returnDelay.Value = (int)uiReturnDelay.Value;
+		_returnDelay.value = (int)uiReturnDelay.Value;
 		uiSave.interactable = true;
 	}
 
-	private void OnChangedReturnLevel()
+    public void OnChangedReturnLevel()
 	{
-		_returnLevel.Value = uiReturnLevel.selectedIndex;
-		uiSave.interactable = true;
+        if (uiReturnLevel0.isOn)
+            _returnLevel.value = 0;
+        if (uiReturnLevel1.isOn)
+            _returnLevel.value = 1;
+        if (uiReturnLevel2.isOn)
+            _returnLevel.value = 2;
+
+        uiSave.interactable = true;
 	}
 }

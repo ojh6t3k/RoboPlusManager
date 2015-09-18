@@ -4,14 +4,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class ControlUI : UIBehaviour
+public class ControlUI : MonoBehaviour
 {
 	private ControlUIInfo _uiInfo;
 	private bool _active = false;
 
 	protected virtual void OnUpdateUIInfo() {}
-	public virtual void Reset()	{}
-	public virtual void Save()	{}
 
 
 	void Awake()

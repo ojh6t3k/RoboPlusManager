@@ -2,47 +2,47 @@
 <Product key="OpenCM904" name="OpenCM 9.04" type="CM" model="400">
 	<Firmware version="16" address="0x08002000"></Firmware>
 	<Control protocol="2.0">
-    <UI icon="TestIcon_2" name="Panel" class="CmUI" param="v4">
+    <UI icon="TestIcon_2" name="Panel" class="CmUI" version="4">
       <Item name="Button" address="26" access="r" save="false" byte="1" default="0"></Item>
       <Item name="AuxLED" address="79" access="rw" save="false" byte="1" default="0"></Item>
     </UI>
-    <UI icon="TestIcon_4" name="Timer" class="TimerUI">
+    <UI icon="TestIcon_4" name="Timer" class="TimerUI" version="1">
       <Item name="Timer" address="73" access="rw" save="false" byte="1" default="0"></Item>
       <Item name="Timer2" address="74" access="rw" save="false" byte="2" default="0"></Item>
     </UI>
-    <UI icon="TestIcon_6" name="RandomValue" class="RandomValueUI">
+    <UI icon="TestIcon_6" name="RandomValue" class="RandomValueUI" version="1">
       <Item name="RandomValue" address="77" access="rw" save="false" byte="2" default="0"></Item>
     </UI>
-    <UI icon="TestIcon_7" name="Motion" class="MotionUI" param="0~65535">
+    <UI icon="TestIcon_7" name="Motion" class="MotionUI" version="1" param="0~65535">
       <Item name="MotionPage" address="66" access="rw" save="false" byte="2" default="0"></Item>
       <Item name="MotionStatus" address="68" access="r" save="false" byte="1" default="0"></Item>
       <Item name="MotionOffset" address="106" access="rw" save="false" byte="2" default="0" continue="26"></Item>
     </UI>
-    <UI icon="TestIcon_9" name="AuxIR" class="AuxIRUI" param="1,4">
+    <UI icon="TestIcon_9" name="AuxIR" class="AuxIRUI" version="1" param="1,4">
       <Item name="AuxIR" address="360" access="r" save="false" byte="2" default="0" continue="2"></Item>
     </UI>
-    <UI icon="TestIcon_10" name="AuxTouch" class="AuxTouchUI" param="1~4">
+    <UI icon="TestIcon_10" name="AuxTouch" class="AuxTouchUI" version="1" param="1~4">
       <Item name="AuxTouch" address="376" access="r" save="false" byte="1" default="0" continue="4"></Item>
     </UI>
-    <UI icon="TestIcon_12" name="AuxLED" class="AuxLEDUI" param="2~3">
+    <UI icon="TestIcon_12" name="AuxLED" class="AuxLEDUI" version="1" param="2~3">
       <Item name="AuxLED" address="380" access="rw" save="false" byte="1" default="0" continue="2"></Item>
     </UI>
-    <UI icon="TestIcon_17" name="AuxTemperature" class="AuxTemperatureUI" param="1~4">
+    <UI icon="TestIcon_17" name="AuxTemperature" class="AuxTemperatureUI" version="1" param="1~4">
       <Item name="AuxTemperature" address="392" access="r" save="false" byte="1" default="0" continue="4"></Item>
     </UI>
-    <UI icon="TestIcon_17" name="AuxUltraSonic" class="AuxUltraSonicUI" param="1~4">
+    <UI icon="TestIcon_17" name="AuxUltraSonic" class="AuxUltraSonicUI" version="1" param="1~4">
       <Item name="AuxUltraSonic" address="396" access="r" save="false" byte="1" default="0" continue="4"></Item>
     </UI>
-    <UI icon="TestIcon_15" name="AuxMagnetic" class="AuxMagneticUI" param="1~4">
+    <UI icon="TestIcon_15" name="AuxMagnetic" class="AuxMagneticUI" version="1" param="1~4">
       <Item name="AuxMagnetic" address="400" access="r" save="false" byte="1" default="0" continue="4"></Item>
     </UI>
-    <UI icon="TestIcon_16" name="AuxMotion" class="AuxMotionUI" param="1~4">
+    <UI icon="TestIcon_16" name="AuxMotion" class="AuxMotionUI" version="1" param="1~4">
       <Item name="AuxMotion" address="404" access="r" save="false" byte="1" default="0" continue="4"></Item>
     </UI>
-    <UI icon="TestIcon_14" name="AuxColor" class="AuxColorUI" param="2~3">
+    <UI icon="TestIcon_14" name="AuxColor" class="AuxColorUI" version="1" param="2~3">
       <Item name="AuxColor" address="408" access="r" save="false" byte="1" default="0" continue="2"></Item>
     </UI>
-    <UI icon="TestIcon_13" name="AuxCustom" class="AuxCustomUI" param="2~3">
+    <UI icon="TestIcon_13" name="AuxCustom" class="AuxCustomUI" version="1" param="2~3">
       <Item name="AuxCustom" address="384" access="rw" save="false" byte="2" default="0" continue="2"></Item>
     </UI>
 	</Control>

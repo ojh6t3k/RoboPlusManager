@@ -20,11 +20,13 @@ public class ControlItemInfo
 	public bool savable;
 	public int bytes;
 	public int defaultValue;
-	public int Value;
+    public int minValue;
+    public int maxValue;
+    public int value;
 
 	public void Reset()
 	{
-		Value = defaultValue;
+		value = defaultValue;
 	}
 }
 
@@ -34,6 +36,7 @@ public class ControlUIInfo
 	public string name;
 	public Sprite icon;
 	public string uiClass;
+    public int version;
 	public string[] uiParameters;
 	public ControlItemInfo[] uiItems;
 
@@ -156,7 +159,8 @@ public class ProductManager : MonoBehaviour
 					}
 					ui.name = xmlNodes[j].Attributes["name"].Value;
 					ui.uiClass = xmlNodes[j].Attributes["class"].Value;
-					try
+                    ui.version = int.Parse(xmlNodes[j].Attributes["version"].Value);
+                    try
 					{
 						ui.uiParameters = xmlNodes[j].Attributes["param"].Value.Split(new char[] { ',' });
 					}
@@ -175,7 +179,6 @@ public class ProductManager : MonoBehaviour
                         }
                         catch(Exception)
                         {
-
                         }
 
                         for (int l=0; l<count; l++)
@@ -192,7 +195,29 @@ public class ProductManager : MonoBehaviour
                                 item.access = ControlItemInfo.ACCESS.RW;
                             item.savable = bool.Parse(xmlNodes2[k].Attributes["save"].Value);
                             item.bytes = int.Parse(xmlNodes2[k].Attributes["byte"].Value);
-                            item.defaultValue = int.Parse(xmlNodes2[k].Attributes["default"].Value);
+                            try
+                            {
+                                item.defaultValue = int.Parse(xmlNodes2[k].Attributes["default"].Value);
+                            }
+                            catch (Exception)
+                            {
+                                item.defaultValue = 0;
+                            }
+                            try
+                            {
+                                string[] tokens = xmlNodes2[k].Attributes["range"].Value.Split(new char[] { '~' });
+                                item.minValue = int.Parse(tokens[0]);
+                                item.maxValue = int.Parse(tokens[1]);
+                            }
+                            catch (Exception)
+                            {
+                                item.minValue = 0;
+                                item.maxValue = 256;
+                                for (int n = 1; n < item.bytes; n++)
+                                    item.maxValue *= 256;
+                                item.maxValue--;
+                            }
+
                             item.Reset();
 
                             if(l > 0)

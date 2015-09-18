@@ -19,16 +19,21 @@ public class UpdownValue : MonoBehaviour
 
 	private float _value;
 
+    void Awake()
+    {
+        if (inputField != null)
+        {
+            inputField.text = initValue.ToString(format);
+            inputField.onEndEdit.AddListener(OnEndEdit);
+        }
+
+        _value = initValue;
+    }
+
 	// Use this for initialization
 	void Start()
 	{
-		if(inputField != null)
-		{
-			inputField.text = initValue.ToString(format);
-			inputField.onEndEdit.AddListener(OnEndEdit);
-		}
-
-		_value = initValue;
+		
 	}
 	
 	// Update is called once per frame
