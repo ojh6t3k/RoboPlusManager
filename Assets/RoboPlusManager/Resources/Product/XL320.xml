@@ -12,17 +12,19 @@
       <Item name="ReturnDelay" address="5" access="rw" save="true" byte="1" default="250"></Item>
       <Item name="ReturnLevel" address="17" access="rw" save="true" byte="1" default="2"></Item>
     </UI>
-    <UI icon="TestIcon_3" name="Drive" class="DriveUI" version="3" param="0~1023,512,-150~150">
-      <Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0"></Item>
-      <Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="1023"></Item>
-      <Item name="DriveMode" address="11" access="rw" save="true" byte="2" default="1023"></Item>
-      <Item name="GoalPosition" address="30" access="rw" save="false" byte="2" default="512"></Item>
-      <Item name="MovingSpeed" address="32" access="rw" save="false" byte="2" default="0"></Item>
-      <Item name="GoalTorque" address="35" access="rw" save="false" byte="2" default="512"></Item>
-      <Item name="PresentPosition" address="37" access="r" save="false" byte="2" default="512"></Item>
-      <Item name="PresentSpeed" address="39" access="r" save="false" byte="2" default="0"></Item>
-      <Item name="PresentLoad" address="41" access="r" save="false" byte="2" default="0"></Item>
-      <Item name="Moving" address="46" access="r" save="false" byte="1" default="0"></Item>
+    <UI icon="TestIcon_3" name="Drive" class="DriveUI" version="3" param="-150~150,0~114">
+      <Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0" range="0~1023"></Item>
+      <Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="1023" range="0~1023"></Item>
+      <Item name="DriveMode" address="11" access="rw" save="true" byte="2" default="2"></Item>
+      <Item name="GoalPosition" address="30" access="rw" save="false" byte="2" range="0~1023"></Item>
+      <Item name="JointSpeed" address="32" access="rw" save="false" byte="2" range="0~1023"></Item>
+      <Item name="WheelSpeed" address="32" access="rw" save="false" byte="2" range="0~2047"></Item>
+      <Item name="GoalTorque" address="35" access="rw" save="false" byte="2"></Item>
+      <Item name="PresentPosition" address="37" access="r" save="false" byte="2" range="0~1023"></Item>
+      <Item name="PresentJointSpeed" address="39" access="r" save="false" byte="2" range="0~1023"></Item>
+      <Item name="PresentWheelSpeed" address="39" access="r" save="false" byte="2" range="0~2047"></Item>
+      <Item name="PresentLoad" address="41" access="r" save="false" byte="2" range="0~2047"></Item>
+      <Item name="Moving" address="46" access="r" save="false" byte="1"></Item>
     </UI>
     <UI icon="TestIcon_5" name="Torque" class="TorqueUI" version="2">
       <Item name="MaxTorque" address="15" access="rw" save="true" byte="2" default="1023"></Item>
@@ -33,7 +35,7 @@
       <Item name="TemperatureHighLimit" address="12" access="rw" save="true" byte="1" default="70" range="10~99"></Item>
       <Item name="VoltageLowLimit" address="13" access="rw" save="true" byte="1" default="60" range="50~250"></Item>
       <Item name="VoltageHighLimit" address="14" access="rw" save="true" byte="1" default="140" range="50~250"></Item>
-      <Item name="AlramShutdown" address="18" access="rw" save="true" byte="1" default="0"></Item>
+      <Item name="AlramShutdown" address="18" access="rw" save="true" byte="1" default="36"></Item>
       <Item name="Voltage" address="45" access="r" save="false" byte="1" default="0"></Item>
       <Item name="Temperature" address="46" access="r" save="false" byte="1" default="0"></Item>
       <Item name="LED" address="25" access="rw" save="false" byte="1" default="0"></Item>

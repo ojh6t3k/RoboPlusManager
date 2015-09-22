@@ -14,8 +14,9 @@ public class DialControl : MonoBehaviour, IPointerDownHandler, IDragHandler
 	public float minAngle = -180f;
 	public float maxAngle = 180f;
 	public bool cw = false;
-	public float centerValue = 512;
-	public float resolution = 1024;
+	public int centerValue = 512;
+	public int minValue = 0;
+    public int maxValue = 1023;
 
 	public UnityEvent OnChangedValue;
 
@@ -24,10 +25,7 @@ public class DialControl : MonoBehaviour, IPointerDownHandler, IDragHandler
 	private Vector2 _prePos;
 	private float _sumAngle;
 	private float _centerAngle;
-	private float _angle2Value;
-	private float _value2Angle;
-	private float _minValue;
-	private float _maxValue;
+
 
 	// Use this for initialization
 	void Start ()
@@ -88,11 +86,6 @@ public class DialControl : MonoBehaviour, IPointerDownHandler, IDragHandler
 		if(cw == true)
 			_centerAngle = -_centerAngle;
 
-		_angle2Value = resolution / (maxAngle - minAngle);
-		_value2Angle = 1f / _angle2Value;
-		_minValue = centerValue + minAngle * _angle2Value;
-		_maxValue = centerValue + maxAngle * _angle2Value;
-
 		if(knob != null)
 		{
 			Vector3 eulerAngles = knob.localEulerAngles;
@@ -134,35 +127,22 @@ public class DialControl : MonoBehaviour, IPointerDownHandler, IDragHandler
 		}
 	}
 
-	public float Value
+	public int Value
 	{
 		set
 		{
 			if(knob == null)
 				return;
 
-			angle = (Mathf.Clamp(value, _minValue, _maxValue) - centerValue) * _value2Angle;
+            float value2Angle = Mathf.Abs(maxAngle - minAngle) / Mathf.Abs(maxValue - minValue + 1);
+            angle = (Mathf.Clamp(value, minValue, maxValue) - centerValue) * value2Angle;
 		}
 		get
 		{
 			float a = angle;
-			return centerValue + a * _angle2Value;
-		}
-	}
+            float angle2Value = Mathf.Abs(maxValue - minValue + 1) / Mathf.Abs(maxAngle - minAngle);
 
-	public float maxValue
-	{
-		get
-		{
-			return _maxValue;
-		}
-	}
-
-	public float minValue
-	{
-		get
-		{
-			return _minValue;
+            return Mathf.RoundToInt(centerValue + a * angle2Value);
 		}
 	}
 }

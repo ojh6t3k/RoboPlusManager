@@ -13,14 +13,16 @@
       <Item name="ReturnDelay" address="5" access="rw" save="true" byte="1" default="0"></Item>
       <Item name="ReturnLevel" address="16" access="rw" save="true" byte="1" default="2"></Item>
     </UI>
-    <UI icon="TestIcon_3" name="Drive" class="DriveUI" version="2" param="0~4095,2048,-180~180">
-      <Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0"></Item>
-      <Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="1023"></Item>
-      <Item name="GoalPosition" address="30" access="rw" save="false" byte="2" default="512"></Item>
-      <Item name="MovingSpeed" address="32" access="rw" save="false" byte="2" default="0"></Item>
-      <Item name="PresentPosition" address="36" access="r" save="false" byte="2" default="512"></Item>
-      <Item name="PresentSpeed" address="38" access="r" save="false" byte="2" default="0"></Item>
-      <Item name="PresentLoad" address="40" access="r" save="false" byte="2" default="0"></Item>
+    <UI icon="TestIcon_3" name="Drive" class="DriveUI" version="2" param="-180~180,0~117.07">
+      <Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0" range="0~4095"></Item>
+      <Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="4095" range="0~4095"></Item>
+      <Item name="GoalPosition" address="30" access="rw" save="false" byte="2" range="0~4095"></Item>
+      <Item name="JointSpeed" address="32" access="rw" save="false" byte="2" range="0~1023"></Item>
+      <Item name="WheelSpeed" address="32" access="rw" save="false" byte="2" range="0~2047"></Item>
+      <Item name="PresentPosition" address="36" access="r" save="false" byte="2" range="0~4095"></Item>
+      <Item name="PresentJointSpeed" address="38" access="r" save="false" byte="2" range="0~1023"></Item>
+      <Item name="PresentWheelSpeed" address="38" access="r" save="false" byte="2" range="0~2047"></Item>
+      <Item name="PresentLoad" address="40" access="r" save="false" byte="2" range="0~2047"></Item>
       <Item name="Moving" address="46" access="r" save="false" byte="1" default="0"></Item>
       <Item name="MultiTurnOffset" address="20" access="rw" save="true" byte="2" default="0"></Item>
       <Item name="ResolutionDivider" address="22" access="rw" save="true" byte="1" default="1"></Item>
