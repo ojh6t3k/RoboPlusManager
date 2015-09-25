@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 
 [RequireComponent(typeof(RectTransform))]
@@ -21,7 +20,6 @@ public class DialControl : MonoBehaviour, IPointerDownHandler, IDragHandler
 	public UnityEvent OnChangedValue;
 
 	private RectTransform _rectTransform;
-	private float _angle = 0f;
 	private Vector2 _prePos;
 	private float _sumAngle;
 	private float _centerAngle;
