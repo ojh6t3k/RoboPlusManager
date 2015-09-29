@@ -1,68 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Product key="CM530" name="CM-530" type="CM" model="390">
   <Firmware version="16" address="0x08003000"></Firmware>
-  <Control protocol="2.0">   
+  <Control protocol="2.0">
+    <UI icon="TestIcon_3" name="Operate" class="OperateUI" version="1">
+      <Item name="AuxLED" address="79" access="rw" save="false" byte="1"></Item>
+      <Item name="Button" address="26" access="r" save="false" byte="1"></Item>
+    </UI>
     <UI icon="TestIcon_1" name="Remote" class="RemoteUI" version="1">
-      <Item name="MyRobotID" address="30" access="r" save="false" byte="2" default="0"></Item>
-      <Item name="DestRobotID" address="32" access="rw" save="true" byte="2" default="0"></Item>
+      <Item name="MyRobotID" address="30" access="r" save="false" byte="2"></Item>
+      <Item name="DestRobotID" address="32" access="rw" save="true" byte="2" default="65535"></Item>
       <Item name="RC100Chanel" address="36" access="rw" save="true" byte="1" default="0"></Item>
-    </UI>
-    <UI icon="TestIcon_3" name="Panel" class="CmUI" version="1">
-      <Item name="AuxLED" address="79" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="Button" address="26" access="r" save="false" byte="1" default="0"></Item>
-    </UI>
-    <UI icon="TestIcon_4" name="Timer" class="TimerUI" version="1">
-      <Item name="Timer" address="73" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="Timer2" address="74" access="rw" save="false" byte="2" default="0"></Item>
-    </UI>
-    <UI icon="TestIcon_5" name="Buzzer" class="BuzzerUI" version="1" param="0~15,0~26">
-      <Item name="BuzzerIndex" address="84" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="BuzzerTime" address="85" access="rw" save="false" byte="1" default="1"></Item>
-    </UI>
-    <UI icon="TestIcon_6" name="Sound" class="SoundUI" version="1">
-      <Item name="ClapCount" address="86" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="ClapCounting" address="87" access="r" save="false" byte="1" default="0"></Item>
-    </UI>
-    <UI icon="TestIcon_7" name="Motion" class="MotionUI" version="1" param="0~255">
-      <Item name="MotionPage" address="66" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="MotionStatus" address="68" access="r" save="false" byte="1" default="0"></Item>
-      <Item name="MotionOffset" address="110" access="rw" save="false" byte="2" default="0" continue="25"></Item>
-    </UI>
-    <UI icon="TestIcon_8" name="AuxServo" class="AuxServoUI" version="1" param="0~1023,-150~150,1~6">
-      <Item name="ServoMode" address="240" access="rw" save="false" byte="1" default="0" continue="6"></Item>
-      <Item name="ServoSpeed" address="248" access="rw" save="false" byte="2" default="0" continue="6"></Item>
-      <Item name="ServoPos" address="268" access="rw" save="false" byte="2" default="0" continue="6"></Item>
-    </UI>
-    <UI icon="TestIcon_9" name="AuxIR" class="AuxIRUI" version="1" param="1~6">
-      <Item name="AuxIR" address="284" access="r" save="false" byte="2" default="0" continue="6"></Item>
-    </UI>
-    <UI icon="TestIcon_11" name="AuxDMS" class="AuxDMSUI" version="1" param="1~6">
-      <Item name="AuxDMS" address="300" access="r" save="false" byte="2" default="0" continue="6"></Item>
-    </UI>
-    <UI icon="TestIcon_10" name="AuxTouch" class="AuxTouchUI" version="1" param="1~6">
-      <Item name="AuxTouch" address="316" access="r" save="false" byte="1" default="0" continue="6"></Item>
     </UI>    
-    <UI icon="TestIcon_12" name="AuxLED" class="AuxLEDUI" version="1" param="1~6">
-      <Item name="AuxLED" address="324" access="rw" save="false" byte="1" default="0" continue="6"></Item>
+    <UI icon="TestIcon_4" name="Programming" class="ProgrammingUI" version="1">
+      <Item name="Timer" address="73" access="rw" save="false" byte="1"></Item>
+      <Item name="Timer2" address="74" access="rw" save="false" byte="2"></Item>
     </UI>
-    <UI icon="TestIcon_17" name="AuxTemperature" class="AuxTemperatureUI" version="1" param="1~6">
-      <Item name="AuxTemperature" address="348" access="r" save="false" byte="1" default="0" continue="6"></Item>
+    <UI icon="TestIcon_5" name="Music" class="MusicUI" version="1">
+      <Item name="MelodyIndex" address="84" access="rw" save="false" byte="1" range="0~15"></Item>
+      <Item name="MusicScale" address="84" access="rw" save="false" byte="1" range="0~26"></Item>
+      <Item name="MusicTime" address="85" access="rw" save="false" byte="1"></Item>
     </UI>
-    <UI icon="TestIcon_17" name="AuxUltraSonic" class="AuxUltraSonicUI" version="1" param="1~6">
-      <Item name="AuxUltraSonic" address="356" access="r" save="false" byte="1" default="0" continue="6"></Item>
+    <UI icon="TestIcon_6" name="Sensing" class="SensingUI" version="1">
+      <Item name="ClapCount" address="86" access="rw" save="false" byte="1"></Item>
+      <Item name="ClapCounting" address="87" access="r" save="false" byte="1"></Item>
     </UI>
-    <UI icon="TestIcon_15" name="AuxMagnetic" class="AuxMagneticUI" version="1" param="1~6">
-      <Item name="AuxMagnetic" address="364" access="r" save="false" byte="1" default="0" continue="6"></Item>     
+    <UI icon="TestIcon_7" name="Motion" class="MotionUI" version="1">
+      <Item name="MotionPage" address="66" access="rw" save="false" byte="1" range="0~255"></Item>
+      <Item name="MotionStatus" address="68" access="r" save="false" byte="1"></Item>
+      <Item name="MotionOffset" address="110" access="rw" save="false" byte="2" default="0" range="-1023~1023" continue="25"></Item>
     </UI>
-    <UI icon="TestIcon_16" name="AuxMotion" class="AuxMotionUI" version="1" param="1~6">
-      <Item name="AuxMotion" address="372" access="r" save="false" byte="1" default="0" continue="6"></Item>      
-    </UI>
-    <UI icon="TestIcon_14" name="AuxColor" class="AuxColorUI" version="1" param="1~6">
-      <Item name="AuxColor" address="380" access="r" save="false" byte="1" default="0" continue="6"></Item> 
-    </UI>
-    <UI icon="TestIcon_13" name="AuxCustom" class="AuxCustomUI" version="1" param="1~6">
-      <Item name="AuxCustom" address="332" access="rw" save="false" byte="2" default="0" continue="6"></Item>
-    </UI>    
+    <UI icon="TestIcon_9" name="AuxDevice" class="AuxDeviceUI" version="1" param="1[-AuxMotor],2[-AuxMotor],3[-AuxMotor],4[-AuxMotor],5[-AuxMotor],6[-AuxMotor]">
+      <Item name="ServoMode" address="240" access="rw" save="false" byte="1" continue="6"></Item>
+      <Item name="ServoSpeed" address="248" access="rw" save="false" byte="2" range="0~2047" continue="6"></Item>
+      <Item name="ServoPos" address="268" access="rw" save="false" byte="2" range="0~1023" continue="6"></Item>
+      <Item name="AuxIR" address="284" access="r" save="false" byte="2" range="0~1023" continue="6"></Item>
+      <Item name="AuxDMS" address="300" access="r" save="false" byte="2" range="0~1023" continue="6"></Item>
+      <Item name="AuxTouch" address="316" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxLED" address="324" access="rw" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxTemperature" address="348" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxUltraSonic" address="356" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxMagnetic" address="364" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxMotion" address="372" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxColor" address="380" access="r" save="false" byte="1" continue="6"></Item>
+      <Item name="AuxCustom" address="332" access="rw" save="false" byte="2" range="0~1023" continue="6"></Item>
+    </UI> 
 	</Control>
 </Product>
 
