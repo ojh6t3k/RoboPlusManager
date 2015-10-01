@@ -83,7 +83,8 @@ public class CommSocket : MonoBehaviour
     public UnityEvent OnFoundDevice;
     public UnityEvent OnSearchCompleted;
 
-    private Thread _openCloseThread;
+    private CommDevice _device;
+    private Thread _openThread;
     private Thread _searchThread;
     private bool _threadOnOpen = false;
     private bool _threadOnClose = false;
@@ -95,7 +96,7 @@ public class CommSocket : MonoBehaviour
 #if UNITY_STANDALONE
     private SerialPort _serialPort;
 #elif UNITY_ANDROID
-    private AndroidJavaObject _androidPlugin = null;
+    private AndroidJavaObject _androidBluetooth = null;
 #endif
     #endregion
 
@@ -115,15 +116,15 @@ public class CommSocket : MonoBehaviour
         using(AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
 		{
 			AndroidJavaObject activityContext = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-            if(activityContext != null)
+            using (AndroidJavaClass pluginClass = new AndroidJavaClass("com.smartmaker.android.CommBluetooth"))
             {
-                using(AndroidJavaClass pluginClass = new AndroidJavaClass("com.smartmaker.android.CommSocket"))
-		        {
-    		        _androidPlugin = pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
-				    _androidPlugin.Call("SetContext", activityContext);                    
-		        }
+                _androidBluetooth = pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
+                if (_androidBluetooth.Call<bool>("Initialize", activityContext, gameObject.name) == true)
+                    _androidBluetooth.Call("SetUnityMethodErrorClose", "AndroidMessageErrorClose");
+                else
+                    _androidBluetooth = null;
             }
-		}
+        }
 #endif
     }
 
@@ -171,11 +172,17 @@ public class CommSocket : MonoBehaviour
     #region Public
     public void Open()
     {
-        if (isOpen)
-            return;
+        if(isOpen)
+        {
+            if (_device.Equals(device))
+                return;
 
-        _openCloseThread = new Thread(OpenCloseThread);
-        _openCloseThread.Start(1);
+            close();                
+        }
+
+        _device = new CommDevice(device);
+        _openThread = new Thread(openThread);
+        _openThread.Start();
     }
 
     public void Close()
@@ -183,42 +190,41 @@ public class CommSocket : MonoBehaviour
         if (!isOpen)
             return;
 
-        _openCloseThread = new Thread(OpenCloseThread);
-        _openCloseThread.Start(2);
-    }
-
-    public void Reopen()
-    {
-        if(_openCloseThread != null)
-        {
-            if (_openCloseThread.IsAlive)
-                _openCloseThread.Abort();
-        }
-
-        _openCloseThread = new Thread(OpenCloseThread);
-        _openCloseThread.Start(3);
+        close();
+        OnClose.Invoke();
     }
 
     public bool isOpen
     {
         get
         {
+            if (_device != null)
+            {
+                if (_device.type == CommDevice.Type.Serial)
+                {
 #if UNITY_STANDALONE
-            return _serialPort.IsOpen;
-#elif UNITY_ANDROID
-            if(_androidPlugin != null)
-                return _androidPlugin.Call<bool>("IsOpen");
-            else
-                return false;
-#else
-            return false;
+                        return _serialPort.IsOpen;
 #endif
+                }
+                else if (_device.type == CommDevice.Type.BT)
+                {
+#if UNITY_ANDROID
+                    if (_androidBluetooth != null)
+                        return _androidBluetooth.Call<bool>("IsOpen");
+#endif
+                }
+                else if (_device.type == CommDevice.Type.BLE)
+                {
+                }
+            }
+
+            return false;
         }
     }
 
     public void Search(params CommDevice.Type[] types)
     {
-        _searchThread = new Thread(SearchThread);
+        _searchThread = new Thread(searchThread);
         _searchThread.Start(types);
     }
 
@@ -229,189 +235,171 @@ public class CommSocket : MonoBehaviour
         if (data.Length == 0)
             return;
 
-        if (device.type == CommDevice.Type.Serial)
+        if (_device != null)
         {
+            if (_device.type == CommDevice.Type.Serial)
+            {
 #if UNITY_STANDALONE
-            try
-            {
-                _serialPort.Write(data, 0, data.Length);
-            }
-            catch (Exception)
-            {
-                ErrorClose();
-            }
+                try
+                {
+                    _serialPort.Write(data, 0, data.Length);
+                    return;
+                }
+                catch (Exception)
+                {
+                }
 #endif
-        }
-        else if(device.type == CommDevice.Type.BT)
-        {
+            }
+            else if (_device.type == CommDevice.Type.BT)
+            {
 #if UNITY_ANDROID
-            if (_androidPlugin != null)
-            {
-                if(_androidPlugin.Call<bool>("Write", data) == false)
-                    ErrorClose();
-            }
+                if (_androidBluetooth != null)
+                {
+                    _androidBluetooth.Call("Write", data);
+                    return;
+                }
 #endif
+            }
         }
-        else
-            ErrorClose();
+
+        close();
+        OnErrorClosed.Invoke();
     }
 
     public byte[] Read()
     {
-        if (device.type == CommDevice.Type.Serial)
+        if (_device != null)
         {
+            if (_device.type == CommDevice.Type.Serial)
+            {
 #if UNITY_STANDALONE
-            List<byte> bytes = new List<byte>();
-            while (true)
-            {
-                try
+                List<byte> bytes = new List<byte>();
+                while (true)
                 {
-                    bytes.Add((byte)_serialPort.ReadByte());
+                    try
+                    {
+                        bytes.Add((byte)_serialPort.ReadByte());
+                    }
+                    catch (TimeoutException)
+                    {
+                        return bytes.ToArray();
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
-                catch (TimeoutException)
-                {
-                    break;
-                }
-                catch (Exception)
-                {
-                    ErrorClose();
-                    return null;
-                }
-            }
-
-            if (bytes.Count == 0)
-                return null;
-            else
-                return bytes.ToArray();
 #endif
-        }
-        else if(device.type == CommDevice.Type.BT)
-        {
+            }
+            else if (_device.type == CommDevice.Type.BT)
+            {
 #if UNITY_ANDROID
-            if(_androidPlugin != null)
-            {
-                byte[] bytes = _androidPlugin.Call<byte[]>("Read");
-				if(bytes == null)
+                if (_androidBluetooth != null)
                 {
-                    ErrorClose();
-                    return null;
+                    if(_androidBluetooth.Call<int>("Available") > 0)
+                        return _androidBluetooth.Call<byte[]>("Read");
                 }
-                else
-                    return bytes;
-            }
-            else
-            {
-                ErrorClose();
-                return null;
-            }
 #endif
+            }
         }
 
+        close();
+        OnErrorClosed.Invoke();
         return null;
     }
 #endregion
 
 #region Private
-    private void ErrorClose()
+    private void close()
     {
-        if (_openCloseThread != null)
+        if (_openThread != null)
         {
-            if (_openCloseThread.IsAlive)
-                _openCloseThread.Abort();
+            if (_openThread.IsAlive)
+                _openThread.Abort();
         }
 
-        _openCloseThread = new Thread(OpenCloseThread);
-        _openCloseThread.Start(4);
+        if(_device != null)
+        {
+            if(_device.type == CommDevice.Type.Serial)
+            {
+#if UNITY_STANDALONE
+                _serialPort.Close();
+#endif
+            }
+            else if(_device.type == CommDevice.Type.BT)
+            {
+#if UNITY_ANDROID
+                if (_androidBluetooth != null)
+                    _androidBluetooth.Call("Close");
+#endif
+            }
+            else if(_device.type == CommDevice.Type.BLE)
+            {
+
+            }
+        }
+
+        _device = null;
     }
 
-    private void OpenCloseThread(object parametern)
+#if UNITY_ANDROID
+    private void AndroidMessageErrorClose(string message)
+    {
+        Debug.Log(message);
+        close();
+        _threadOnErrorClosed = true;
+    }
+#endif
+
+    private void openThread()
     {
 #if UNITY_ANDROID
         AndroidJNI.AttachCurrentThread();
 #endif
-
-        int option = (int)parametern;        
-
-        if(isOpen)
-        {
-            if (option == 1) // except open only
-                goto OpenCloseThread_END;
-
-#if UNITY_STANDALONE
-            if (device.type == CommDevice.Type.Serial)
-                _serialPort.Close();
-#elif UNITY_ANDROID
-            if (_androidPlugin != null)
-                _androidPlugin.Call("Close");
-#endif
-            if (option == 2) // close only
-            {
-                _threadOnClose = true;
-                goto OpenCloseThread_END;
-            }
-            else if(option == 4) // error close only
-            {
-                _threadOnErrorClosed = true;
-                goto OpenCloseThread_END;
-            }
-        }
         
-        if (device.type == CommDevice.Type.Serial)
+        if (_device.type == CommDevice.Type.Serial)
         {
 #if UNITY_STANDALONE
-#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-            _serialPort.PortName = "//./" + device.address;
-#else
             _serialPort.PortName = device.address;        
-#endif
             try
             {
                 _serialPort.BaudRate = int.Parse(device.args[0]);
                 _serialPort.Open();
-                if (option == 1) // open only
-                {
-                    _threadOnOpen = true;
-                    goto OpenCloseThread_END;
-                }
+                _threadOnOpen = true;
             }
             catch (Exception e)
             {
                 Debug.Log(e);
+                _threadOnOpenFailed = true;
             }
 #endif
         }
         else if (device.type == CommDevice.Type.BT)
         {
 #if UNITY_ANDROID
-            if(_androidPlugin != null)
+            if(_androidBluetooth != null)
             {
-    			if(_androidPlugin.Call<bool>("Open", device.address) == true)
-    			{
-    				if (option == 1) // open only
-                    {
-                        _threadOnOpen = true;
-                        goto OpenCloseThread_END;
-                    }
-    			}
+    			if(_androidBluetooth.Call<bool>("Open", device.address) == true)
+                    _threadOnOpen = true;
+                else
+                    _threadOnOpenFailed = true;
             }
+            else
+                _threadOnOpenFailed = true;
 #endif
         }
         else
         {
             Debug.Log("Not supported device type");
         }
-        
-        _threadOnOpenFailed = true;
 
-OpenCloseThread_END:
 #if UNITY_ANDROID
         AndroidJNI.DetachCurrentThread();
 #endif
-        _openCloseThread.Abort();
+        _openThread.Abort();
         return;
     }
 
-    private void SearchThread(object parameter)
+    private void searchThread(object parameter)
     {
 #if UNITY_ANDROID
         AndroidJNI.AttachCurrentThread();
@@ -453,7 +441,7 @@ OpenCloseThread_END:
                 CommDevice foundDevice = new CommDevice();
                 foundDevice.name = devInfos[i];
                 foundDevice.type = CommDevice.Type.Serial;
-                foundDevice.address = devInfos[i];
+                foundDevice.address = "//./" + devInfos[i];
                 foundDevice.args.Add("57600");
                 foundDevices.Add(foundDevice);
             }
@@ -483,9 +471,9 @@ OpenCloseThread_END:
         if (bt)
         {
 #if UNITY_ANDROID
-            if (_androidPlugin != null)
+            if (_androidBluetooth != null)
             {
-                string[] devInfos = _androidPlugin.Call<string[]>("GetBondedBluetooth");
+                string[] devInfos = _androidBluetooth.Call<string[]>("GetBondedDevices");
                 for(int i=0; i<devInfos.Length; i++)
                 {
                     string[] tokens = devInfos[i].Split(new char[] { ',' });
