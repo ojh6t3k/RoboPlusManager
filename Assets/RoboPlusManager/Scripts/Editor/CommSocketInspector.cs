@@ -6,6 +6,7 @@ using UnityEditor;
 public class CommSocketInspector : Editor
 {
     SerializedProperty device;
+    SerializedProperty searchTimeout;
     SerializedProperty OnOpen;
     SerializedProperty OnClose;
     SerializedProperty OnOpenFailed;
@@ -18,6 +19,7 @@ public class CommSocketInspector : Editor
     void OnEnable()
     {
         device = serializedObject.FindProperty("device");
+        searchTimeout = serializedObject.FindProperty("searchTimeout");
         OnOpen = serializedObject.FindProperty("OnOpen");
         OnClose = serializedObject.FindProperty("OnClose");
         OnOpenFailed = serializedObject.FindProperty("OnOpenFailed");
@@ -82,7 +84,9 @@ public class CommSocketInspector : Editor
 
             EditorGUI.indentLevel--;
             GUI.enabled = true;
-        }        
+        }
+
+        EditorGUILayout.PropertyField(searchTimeout, new GUIContent("SearchTimeout"));
 
         if (Application.isPlaying == true)
         {

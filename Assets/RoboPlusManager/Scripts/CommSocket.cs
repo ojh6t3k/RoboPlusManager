@@ -75,6 +75,7 @@ public class CommSocket : MonoBehaviour
     public List<CommDevice> foundDevices = new List<CommDevice>();
     [SerializeField]
     public CommDevice device;
+    public float searchTimeout = 5f;
 
     public UnityEvent OnOpen;
     public UnityEvent OnClose;
@@ -91,12 +92,15 @@ public class CommSocket : MonoBehaviour
     private bool _threadOnOpenFailed = false;
     private bool _threadOnErrorClosed = false;
     private bool _threadOnFoundDevice = false;
-    private bool _threadOnSearchCompleted = false;
+    private bool _threadOnSearchCompleted = false;   
 
 #if UNITY_STANDALONE
     private SerialPort _serialPort;
 #elif UNITY_ANDROID
     private AndroidJavaObject _androidBluetooth = null;
+    private float _btSearchTimeout = 0f;
+    private float _bleSearchTimeout = 0f;
+    private bool _btSearchContinue = false;
 #endif
     #endregion
 
@@ -113,18 +117,29 @@ public class CommSocket : MonoBehaviour
         _serialPort.ReadTimeout = 1; // since on windows we *cannot* have a separate read thread
         _serialPort.WriteTimeout = 1000;
 #elif UNITY_ANDROID
-        using(AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-		{
-			AndroidJavaObject activityContext = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-            using (AndroidJavaClass pluginClass = new AndroidJavaClass("com.smartmaker.android.CommBluetooth"))
+        try
+        {
+            AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject activityContext = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
+            AndroidJavaClass pluginClass = new AndroidJavaClass("com.smartmaker.android.CommBluetooth");
+            _androidBluetooth = pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
+            if (_androidBluetooth.Call<bool>("Initialize", activityContext, gameObject.name) == true)
             {
-                _androidBluetooth = pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
-                if (_androidBluetooth.Call<bool>("Initialize", activityContext, gameObject.name) == true)
-                    _androidBluetooth.Call("SetUnityMethodErrorClose", "AndroidMessageErrorClose");
-                else
-                    _androidBluetooth = null;
+                _androidBluetooth.Call("SetUnityMethodOpenSuccess", "AndroidMessageOpenSuccess");
+                _androidBluetooth.Call("SetUnityMethodOpenFailed", "AndroidMessageOpenFailed");
+                _androidBluetooth.Call("SetUnityMethodErrorClose", "AndroidMessageErrorClose");
+                _androidBluetooth.Call("SetUnityMethodFoundDevice", "AndroidMessageFoundDevice");
             }
+            else
+                _androidBluetooth = null;
         }
+        catch(Exception)
+        {
+            _androidBluetooth = null;
+        }
+
+        if(_androidBluetooth == null)
+            Debug.Log("AndroidPlugin Failed!");
 #endif
     }
 
@@ -166,13 +181,49 @@ public class CommSocket : MonoBehaviour
             OnSearchCompleted.Invoke();
             _threadOnSearchCompleted = false;
         }
+
+#if UNITY_ANDROID
+        if (_bleSearchTimeout > 0f)
+        {
+            _bleSearchTimeout -= Time.deltaTime;
+            if (_bleSearchTimeout <= 0f)
+            {
+                if (_androidBluetooth != null)
+                {
+                    _androidBluetooth.Call("StopSearchBLE");
+                    if(_btSearchContinue)
+                    {
+                        _androidBluetooth.Call("StartSearchBT");
+                        _btSearchTimeout = searchTimeout / 2f;
+                        _btSearchContinue = false;
+                    }
+                    else
+                        _threadOnSearchCompleted = true;
+                }                   
+            }
+        }
+
+        if (_btSearchTimeout > 0f)
+        {
+            _btSearchTimeout -= Time.deltaTime;
+            if(_btSearchTimeout <= 0f)
+            {
+                if(_androidBluetooth != null)
+                    _androidBluetooth.Call("StopSearchBT");
+
+                _threadOnSearchCompleted = true;
+            }
+        }        
+#endif
     }
     #endregion
 
     #region Public
     public void Open()
     {
-        if(isOpen)
+        CancelSearch();
+
+        if (isOpen)
         {
             if (_device.Equals(device))
                 return;
@@ -222,10 +273,49 @@ public class CommSocket : MonoBehaviour
         }
     }
 
+    public bool isSupportBLE
+    {
+        get
+        {
+#if UNITY_ANDROID
+            if (_androidBluetooth != null)
+                return _androidBluetooth.Call<bool>("IsSupportBLE");
+#endif
+            return false;
+        }
+    }
+
     public void Search(params CommDevice.Type[] types)
     {
         _searchThread = new Thread(searchThread);
         _searchThread.Start(types);
+    }
+
+    public void CancelSearch()
+    {
+        if (_searchThread != null)
+        {
+            if (_searchThread.IsAlive)
+                _searchThread.Abort();
+        }
+
+#if UNITY_ANDROID
+        if(_bleSearchTimeout > 0f)
+        {
+            if (_androidBluetooth != null)
+                _androidBluetooth.Call("StopSearchBLE");
+            OnSearchCompleted.Invoke();
+            _bleSearchTimeout = 0f;
+        }
+
+        if (_btSearchTimeout > 0f)
+        {
+            if (_androidBluetooth != null)
+                _androidBluetooth.Call("StopSearchBT");
+            OnSearchCompleted.Invoke();
+            _btSearchTimeout = 0f;
+        }
+#endif
     }
 
     public void Write(byte[] data)
@@ -342,11 +432,47 @@ public class CommSocket : MonoBehaviour
     }
 
 #if UNITY_ANDROID
+    private void AndroidMessageOpenSuccess(string message)
+    {
+        Debug.Log(message);
+        _threadOnOpen = true;
+    }
+
+    private void AndroidMessageOpenFailed(string message)
+    {
+        Debug.Log(message);
+        close();
+        _threadOnOpenFailed = true;
+    }
+
     private void AndroidMessageErrorClose(string message)
     {
         Debug.Log(message);
         close();
         _threadOnErrorClosed = true;
+    }
+
+    private void AndroidMessageFoundDevice(string message)
+    {
+        Debug.Log(message);
+
+        string[] tokens = message.Split(new char[] { ',' });
+        CommDevice foundDevice = new CommDevice();
+        if(tokens[0].Equals("BT"))
+            foundDevice.type = CommDevice.Type.BT;
+        else if (tokens[0].Equals("BLE"))
+            foundDevice.type = CommDevice.Type.BLE;
+        foundDevice.name = tokens[1];
+        foundDevice.address = tokens[2];
+
+        for(int i=0; i<foundDevices.Count; i++)
+        {
+            if (foundDevices[i].Equals(foundDevice))
+                return;
+        }
+
+        foundDevices.Add(foundDevice);
+        _threadOnFoundDevice = true;
     }
 #endif
 
@@ -377,12 +503,7 @@ public class CommSocket : MonoBehaviour
         {
 #if UNITY_ANDROID
             if(_androidBluetooth != null)
-            {
-    			if(_androidBluetooth.Call<bool>("Open", device.address) == true)
-                    _threadOnOpen = true;
-                else
-                    _threadOnOpenFailed = true;
-            }
+                _androidBluetooth.Call("Open", device.address);
             else
                 _threadOnOpenFailed = true;
 #endif
@@ -430,6 +551,9 @@ public class CommSocket : MonoBehaviour
                     ble = true;
             }
         }
+
+        ble &= isSupportBLE;
+        bool searchStart = false;
 
         if (serial)
         {
@@ -485,16 +609,39 @@ public class CommSocket : MonoBehaviour
                 }
                 if (devInfos.Length > 0)
                     _threadOnFoundDevice = true;
+
+                if(!ble)
+                {
+                    _androidBluetooth.Call("StartSearchBT");
+                    _btSearchTimeout = searchTimeout;
+                    searchStart = true;
+                }                
             }
 #endif
         }
 
         if (ble)
         {
+#if UNITY_ANDROID
+            if (_androidBluetooth != null)
+            {
+                _androidBluetooth.Call("StartSearchBLE");
+                if (bt)
+                {
+                    _bleSearchTimeout = searchTimeout / 2f;
+                    _btSearchContinue = true;
+                }
+                else
+                    _bleSearchTimeout = searchTimeout;
 
+                searchStart = true;
+            }
+#endif
         }
 
-        _threadOnSearchCompleted = true;
+        if(!searchStart)
+            _threadOnSearchCompleted = true;
+
 #if UNITY_ANDROID
         AndroidJNI.DetachCurrentThread();
 #endif
