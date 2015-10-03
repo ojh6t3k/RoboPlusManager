@@ -194,12 +194,13 @@ public class CommSocket : MonoBehaviour
                     if(_btSearchContinue)
                     {
                         _androidBluetooth.Call("StartSearchBT");
-                        _btSearchTimeout = searchTimeout / 2f;
+                        _btSearchTimeout = searchTimeout * 0.7f;
+                        Debug.Log(string.Format("BT Search time: {0:f1}", _btSearchTimeout));
                         _btSearchContinue = false;
                     }
                     else
                         _threadOnSearchCompleted = true;
-                }                   
+                }
             }
         }
 
@@ -266,6 +267,10 @@ public class CommSocket : MonoBehaviour
                 }
                 else if (_device.type == CommDevice.Type.BLE)
                 {
+#if UNITY_ANDROID
+                    if (_androidBluetooth != null)
+                        return _androidBluetooth.Call<bool>("IsOpen");
+#endif
                 }
             }
 
@@ -350,6 +355,16 @@ public class CommSocket : MonoBehaviour
                 }
 #endif
             }
+            else if (_device.type == CommDevice.Type.BLE)
+            {
+#if UNITY_ANDROID
+                if (_androidBluetooth != null)
+                {
+                    _androidBluetooth.Call("Write", data);
+                    return;
+                }
+#endif
+            }
         }
 
         close();
@@ -390,6 +405,16 @@ public class CommSocket : MonoBehaviour
                 }
 #endif
             }
+            else if (_device.type == CommDevice.Type.BLE)
+            {
+#if UNITY_ANDROID
+                if (_androidBluetooth != null)
+                {
+                    if (_androidBluetooth.Call<int>("Available") > 0)
+                        return _androidBluetooth.Call<byte[]>("Read");
+                }
+#endif
+            }
         }
 
         close();
@@ -424,7 +449,10 @@ public class CommSocket : MonoBehaviour
             }
             else if(_device.type == CommDevice.Type.BLE)
             {
-
+#if UNITY_ANDROID
+                if (_androidBluetooth != null)
+                    _androidBluetooth.Call("Close");
+#endif
             }
         }
 
@@ -481,7 +509,8 @@ public class CommSocket : MonoBehaviour
 #if UNITY_ANDROID
         AndroidJNI.AttachCurrentThread();
 #endif
-        
+        bool openTry = false;
+
         if (_device.type == CommDevice.Type.Serial)
         {
 #if UNITY_STANDALONE
@@ -491,27 +520,39 @@ public class CommSocket : MonoBehaviour
                 _serialPort.BaudRate = int.Parse(device.args[0]);
                 _serialPort.Open();
                 _threadOnOpen = true;
+                openTry = true;
             }
             catch (Exception e)
             {
                 Debug.Log(e);
-                _threadOnOpenFailed = true;
             }
 #endif
         }
         else if (device.type == CommDevice.Type.BT)
         {
 #if UNITY_ANDROID
-            if(_androidBluetooth != null)
+            if (_androidBluetooth != null)
+            {
                 _androidBluetooth.Call("Open", device.address);
-            else
-                _threadOnOpenFailed = true;
+                openTry = true;
+            }
+#endif
+        }
+        else if (device.type == CommDevice.Type.BLE)
+        {
+#if UNITY_ANDROID
+            if (_androidBluetooth != null)
+            {
+                _androidBluetooth.Call("Open", device.address);
+                openTry = true;
+            }
 #endif
         }
         else
-        {
             Debug.Log("Not supported device type");
-        }
+
+        if (!openTry)
+            _threadOnOpenFailed = true;
 
 #if UNITY_ANDROID
         AndroidJNI.DetachCurrentThread();
@@ -614,6 +655,7 @@ public class CommSocket : MonoBehaviour
                 {
                     _androidBluetooth.Call("StartSearchBT");
                     _btSearchTimeout = searchTimeout;
+                    Debug.Log(string.Format("BT Search time: {0:f1}", _btSearchTimeout));
                     searchStart = true;
                 }                
             }
@@ -628,12 +670,13 @@ public class CommSocket : MonoBehaviour
                 _androidBluetooth.Call("StartSearchBLE");
                 if (bt)
                 {
-                    _bleSearchTimeout = searchTimeout / 2f;
+                    _bleSearchTimeout = searchTimeout * 0.3f;                    
                     _btSearchContinue = true;
                 }
                 else
                     _bleSearchTimeout = searchTimeout;
 
+                Debug.Log(string.Format("BLE Search time: {0:f1}", _bleSearchTimeout));
                 searchStart = true;
             }
 #endif

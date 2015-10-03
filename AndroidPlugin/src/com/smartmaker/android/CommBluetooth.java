@@ -24,10 +24,9 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.robotis.sdk.UartService;
+import com.robotis.bluetooth.UartService;
 import com.unity3d.player.*;
 
 
@@ -164,6 +163,8 @@ public class CommBluetooth
 	
 	public void StartSearchBT()
 	{
+		Log.d(_logTag, "StartSearchBT");
+		
 		if(_btAdapter == null)
 			return;
 		
@@ -172,6 +173,8 @@ public class CommBluetooth
 	
 	public void StopSearchBT()
 	{
+		Log.d(_logTag, "StopSearchBT");
+		
 		if(_btAdapter == null)
 			return;
 		
@@ -181,6 +184,8 @@ public class CommBluetooth
 	
 	public void StartSearchBLE()
 	{
+		Log.d(_logTag, "StartSearchBLE");
+		
 		if(_btAdapter == null || !_isSupportBLE)
 			return;
 		
@@ -189,18 +194,12 @@ public class CommBluetooth
 	
 	public void StopSearchBLE()
 	{
+		Log.d(_logTag, "StopSearchBLE");
+		
 		if(_btAdapter == null || !_isSupportBLE)
 			return;
 		
 		_btAdapter.getBluetoothLeScanner().stopScan(_bleScanCallback);
-	}
-	
-	public boolean IsSearchDevice()
-	{
-		if(_btAdapter == null)
-			return false;
-		
-		return _btAdapter.isDiscovering();
 	}
 	
 	public synchronized void Open(String address)
@@ -249,16 +248,19 @@ public class CommBluetooth
 	{
 		if(_isOpen)
 		{
-			try
+			if(_OutStream != null)
 			{
-				_OutStream.write(data);
-			}
-			catch (Exception e)
-			{
-				Log.d(_logTag, "Write Error");
-				_isErrorClose = true;
-				_errorMessage = "Write Error";
-				close();
+				try
+				{
+					_OutStream.write(data);
+				}
+				catch (Exception e)
+				{
+					Log.d(_logTag, "Write Error");
+					_isErrorClose = true;
+					_errorMessage = "Write Error";
+					close();
+				}
 			}
 		}
 	}
@@ -267,16 +269,23 @@ public class CommBluetooth
 	{
 		if(_isOpen)
 		{
-			try
+			if(_InStream != null)
 			{
-				return _InStream.available();
+				try
+				{
+					return _InStream.available();
+				}
+				catch (Exception e)
+				{
+					Log.d(_logTag, "Avaliable Error");
+					_isErrorClose = true;
+					_errorMessage = "Avaliable Error";
+					close();
+				}
 			}
-			catch (Exception e)
+			else
 			{
-				Log.d(_logTag, "Avaliable Error");
-				_isErrorClose = true;
-				_errorMessage = "Avaliable Error";
-				close();
+				
 			}
 		}
 		
@@ -287,18 +296,25 @@ public class CommBluetooth
 	{
 		if(_isOpen)
 		{
-			try
+			if(_InStream != null)
 			{
-				byte[] data = new byte[_InStream.available()];
-				_InStream.read(data);
-				return data;
+				try
+				{
+					byte[] data = new byte[_InStream.available()];
+					_InStream.read(data);
+					return data;
+				}
+				catch (Exception e)
+				{
+					Log.d(_logTag, "Read Error");
+					_isErrorClose = true;
+					_errorMessage = "Read Error";
+					close();
+				}
 			}
-			catch (Exception e)
+			else
 			{
-				Log.d(_logTag, "Read Error");
-				_isErrorClose = true;
-				_errorMessage = "Read Error";
-				close();
+				
 			}
 		}
 		
@@ -308,6 +324,8 @@ public class CommBluetooth
 	
 	private void openBT()
 	{
+		Log.d(_logTag, "openBT");
+		
 		try
 		{
 			_btSocket = _btDevice.createRfcommSocketToServiceRecord(SPP_UUID);
@@ -325,15 +343,19 @@ public class CommBluetooth
 	
 	private void openBLE()
 	{
-		Intent bindIntent = new Intent(_context, UartService.class);
-    	_context.bindService(bindIntent, _serviceConnection, Context.BIND_AUTO_CREATE);
+		Log.d(_logTag, "openBLE");
+		
+		Intent bindIntent = new Intent(_context, UartService.class);		
+    	if(!_context.bindService(bindIntent, _serviceConnection, Context.BIND_AUTO_CREATE))
+    		Log.d(_logTag, "Bind UARTService failed");
+    	
     	final IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(UartService.ACTION_GATT_CONNECTED);
 		intentFilter.addAction(UartService.ACTION_GATT_DISCONNECTED);
 		intentFilter.addAction(UartService.ACTION_GATT_SERVICES_DISCOVERED);
 		intentFilter.addAction(UartService.ACTION_DATA_AVAILABLE);
 		intentFilter.addAction(UartService.DEVICE_DOES_NOT_SUPPORT_UART);
-    	LocalBroadcastManager.getInstance(_context).registerReceiver(_serviceReceiver, intentFilter);
+		_context.registerReceiver(_serviceReceiver, intentFilter);
 	}
 	
 	private void close()
@@ -350,7 +372,7 @@ public class CommBluetooth
 			
 			try
 			{
-				LocalBroadcastManager.getInstance(_context).unregisterReceiver(_serviceReceiver);
+				_context.unregisterReceiver(_serviceReceiver);
 			}
 			catch (Exception e)
 			{			
@@ -387,17 +409,13 @@ public class CommBluetooth
 	private static boolean deviceFilter(String address)
 	{
 		if (address.startsWith("00:19:01") || address.startsWith("B8:63:BC") || address.startsWith("B2:10:FF"))
-		{
 			return true;
-		}
-		else
-		{
-			int mac1 = Integer.parseInt(Character.toString(address.charAt(0)), 16);
-			int mac2 = Integer.parseInt(Character.toString(address.charAt(1)), 16);
-			int macMsb = (mac1 << 4) | mac2;
+		
+		int mac1 = Integer.parseInt(Character.toString(address.charAt(0)), 16);
+		int mac2 = Integer.parseInt(Character.toString(address.charAt(1)), 16);
+		int macMsb = (mac1 << 4) | mac2;
 
-			return macMsb < 0xC0;
-		}
+		return macMsb >= 0xC0;
 	}
 	
 	private ServiceConnection _serviceConnection = new ServiceConnection()
@@ -450,8 +468,6 @@ public class CommBluetooth
 			{
 				Log.d(_logTag, "ACTION_GATT_SERVICES_DISCOVERED");
 				_bleService.enableTXNotification(_btDevice.getAddress());
-				_isOpen = true;
-				UnityPlayer.UnitySendMessage(_unityObject, _unityMethodOpenSuccess, "BLE Connected");
 			}
 			else if (action.equals(UartService.ACTION_DATA_AVAILABLE))
 			{
@@ -474,9 +490,9 @@ public class CommBluetooth
 
 			if (BluetoothDevice.ACTION_FOUND.equalsIgnoreCase(action))
 			{
-				Log.d(_logTag, "Device Found");
-				
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				Log.d(_logTag, "Bluetooth Device Found: " + device.getName());
+				
 				if(deviceFilter(device.getAddress()))
 				{
 					if(_isSupportBLE)
@@ -496,7 +512,7 @@ public class CommBluetooth
 			}
 			else if (BluetoothDevice.ACTION_ACL_CONNECTED.equalsIgnoreCase(action))
 			{
-				Log.d(_logTag, "Device Connected!!");
+				Log.d(_logTag, "Bluetooth Device Connected!");
 				
 				if(_isSupportBLE)
 				{
@@ -504,6 +520,11 @@ public class CommBluetooth
 					{
 						_isOpen = true;
 						UnityPlayer.UnitySendMessage(_unityObject, _unityMethodOpenSuccess, "BT Connected");
+					}
+					else if(_btDevice.getType() == BluetoothDevice.DEVICE_TYPE_LE)
+					{
+						_isOpen = true;
+						UnityPlayer.UnitySendMessage(_unityObject, _unityMethodOpenSuccess, "BLE Connected");
 					}
 				}
 				else
@@ -544,9 +565,9 @@ public class CommBluetooth
             BluetoothDevice device = result.getDevice();
             if (device != null)
             {
-            	Log.d(_logTag, "BLE Found: " + device.getName());
+            	Log.d(_logTag, "BLE Device Found: " + device.getName());
             	
-//            	if(deviceFilter(device.getAddress()))
+            	if(deviceFilter(device.getAddress()))
             		UnityPlayer.UnitySendMessage(_unityObject, _unityMethodFoundDevice, String.format("BLE,%s,%s", device.getName(), device.getAddress()));
             }        	
         }

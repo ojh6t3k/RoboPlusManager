@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.robotis.sdk;
+package com.robotis.bluetooth;
 
 // Add "<service android:enabled="true" android:name="com.robotis.sdk.UartService" />" to AndroidManifest.xml
 
@@ -178,6 +178,7 @@ public class UartService extends Service
 	@Override
 	public IBinder onBind(Intent intent)
 	{
+		Log.d(TAG, "Bind Service");
 		return mBinder;
 	}
 
@@ -185,13 +186,16 @@ public class UartService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
-
+		
+		Log.d(TAG, "Create Service");
 		mReceivedMap = new HashMap<String, ArrayList<Byte>>();
 	}
 
 	@Override
 	public boolean onUnbind(Intent intent)
 	{
+		Log.d(TAG, "Unbind Service");
+		
 		disconnect();
 		close();
 		return super.onUnbind(intent);
