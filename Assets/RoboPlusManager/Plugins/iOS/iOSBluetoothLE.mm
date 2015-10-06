@@ -1,17 +1,21 @@
 //
-//  UnityBluetoothLE.h
+//  iOSBluetoothLE.h
 //  Unity-iPhone
 //
 //  Created by Tony Pitman on 03/05/2014.
+//  Modified by Jaehong Oh on 10/06/2015.
 //
 //
 
-#import "UnityBluetoothLE.h"
+#import "iOSBluetoothLE.h"
 
 
 extern "C" {
     
-    UnityBluetoothLE *_unityBluetoothLE = nil;
+    iOSBluetoothLE *_iOSBluetoothLE = nil;
+	NSString *_unityObject;
+	NSString *_unityMessage;
+	NSString *_unityData;
     
     void _iOSBluetoothLELogString (NSString *message) {
         
@@ -23,35 +27,39 @@ extern "C" {
         _iOSBluetoothLELogString ([NSString stringWithFormat:@"%s", message]);
     }
 
-    void _iOSBluetoothLEInitialize (BOOL asCentral, BOOL asPeripheral) {
+    void _iOSBluetoothLEInitialize (BOOL asCentral, BOOL asPeripheral, char *unityObject, char *unityMessage, char *unityData) {
         
-        _unityBluetoothLE = [UnityBluetoothLE new];
-        [_unityBluetoothLE initialize:asCentral asPeripheral:asPeripheral];
+        _iOSBluetoothLE = [iOSBluetoothLE new];
+        [_iOSBluetoothLE initialize:asCentral asPeripheral:asPeripheral];
+
+		_unityObject = unityObject;
+		_unityMessage = unityMessage;
+		_unityData = unityData;
         
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", "Initialized");
+        UnitySendMessage (_unityObject, _unityMessage, "Initialized");
     }
     
     void _iOSBluetoothLEDeInitialize () {
         
-        if (_unityBluetoothLE != nil) {
+        if (_iOSBluetoothLE != nil) {
             
-            [_unityBluetoothLE deInitialize];
-            [_unityBluetoothLE release];
-            _unityBluetoothLE = nil;
+            [_iOSBluetoothLE deInitialize];
+            [_iOSBluetoothLE release];
+            _iOSBluetoothLE = nil;
             
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", "DeInitialized");
+            UnitySendMessage (_unityObject, _unityMessage, "DeInitialized");
         }
     }
     
     void _iOSBluetoothLEPauseMessages (BOOL pause) {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE pauseMessages:pause];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE pauseMessages:pause];
     }
     
     void _iOSBluetoothLEScanForPeripheralsWithServices (char *serviceUUIDsStringRaw) {
         
-        if (_unityBluetoothLE != nil)
+        if (_iOSBluetoothLE != nil)
         {
             NSMutableArray *actualUUIDs = nil;
             
@@ -69,19 +77,19 @@ extern "C" {
                 }
             }
             
-            [_unityBluetoothLE scanForPeripheralsWithServices:actualUUIDs options:nil];
+            [_iOSBluetoothLE scanForPeripheralsWithServices:actualUUIDs options:nil];
         }
     }
     
     void _iOSBluetoothLEStopScan () {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE stopScan];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE stopScan];
     }
     
     void _iOSBluetoothLERetrieveListOfPeripheralsWithServices (char *serviceUUIDsStringRaw) {
         
-        if (_unityBluetoothLE != nil)
+        if (_iOSBluetoothLE != nil)
         {
             NSMutableArray *actualUUIDs = nil;
             
@@ -99,122 +107,123 @@ extern "C" {
                 }
             }
             
-            [_unityBluetoothLE retrieveListOfPeripheralsWithServices:actualUUIDs];
+            [_iOSBluetoothLE retrieveListOfPeripheralsWithServices:actualUUIDs];
         }
     }
     
     void _iOSBluetoothLEConnectToPeripheral (char *name) {
         
-        if (_unityBluetoothLE && name != nil)
-            [_unityBluetoothLE connectToPeripheral:[NSString stringWithFormat:@"%s", name]];
+        if (_iOSBluetoothLE && name != nil)
+            [_iOSBluetoothLE connectToPeripheral:[NSString stringWithFormat:@"%s", name]];
     }
     
     void _iOSBluetoothLEDisconnectPeripheral (char *name) {
         
-        if (_unityBluetoothLE && name != nil)
-            [_unityBluetoothLE disconnectPeripheral:[NSString stringWithFormat:@"%s", name]];
+        if (_iOSBluetoothLE && name != nil)
+            [_iOSBluetoothLE disconnectPeripheral:[NSString stringWithFormat:@"%s", name]];
     }
     
     void _iOSBluetoothLEReadCharacteristic (char *name, char *service, char *characteristic) {
         
-        if (_unityBluetoothLE && name != nil && service != nil && characteristic != nil)
-            [_unityBluetoothLE readCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
+        if (_iOSBluetoothLE && name != nil && service != nil && characteristic != nil)
+            [_iOSBluetoothLE readCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
     }
     
     void _iOSBluetoothLEWriteCharacteristic (char *name, char *service, char *characteristic, unsigned char *data, int length, BOOL withResponse) {
         
-        if (_unityBluetoothLE && name != nil && service != nil && characteristic != nil && data != nil && length > 0)
-            [_unityBluetoothLE writeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic] data:[NSData dataWithBytes:data length:length] withResponse:withResponse];
+        if (_iOSBluetoothLE && name != nil && service != nil && characteristic != nil && data != nil && length > 0)
+            [_iOSBluetoothLE writeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic] data:[NSData dataWithBytes:data length:length] withResponse:withResponse];
     }
     
     void _iOSBluetoothLESubscribeCharacteristic (char *name, char *service, char *characteristic) {
         
-        if (_unityBluetoothLE && name != nil && service != nil && characteristic != nil)
-            [_unityBluetoothLE subscribeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
+        if (_iOSBluetoothLE && name != nil && service != nil && characteristic != nil)
+            [_iOSBluetoothLE subscribeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
     }
     
     void _iOSBluetoothLEUnSubscribeCharacteristic (char *name, char *service, char *characteristic) {
         
-        if (_unityBluetoothLE && name != nil && service != nil && characteristic != nil)
-            [_unityBluetoothLE unsubscribeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
+        if (_iOSBluetoothLE && name != nil && service != nil && characteristic != nil)
+            [_iOSBluetoothLE unsubscribeCharacteristic:[NSString stringWithFormat:@"%s", name] service:[NSString stringWithFormat:@"%s", service] characteristic:[NSString stringWithFormat:@"%s", characteristic]];
     }
     
     void _iOSBluetoothLEPeripheralName (char *newName) {
         
-        if (_unityBluetoothLE != nil && newName != nil)
-            [_unityBluetoothLE peripheralName:[[NSString alloc] initWithUTF8String:newName]];
+        if (_iOSBluetoothLE != nil && newName != nil)
+            [_iOSBluetoothLE peripheralName:[[NSString alloc] initWithUTF8String:newName]];
     }
     
     void _iOSBluetoothLECreateService (char *uuid, BOOL primary) {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE createService:[NSString stringWithFormat:@"%s", uuid] primary:primary];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE createService:[NSString stringWithFormat:@"%s", uuid] primary:primary];
     }
     
     void _iOSBluetoothLERemoveService (char *uuid) {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE removeService:[NSString stringWithFormat:@"%s", uuid]];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE removeService:[NSString stringWithFormat:@"%s", uuid]];
     }
     
     void _iOSBluetoothLERemoveServices () {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE removeServices];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE removeServices];
     }
     
     void _iOSBluetoothLECreateCharacteristic (char *uuid, int properties, int permissions, unsigned char *data, int length) {
         
-        if (_unityBluetoothLE != nil) {
+        if (_iOSBluetoothLE != nil) {
             
             NSData *value = nil;
             if (data != nil)
                 value = [[NSData alloc] initWithBytes:data length:length];
             
-            [_unityBluetoothLE createCharacteristic:[NSString stringWithFormat:@"%s", uuid] properties:properties permissions:permissions value:value];
+            [_iOSBluetoothLE createCharacteristic:[NSString stringWithFormat:@"%s", uuid] properties:properties permissions:permissions value:value];
         }
     }
     
     void _iOSBluetoothLERemoveCharacteristic (char *uuid) {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE removeCharacteristic:[NSString stringWithFormat:@"%s", uuid]];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE removeCharacteristic:[NSString stringWithFormat:@"%s", uuid]];
     }
     
     void _iOSBluetoothLERemoveCharacteristics () {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE removeCharacteristics];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE removeCharacteristics];
     }
     
     void _iOSBluetoothLEStartAdvertising () {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE startAdvertising];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE startAdvertising];
     }
     
     void _iOSBluetoothLEStopAdvertising () {
         
-        if (_unityBluetoothLE != nil)
-            [_unityBluetoothLE stopAdvertising];
+        if (_iOSBluetoothLE != nil)
+            [_iOSBluetoothLE stopAdvertising];
     }
     
     void _iOSBluetoothLEUpdateCharacteristicValue (char *uuid, unsigned char *data, int length) {
         
-        if (_unityBluetoothLE != nil) {
+        if (_iOSBluetoothLE != nil) {
             
             NSData *value = nil;
             if (data != nil)
                 value = [[NSData alloc] initWithBytes:data length:length];
             
-            [_unityBluetoothLE updateCharacteristicValue:[NSString stringWithFormat:@"%s", uuid] value:value];
+            [_iOSBluetoothLE updateCharacteristicValue:[NSString stringWithFormat:@"%s", uuid] value:value];
         }
     }
 }
 
-@implementation UnityBluetoothLE
+@implementation iOSBluetoothLE
 
 @synthesize _peripherals;
+
 
 - (void)initialize:(BOOL)asCentral asPeripheral:(BOOL)asPeripheral
 {
@@ -451,7 +460,7 @@ extern "C" {
                     NSString *name = [peripheral name];
                     
                     NSString *message = [NSString stringWithFormat:@"RetrievedConnectedPeripheral~%@~%@", identifier, name];
-                    UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+                    UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
                     
                     [_peripherals setObject:peripheral forKey:identifier];
                 }
@@ -582,9 +591,9 @@ extern "C" {
     _iOSBluetoothLELogString ([NSString stringWithFormat:@"Central State Update: %d", (int)central.state]);
 	
 	if(((int)central.state) == 5)
-		UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", "BLESupported");
+		UnitySendMessage (_unityObject, _unityMessage, "BLESupported");
 	else
-		UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", "BLENotSupported");
+		UnitySendMessage (_unityObject, _unityMessage, "BLENotSupported");
 }
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
@@ -602,7 +611,7 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
 }
 
@@ -638,7 +647,7 @@ extern "C" {
 
 			[_peripherals setObject:peripheral forKey:identifier];
 
-			UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+			UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
 		}
     }
 }
@@ -651,7 +660,7 @@ extern "C" {
         if (foundPeripheral != nil)
         {
             NSString *message = [NSString stringWithFormat:@"DisconnectedPeripheral~%@", foundPeripheral];
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+            UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
         }
     }
 }
@@ -662,7 +671,7 @@ extern "C" {
     if (foundPeripheral != nil)
     {
         NSString *message = [NSString stringWithFormat:@"ConnectedPeripheral~%@", foundPeripheral];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
         
         peripheral.delegate = self;
         
@@ -714,7 +723,7 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
@@ -724,7 +733,7 @@ extern "C" {
             for (CBService *service in peripheral.services)
             {
                 NSString *message = [NSString stringWithFormat:@"DiscoveredService~%@~%@", foundPeripheral, [service UUID]];
-                UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+                UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
                 
                 [peripheral discoverCharacteristics:nil forService:service];
             }
@@ -737,7 +746,7 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
@@ -747,7 +756,7 @@ extern "C" {
             for (CBCharacteristic *characteristic in service.characteristics)
             {
                 NSString *message = [NSString stringWithFormat:@"DiscoveredCharacteristic~%@~%@~%@", foundPeripheral, [service UUID], [characteristic UUID]];
-                UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+                UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
                 
                 [_peripheralCharacteristics setObject:characteristic forKey:[characteristic UUID]];
             }
@@ -760,16 +769,16 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
         if (characteristic.value != nil)
         {
             NSString *message = [NSString stringWithFormat:@"DidUpdateValueForCharacteristic~%@~%@", [characteristic UUID], [UnityBluetoothLE base64StringFromData:characteristic.value length:characteristic.value.length]];
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String]);
+            UnitySendMessage (_unityObject, _unityMessage, [message UTF8String]);
             //NSString *message = [UnityBluetoothLE base64StringFromData:characteristic.value length:characteristic.value.length];
-            //UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothData", [message UTF8String] );
+            //UnitySendMessage (_unityObject, _unityData, [message UTF8String] );
         }
     }
 }
@@ -779,12 +788,12 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
         NSString *message = [NSString stringWithFormat:@"DidWriteCharacteristic~%@", characteristic.UUID];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
 }
 
@@ -793,12 +802,12 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
         NSString *message = [NSString stringWithFormat:@"DidUpdateNotificationStateForCharacteristic~%@", characteristic.UUID];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
 }
 
@@ -813,12 +822,12 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
         NSString *message = [NSString stringWithFormat:@"ServiceAdded~%@", service.UUID];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
 }
 
@@ -827,12 +836,12 @@ extern "C" {
     if (error)
     {
         NSString *message = [NSString stringWithFormat:@"Error~%@", error.description];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
     else
     {
         NSString *message = [NSString stringWithFormat:@"StartedAdvertising"];
-        UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+        UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
     }
 }
 
@@ -923,11 +932,11 @@ extern "C" {
         
         if (isString)
         {
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [message UTF8String] );
+            UnitySendMessage (_unityObject, _unityMessage, [message UTF8String] );
         }
         else
         {
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothData", [message UTF8String] );
+            UnitySendMessage (_unityObject, _unityData, [message UTF8String] );
         }
     }
 }
@@ -1020,9 +1029,9 @@ static char base64EncodingTable[64] =
     if (_message != nil) {
         
         if (_isString)
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothMessage", [_message UTF8String] );
+            UnitySendMessage (_unityObject, _unityMessage, [_message UTF8String] );
         else
-            UnitySendMessage ("BluetoothLEReceiver", "OnBluetoothData", [_message UTF8String] );
+            UnitySendMessage (_unityObject, _unityData, [_message UTF8String] );
     }
 }
 

@@ -1,16 +1,16 @@
 //
-//  UnityBluetoothLE.h
+//  iOSBluetoothLE.h
 //  Unity-iPhone
 //
 //  Created by Tony Pitman on 03/05/2014.
+//  Modified by Jaehong Oh on 10/06/2015.
 //
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@interface UnityBluetoothLE : NSObject <CBCentralManagerDelegate, CBPeripheralManagerDelegate, CBPeripheralDelegate>
-
+@interface iOSBluetoothLE : NSObject <CBCentralManagerDelegate, CBPeripheralManagerDelegate, CBPeripheralDelegate>
 {
     CBCentralManager *_centralManager;
     
@@ -19,14 +19,14 @@
     
     CBPeripheralManager *_peripheralManager;
     
-    NSString *_peripheralName;
+    NSString *_peripheralName;	
     
     NSMutableDictionary *_services;
     NSMutableDictionary *_characteristics;
     
     NSMutableArray *_backgroundMessages;
     BOOL _isPaused;
-    BOOL _alreadyNotified;
+    BOOL _alreadyNotified;	
 }
 
 @property (atomic, strong) NSMutableDictionary *_peripherals;
@@ -53,7 +53,7 @@
 - (void)stopAdvertising;
 - (void)updateCharacteristicValue:(NSString *)uuid value:(NSData *)value;
 - (void)pauseMessages:(BOOL)isPaused;
-- (void)sendUnityMessage:(BOOL)isString message:(NSString *)message;
+- (void)sendUnityMessage:(BOOL)isString message : (NSString *)message;
 
 + (NSString *) base64StringFromData:(NSData *)data length:(int)length;
 
@@ -71,3 +71,4 @@
 - (void)sendUnityMessage;
 
 @end
+
