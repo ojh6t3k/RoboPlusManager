@@ -67,6 +67,17 @@ public class ProductInfo
 	public float calibrationVersion;
 	public float protocolVersion;
 	public ControlUIInfo[] uiList;
+
+    public ControlUIInfo GetControlUIInfo(string uiClass)
+    {
+        foreach (ControlUIInfo uiInfo in uiList)
+        {
+            if (uiInfo.uiClass.Equals(uiClass) == true)
+                return uiInfo;
+        }
+
+        return null;
+    }
 }
 
 public class ProductManager : MonoBehaviour
@@ -88,6 +99,17 @@ public class ProductManager : MonoBehaviour
 	{
 	
 	}
+
+    public ProductInfo GetProductInfo(int model)
+    {
+        foreach(ProductInfo info in productList)
+        {
+            if (info.model == model)
+                return info;
+        }
+
+        return null;
+    }
 
 	private void Load()
 	{
@@ -220,8 +242,8 @@ public class ProductManager : MonoBehaviour
 
                             item.Reset();
 
-                            if(l > 0)
-                                item.name += string.Format("_{0:d}", l);
+                            if(count > 1)
+                                item.name += string.Format("{0:d}", l);
                             item.address += (l * item.bytes);
 
                             items.Add(item);
