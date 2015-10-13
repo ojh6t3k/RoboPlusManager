@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		D7F78FD11BCD0ED10016B3B5 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7F78FD01BCD0ED10016B3B5 /* CoreBluetooth.framework */; };
 		D7F78FD31BCD0ED90016B3B5 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7F78FD21BCD0ED90016B3B5 /* AppKit.framework */; };
-		D7F78FDE1BCD0F670016B3B5 /* iOSBluetoothLE.mm in Sources */ = {isa = PBXBuildFile; fileRef = D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */; settings = {ASSET_TAGS = (); }; };
+		D7F78FE11BCD1C600016B3B5 /* iOSBluetoothLE.mm in Sources */ = {isa = PBXBuildFile; fileRef = D7F78FE01BCD1C600016B3B5 /* iOSBluetoothLE.mm */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,8 +17,8 @@
 		D7F78FCA1BCD0EB20016B3B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7F78FD01BCD0ED10016B3B5 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		D7F78FD21BCD0ED90016B3B5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		D7F78FDC1BCD0F670016B3B5 /* iOSBluetoothLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSBluetoothLE.h; path = ../../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.h; sourceTree = "<group>"; };
-		D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iOSBluetoothLE.mm; path = ../../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.mm; sourceTree = "<group>"; };
+		D7F78FDF1BCD1C600016B3B5 /* iOSBluetoothLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSBluetoothLE.h; path = ../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.h; sourceTree = "<group>"; };
+		D7F78FE01BCD1C600016B3B5 /* iOSBluetoothLE.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iOSBluetoothLE.mm; path = ../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,8 +55,8 @@
 		D7F78FC91BCD0EB20016B3B5 /* OSXPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				D7F78FDC1BCD0F670016B3B5 /* iOSBluetoothLE.h */,
-				D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */,
+				D7F78FDF1BCD1C600016B3B5 /* iOSBluetoothLE.h */,
+				D7F78FE01BCD1C600016B3B5 /* iOSBluetoothLE.mm */,
 				D7F78FCA1BCD0EB20016B3B5 /* Info.plist */,
 			);
 			path = OSXPlugin;
@@ -128,7 +128,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7F78FDE1BCD0F670016B3B5 /* iOSBluetoothLE.mm in Sources */,
+				D7F78FE11BCD1C600016B3B5 /* iOSBluetoothLE.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +261,7 @@
 				D7F78FCF1BCD0EB20016B3B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
