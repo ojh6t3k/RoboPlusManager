@@ -6,99 +6,115 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D7F78FD11BCD0ED10016B3B5 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7F78FD01BCD0ED10016B3B5 /* CoreBluetooth.framework */; };
+		D7F78FD31BCD0ED90016B3B5 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7F78FD21BCD0ED90016B3B5 /* AppKit.framework */; };
+		D7F78FDE1BCD0F670016B3B5 /* iOSBluetoothLE.mm in Sources */ = {isa = PBXBuildFile; fileRef = D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */; settings = {ASSET_TAGS = (); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		D7F77FA71BCCCF150016B3B5 /* iOSPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		D7F77FAA1BCCCF150016B3B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7F78FC71BCD0EB20016B3B5 /* OSXPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OSXPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7F78FCA1BCD0EB20016B3B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7F78FD01BCD0ED10016B3B5 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		D7F78FD21BCD0ED90016B3B5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		D7F78FDC1BCD0F670016B3B5 /* iOSBluetoothLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSBluetoothLE.h; path = ../../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.h; sourceTree = "<group>"; };
+		D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iOSBluetoothLE.mm; path = ../../../Assets/RoboPlusManager/Plugins/iOS/iOSBluetoothLE.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D7F77FA41BCCCF150016B3B5 /* Frameworks */ = {
+		D7F78FC41BCD0EB20016B3B5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7F78FD31BCD0ED90016B3B5 /* AppKit.framework in Frameworks */,
+				D7F78FD11BCD0ED10016B3B5 /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D7F77F9E1BCCCF150016B3B5 = {
+		D7F78FBE1BCD0EB20016B3B5 = {
 			isa = PBXGroup;
 			children = (
-				D7F77FA91BCCCF150016B3B5 /* iOSPlugin */,
-				D7F77FA81BCCCF150016B3B5 /* Products */,
+				D7F78FD21BCD0ED90016B3B5 /* AppKit.framework */,
+				D7F78FD01BCD0ED10016B3B5 /* CoreBluetooth.framework */,
+				D7F78FC91BCD0EB20016B3B5 /* OSXPlugin */,
+				D7F78FC81BCD0EB20016B3B5 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		D7F77FA81BCCCF150016B3B5 /* Products */ = {
+		D7F78FC81BCD0EB20016B3B5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D7F77FA71BCCCF150016B3B5 /* iOSPlugin.bundle */,
+				D7F78FC71BCD0EB20016B3B5 /* OSXPlugin.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D7F77FA91BCCCF150016B3B5 /* iOSPlugin */ = {
+		D7F78FC91BCD0EB20016B3B5 /* OSXPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				D7F77FAA1BCCCF150016B3B5 /* Info.plist */,
+				D7F78FDC1BCD0F670016B3B5 /* iOSBluetoothLE.h */,
+				D7F78FDD1BCD0F670016B3B5 /* iOSBluetoothLE.mm */,
+				D7F78FCA1BCD0EB20016B3B5 /* Info.plist */,
 			);
-			path = iOSPlugin;
+			path = OSXPlugin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D7F77FA61BCCCF150016B3B5 /* iOSPlugin */ = {
+		D7F78FC61BCD0EB20016B3B5 /* OSXPlugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D7F77FAD1BCCCF150016B3B5 /* Build configuration list for PBXNativeTarget "iOSPlugin" */;
+			buildConfigurationList = D7F78FCD1BCD0EB20016B3B5 /* Build configuration list for PBXNativeTarget "OSXPlugin" */;
 			buildPhases = (
-				D7F77FA31BCCCF150016B3B5 /* Sources */,
-				D7F77FA41BCCCF150016B3B5 /* Frameworks */,
-				D7F77FA51BCCCF150016B3B5 /* Resources */,
+				D7F78FC31BCD0EB20016B3B5 /* Sources */,
+				D7F78FC41BCD0EB20016B3B5 /* Frameworks */,
+				D7F78FC51BCD0EB20016B3B5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = iOSPlugin;
-			productName = iOSPlugin;
-			productReference = D7F77FA71BCCCF150016B3B5 /* iOSPlugin.bundle */;
+			name = OSXPlugin;
+			productName = OSXPlugin;
+			productReference = D7F78FC71BCD0EB20016B3B5 /* OSXPlugin.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D7F77F9F1BCCCF150016B3B5 /* Project object */ = {
+		D7F78FBF1BCD0EB20016B3B5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = smartmaker;
 				TargetAttributes = {
-					D7F77FA61BCCCF150016B3B5 = {
+					D7F78FC61BCD0EB20016B3B5 = {
 						CreatedOnToolsVersion = 7.0.1;
 					};
 				};
 			};
-			buildConfigurationList = D7F77FA21BCCCF150016B3B5 /* Build configuration list for PBXProject "iOSPlugin" */;
+			buildConfigurationList = D7F78FC21BCD0EB20016B3B5 /* Build configuration list for PBXProject "OSXPlugin" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = D7F77F9E1BCCCF150016B3B5;
-			productRefGroup = D7F77FA81BCCCF150016B3B5 /* Products */;
+			mainGroup = D7F78FBE1BCD0EB20016B3B5;
+			productRefGroup = D7F78FC81BCD0EB20016B3B5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D7F77FA61BCCCF150016B3B5 /* iOSPlugin */,
+				D7F78FC61BCD0EB20016B3B5 /* OSXPlugin */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D7F77FA51BCCCF150016B3B5 /* Resources */ = {
+		D7F78FC51BCD0EB20016B3B5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -108,17 +124,18 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D7F77FA31BCCCF150016B3B5 /* Sources */ = {
+		D7F78FC31BCD0EB20016B3B5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7F78FDE1BCD0F670016B3B5 /* iOSBluetoothLE.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		D7F77FAB1BCCCF150016B3B5 /* Debug */ = {
+		D7F78FCB1BCD0EB20016B3B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -160,7 +177,7 @@
 			};
 			name = Debug;
 		};
-		D7F77FAC1BCCCF150016B3B5 /* Release */ = {
+		D7F78FCC1BCD0EB20016B3B5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -195,26 +212,30 @@
 			};
 			name = Release;
 		};
-		D7F77FAE1BCCCF150016B3B5 /* Debug */ = {
+		D7F78FCE1BCD0EB20016B3B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = iOSPlugin/Info.plist;
+				GCC_NO_COMMON_BLOCKS = NO;
+				INFOPLIST_FILE = OSXPlugin/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = com.smartmaker.ios.iOSPlugin;
+				PRODUCT_BUNDLE_IDENTIFIER = com.smartmaker.osx.OSXPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
 		};
-		D7F77FAF1BCCCF150016B3B5 /* Release */ = {
+		D7F78FCF1BCD0EB20016B3B5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = iOSPlugin/Info.plist;
+				GCC_NO_COMMON_BLOCKS = NO;
+				INFOPLIST_FILE = OSXPlugin/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = com.smartmaker.ios.iOSPlugin;
+				PRODUCT_BUNDLE_IDENTIFIER = com.smartmaker.osx.OSXPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -224,24 +245,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D7F77FA21BCCCF150016B3B5 /* Build configuration list for PBXProject "iOSPlugin" */ = {
+		D7F78FC21BCD0EB20016B3B5 /* Build configuration list for PBXProject "OSXPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D7F77FAB1BCCCF150016B3B5 /* Debug */,
-				D7F77FAC1BCCCF150016B3B5 /* Release */,
+				D7F78FCB1BCD0EB20016B3B5 /* Debug */,
+				D7F78FCC1BCD0EB20016B3B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D7F77FAD1BCCCF150016B3B5 /* Build configuration list for PBXNativeTarget "iOSPlugin" */ = {
+		D7F78FCD1BCD0EB20016B3B5 /* Build configuration list for PBXNativeTarget "OSXPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D7F77FAE1BCCCF150016B3B5 /* Debug */,
-				D7F77FAF1BCCCF150016B3B5 /* Release */,
+				D7F78FCE1BCD0EB20016B3B5 /* Debug */,
+				D7F78FCF1BCD0EB20016B3B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D7F77F9F1BCCCF150016B3B5 /* Project object */;
+	rootObject = D7F78FBF1BCD0EB20016B3B5 /* Project object */;
 }

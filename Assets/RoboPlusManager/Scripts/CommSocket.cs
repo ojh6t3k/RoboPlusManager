@@ -122,51 +122,167 @@ public class CommSocket : MonoBehaviour
     private bool _bleInitialized = false;
     private List<byte> _rcvBuffer = new List<byte>();
 
-    [DllImport("__Internal")]
+	public delegate void UnityCallbackDelegate(IntPtr arg1, IntPtr arg2);
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLELog(string message);
-    [DllImport("__Internal")]
-    private static extern void _iOSBluetoothLEInitialize(bool asCentral, bool asPeripheral, string unityObject, string unityMessage, string unityData);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
+	private static extern void _iOSBluetoothLEInitialize(bool asCentral, bool asPeripheral, [MarshalAs(UnmanagedType.FunctionPtr)]UnityCallbackDelegate unityCallback);
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEDeInitialize();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEPauseMessages(bool isPaused);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEScanForPeripheralsWithServices(string serviceUUIDsString);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLERetrieveListOfPeripheralsWithServices(string serviceUUIDsString);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEStopScan();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEConnectToPeripheral(string name);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEDisconnectPeripheral(string name);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEReadCharacteristic(string name, string service, string characteristic);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEWriteCharacteristic(string name, string service, string characteristic, byte[] data, int length, bool withResponse);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLESubscribeCharacteristic(string name, string service, string characteristic);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEUnSubscribeCharacteristic(string name, string service, string characteristic);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEPeripheralName(string newName);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLECreateService(string uuid, bool primary);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLERemoveService(string uuid);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLERemoveServices();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLECreateCharacteristic(string uuid, int properties, int permissions, byte[] data, int length);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLERemoveCharacteristic(string uuid);
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLERemoveCharacteristics();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEStartAdvertising();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEStopAdvertising();
-    [DllImport("__Internal")]
+
+#if UNITY_IOS
+	[DllImport("__Internal")]
+#else
+	[DllImport("OSXPlugin")]
+#endif
     private static extern void _iOSBluetoothLEUpdateCharacteristicValue(string uuid, byte[] data, int length);
 #endif
     #endregion
@@ -212,7 +328,7 @@ public class CommSocket : MonoBehaviour
 #endif
 
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
-  //      _iOSBluetoothLEInitialize(true, false, gameObject.name, "iOSMessage", "iOSData");
+		_iOSBluetoothLEInitialize(true, false, iOSBluetoothLEDelegate);
 #endif
     }
 
@@ -640,11 +756,19 @@ public class CommSocket : MonoBehaviour
         _threadOnFoundDevice = true;
     }
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS)
-    private void iOSMessage(string message)
+	private void iOSBluetoothLEDelegate(IntPtr arg1, IntPtr arg2)
+	{
+		string methodName = Marshal.PtrToStringAuto(arg1);
+		string data = Marshal.PtrToStringAuto(arg2);
+		this.SendMessage(methodName, data);
+	}
+
+    private void iOSBluetoothLEMessage(string message)
     {
         if (message != null)
         {
             Debug.Log(message);
+
             string[] parts = message.Split(new char[] { '~' });
 
             const string deviceBLESupportedString = "BLESupported";
@@ -758,7 +882,7 @@ public class CommSocket : MonoBehaviour
         }
     }
 
-    private void iOSData(string base64Data)
+    private void iOSBluetoothLEData(string base64Data)
     {
         iOSDataDecoding(string.Empty, base64Data);
     }

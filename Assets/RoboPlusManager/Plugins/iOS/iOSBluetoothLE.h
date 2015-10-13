@@ -10,6 +10,35 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+typedef void (* UnityCallback)(const char* methodName, const char* arg);
+
+extern "C" {
+    void _iOSBluetoothLELogString (NSString *message);
+    void _iOSBluetoothLELog (char *message);
+    void _iOSBluetoothLEInitialize (BOOL asCentral, BOOL asPeripheral, UnityCallback unityCallback);
+    void _iOSBluetoothLEDeInitialize ();
+    void _iOSBluetoothLEPauseMessages (BOOL pause);
+    void _iOSBluetoothLEScanForPeripheralsWithServices (char *serviceUUIDsStringRaw);
+    void _iOSBluetoothLEStopScan ();
+    void _iOSBluetoothLERetrieveListOfPeripheralsWithServices (char *serviceUUIDsStringRaw);
+    void _iOSBluetoothLEConnectToPeripheral (char *name);
+    void _iOSBluetoothLEDisconnectPeripheral (char *name);
+    void _iOSBluetoothLEReadCharacteristic (char *name, char *service, char *characteristic);
+    void _iOSBluetoothLEWriteCharacteristic (char *name, char *service, char *characteristic, unsigned char *data, int length, BOOL withResponse);
+    void _iOSBluetoothLESubscribeCharacteristic (char *name, char *service, char *characteristic);
+    void _iOSBluetoothLEUnSubscribeCharacteristic (char *name, char *service, char *characteristic);
+    void _iOSBluetoothLEPeripheralName (char *newName);
+    void _iOSBluetoothLECreateService (char *uuid, BOOL primary);
+    void _iOSBluetoothLERemoveService (char *uuid);
+    void _iOSBluetoothLERemoveServices ();
+    void _iOSBluetoothLECreateCharacteristic (char *uuid, int properties, int permissions, unsigned char *data, int length);
+    void _iOSBluetoothLERemoveCharacteristic (char *uuid);
+    void _iOSBluetoothLERemoveCharacteristics ();
+    void _iOSBluetoothLEStartAdvertising ();
+    void _iOSBluetoothLEStopAdvertising ();
+    void _iOSBluetoothLEUpdateCharacteristicValue (char *uuid, unsigned char *data, int length);
+}
+
 @interface iOSBluetoothLE : NSObject <CBCentralManagerDelegate, CBPeripheralManagerDelegate, CBPeripheralDelegate>
 {
     CBCentralManager *_centralManager;

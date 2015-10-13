@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D7F77FA61BCCCF150016B3B5"
-               BuildableName = "iOSPlugin.bundle"
-               BlueprintName = "iOSPlugin"
-               ReferencedContainer = "container:iOSPlugin.xcodeproj">
+               BlueprintIdentifier = "D7F78FC61BCD0EB20016B3B5"
+               BuildableName = "OSXPlugin.bundle"
+               BlueprintName = "OSXPlugin"
+               ReferencedContainer = "container:OSXPlugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,10 +45,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D7F77FA61BCCCF150016B3B5"
-            BuildableName = "iOSPlugin.bundle"
-            BlueprintName = "iOSPlugin"
-            ReferencedContainer = "container:iOSPlugin.xcodeproj">
+            BlueprintIdentifier = "D7F78FC61BCD0EB20016B3B5"
+            BuildableName = "OSXPlugin.bundle"
+            BlueprintName = "OSXPlugin"
+            ReferencedContainer = "container:OSXPlugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,10 +63,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D7F77FA61BCCCF150016B3B5"
-            BuildableName = "iOSPlugin.bundle"
-            BlueprintName = "iOSPlugin"
-            ReferencedContainer = "container:iOSPlugin.xcodeproj">
+            BlueprintIdentifier = "D7F78FC61BCD0EB20016B3B5"
+            BuildableName = "OSXPlugin.bundle"
+            BlueprintName = "OSXPlugin"
+            ReferencedContainer = "container:OSXPlugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 98f8155dfd9f1fd4693c10b1736431e2
-timeCreated: 1443604898
-licenseType: Free
+guid: cc5a3b92c789c4a518e815e617c58a4a
+folderAsset: yes
+timeCreated: 1444731752
+licenseType: Pro
 PluginImporter:
   serializedVersion: 1
   iconMap: {}
@@ -13,7 +14,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
     Any:
-      enabled: 0
+      enabled: 1
       settings: {}
     Editor:
       enabled: 0
@@ -36,11 +37,11 @@ PluginImporter:
     OSXIntel:
       enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     OSXIntel64:
       enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     OSXUniversal:
       enabled: 0
       settings:
@@ -49,12 +50,6 @@ PluginImporter:
       enabled: 0
       settings:
         STV_MODEL: STANDARD_13
-    WP8:
-      enabled: 0
-      settings:
-        CPU: AnyCPU
-        DontProcess: False
-        PlaceholderPath: 
     Win:
       enabled: 0
       settings:
@@ -63,15 +58,8 @@ PluginImporter:
       enabled: 0
       settings:
         CPU: AnyCPU
-    WindowsStoreApps:
-      enabled: 0
-      settings:
-        CPU: AnyCPU
-        DontProcess: False
-        PlaceholderPath: 
-        SDK: AnySDK
     iOS:
-      enabled: 1
+      enabled: 0
       settings:
         CompileFlags: 
         FrameworkDependencies: 
