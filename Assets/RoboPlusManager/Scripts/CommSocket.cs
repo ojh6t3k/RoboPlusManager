@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using System.IO;
 #if UNITY_STANDALONE
 using System.IO.Ports;
 #endif
@@ -211,7 +212,7 @@ public class CommSocket : MonoBehaviour
 #endif
 
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
-        _iOSBluetoothLEInitialize(true, false, gameObject.name, "iOSMessage", "iOSData");
+  //      _iOSBluetoothLEInitialize(true, false, gameObject.name, "iOSMessage", "iOSData");
 #endif
     }
 
@@ -905,17 +906,27 @@ public class CommSocket : MonoBehaviour
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
             string prefix = "/dev/";
             string[] devInfos = Directory.GetFiles(prefix, "*.*");
-            for(int i=0; i<ports.Length; i++)
+			for(int i=0; i<devInfos.Length; i++)
             {
-                CommDevice foundDevice = new CommDevice();
-                foundDevice.name = devInfos[i].Substring(prefix.Length));            
-                foundDevice.address = devInfos[i];
-                if(devInfos[i].StartsWith ("/dev/cu.usb") | devInfos[i].StartsWith ("/dev/tty.usb"))
+				if(devInfos[i].StartsWith ("/dev/cu."))
                 {
-                    foundDevice.type = CommDevice.Type.Serial;
-                    foundDevice.args.Add("57600");
-                }            
-                foundDevices.Add(foundDevice);
+					if(devInfos[i].Contains("usb") || devInfos[i].Contains("BT-110") || devInfos[i].Contains("BT-210"))
+					{
+						CommDevice foundDevice = new CommDevice();
+						foundDevice.name = devInfos[i].Substring(prefix.Length);            
+						foundDevice.address = devInfos[i];
+						foundDevice.type = CommDevice.Type.Serial;
+						foundDevice.args.Add("57600");
+						foundDevices.Add(foundDevice);
+					}					    
+				}
+
+			//	CommDevice foundDevice = new CommDevice();
+			//	foundDevice.name = devInfos[i].Substring(prefix.Length);            
+			//	foundDevice.address = devInfos[i];
+			//	foundDevice.type = CommDevice.Type.Serial;
+			//	foundDevice.args.Add("57600");
+			//	foundDevices.Add(foundDevice);
             }
             if (devInfos.Length > 0)
                 _threadOnFoundDevice = true;
