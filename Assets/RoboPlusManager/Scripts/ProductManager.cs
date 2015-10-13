@@ -194,16 +194,27 @@ public class ProductManager : MonoBehaviour
 					XmlNodeList xmlNodes2 = xmlNodes[j].SelectNodes("./Item");
 					for(int k=0; k<xmlNodes2.Count; k++)
 					{
-                        int count = 1;
+                        List<int> continueList = new List<int>();
                         try
                         {
-                            count = int.Parse(xmlNodes2[k].Attributes["continue"].Value);
+                            string[] tokens = xmlNodes2[k].Attributes["continue"].Value.Split(new char[] { ',' });
+                            for(int x=0; x<tokens.Length; x++)
+                            {
+                                string[] tokens2 = tokens[x].Split(new char[] { '~' });
+                                int min = int.Parse(tokens2[0]);
+                                int max = min;
+                                if (tokens2.Length > 1)
+                                    max = int.Parse(tokens2[1]);
+                                for (int y = min; y <= max; y++)
+                                    continueList.Add(y);
+                            }
                         }
                         catch(Exception)
                         {
+                            continueList.Add(0);
                         }
 
-                        for (int l=0; l<count; l++)
+                        for (int l=0; l< continueList.Count; l++)
                         {
                             ControlItemInfo item = new ControlItemInfo();
                             item.name = xmlNodes2[k].Attributes["name"].Value;
@@ -242,9 +253,9 @@ public class ProductManager : MonoBehaviour
 
                             item.Reset();
 
-                            if(count > 1)
-                                item.name += string.Format("{0:d}", l);
-                            item.address += (l * item.bytes);
+                            if(continueList.Count > 1)
+                                item.name += string.Format("{0:d}", continueList[l]);
+                            item.address += (continueList[l] * item.bytes);
 
                             items.Add(item);
                         }                 

@@ -152,11 +152,11 @@ public class CommProduct : MonoBehaviour
     public void MoveServo(int pos)
     {
         ControlUIInfo ui = productInfo.GetControlUIInfo("AuxDeviceUI");
-        ControlItemInfo servoMode = ui.GetUIItem("ServoMode1");
+        ControlItemInfo servoMode = ui.GetUIItem("ServoMode3");
         servoMode.value = 1;
-        ControlItemInfo servoPos = ui.GetUIItem("ServoPos1");
+        ControlItemInfo servoPos = ui.GetUIItem("ServoPos3");
         servoPos.value = pos;
-        ControlItemInfo servoSpeed = ui.GetUIItem("ServoSpeed1");
+        ControlItemInfo servoSpeed = ui.GetUIItem("ServoSpeed3");
         servoSpeed.value = 1023;
 
         _writeItems.Add(servoMode);

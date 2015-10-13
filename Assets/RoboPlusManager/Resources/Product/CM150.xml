@@ -3,7 +3,7 @@
   <Firmware version="20" address="0x08003000"></Firmware>
 	<Control protocol="2.0">
     <UI icon="TestIcon_2" name="Operate" class="OperateUI" version="2">
-      <Item name="SleepTimer" address="76" access="rw" save="false" byte="2"></Item>
+      <Item name="SleepTimer" address="76" access="rw" save="false" byte="1"></Item>
       <Item name="ButtonCount" address="25" access="r" save="false" byte="1"></Item>      
     </UI>
     <UI icon="TestIcon_1" name="Remote" class="RemoteUI" version="1">
@@ -29,19 +29,19 @@
       <Item name="RightIR" address="91" access="rw" save="false" byte="2" range="0~1023"></Item>
     </UI>
     <UI icon="TestIcon_9" name="AuxDevice" class="AuxDeviceUI" version="1" param="1[AuxMotor],2[AuxMotor],3[-AuxMotor|AuxDMS],4[-AuxMotor|AuxDMS]">
-      <Item name="AuxMotor" address="152" access="rw" save="false" byte="1" range="0~2047" continue="2"></Item>
-      <Item name="ServoMode" address="126" access="rw" save="false" byte="1" continue="2"></Item>
-      <Item name="ServoSpeed" address="132" access="rw" save="false" byte="2" range="0~2047" continue="2"></Item>
-      <Item name="ServoPos" address="152" access="rw" save="false" byte="2" range="0~1023" continue="2"></Item>
-      <Item name="AuxIR" address="168" access="r" save="false" byte="2" range="0~1023" continue="2"></Item>
-      <Item name="AuxTouch" address="202" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxLED" address="210" access="rw" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxTemperature" address="234" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxUltraSonic" address="242" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxMagnetic" address="250" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxMotion" address="258" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxColor" address="266" access="r" save="false" byte="1" continue="2"></Item>
-      <Item name="AuxCustom" address="216" access="rw" save="false" byte="2" continue="2"></Item>
+      <Item name="AuxMotor" address="152" access="rw" save="false" byte="2" range="0~2047" continue="0~1"></Item>
+      <Item name="ServoMode" address="126" access="rw" save="false" byte="1" continue="2~3"></Item>
+      <Item name="ServoSpeed" address="132" access="rw" save="false" byte="2" range="0~2047" continue="2~3"></Item>
+      <Item name="ServoPos" address="152" access="rw" save="false" byte="2" range="0~1023" continue="2~3"></Item>
+      <Item name="AuxIR" address="168" access="r" save="false" byte="2" range="0~1023" continue="2~3"></Item>
+      <Item name="AuxTouch" address="202" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxLED" address="210" access="rw" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxTemperature" address="234" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxUltraSonic" address="242" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxMagnetic" address="250" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxMotion" address="258" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxColor" address="266" access="r" save="false" byte="1" continue="2~3"></Item>
+      <Item name="AuxCustom" address="216" access="rw" save="false" byte="2" continue="2~3"></Item>
     </UI>
   </Control>
 </Product>
