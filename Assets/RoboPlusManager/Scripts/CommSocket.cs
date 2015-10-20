@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Ports;
 #endif
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS)
+using AOT;
 using System.Runtime.InteropServices;
 #endif
 
@@ -118,11 +119,11 @@ public class CommSocket : MonoBehaviour
     }
 
     private bool _isBleOpen = false;
-    private bool _isSupportBLE = false;
+    private bool _isSupportBLE = true;
     private bool _bleInitialized = false;
     private List<byte> _rcvBuffer = new List<byte>();
-
-	public delegate void UnityCallbackDelegate(IntPtr arg1, IntPtr arg2);
+	private static GameObject _gameObject;
+	private delegate void UnityCallbackDelegate(IntPtr arg1, IntPtr arg2);
 
 #if UNITY_IOS
 	[DllImport("__Internal")]
@@ -328,6 +329,7 @@ public class CommSocket : MonoBehaviour
 #endif
 
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
+		_gameObject = this.gameObject;
 		_iOSBluetoothLEInitialize(true, false, iOSBluetoothLEDelegate);
 #endif
     }
@@ -697,14 +699,15 @@ public class CommSocket : MonoBehaviour
                 if (_androidBluetooth != null)
                     _androidBluetooth.Call("Close");
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS)
+				_isBleOpen = false;
+				_rcvBuffer.Clear();
+
                 if (_bleInitialized)
                 {
                     string uuid = _device.args[0];
                     _iOSBluetoothLEUnSubscribeCharacteristic(uuid, BleUUID.service, BleUUID.rxCharacteristic);
                     _iOSBluetoothLEDisconnectPeripheral(uuid);
                 }
-                _isBleOpen = false;
-                _rcvBuffer.Clear();
 #endif
             }
         }
@@ -756,36 +759,39 @@ public class CommSocket : MonoBehaviour
         _threadOnFoundDevice = true;
     }
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS)
-	private void iOSBluetoothLEDelegate(IntPtr arg1, IntPtr arg2)
+	[MonoPInvokeCallback(typeof(UnityCallbackDelegate))]
+	private static void iOSBluetoothLEDelegate(IntPtr arg1, IntPtr arg2)
 	{
 		string methodName = Marshal.PtrToStringAuto(arg1);
-		string data = Marshal.PtrToStringAuto(arg2);
-		this.SendMessage(methodName, data);
+		string message = Marshal.PtrToStringAuto(arg2);
+
+		Debug.Log(string.Format("iOS Message: {0}, {1}", methodName, message));
+		_gameObject.SendMessage(methodName, message);
 	}
-
-    private void iOSBluetoothLEMessage(string message)
-    {
-        if (message != null)
-        {
-            Debug.Log(message);
-
-            string[] parts = message.Split(new char[] { '~' });
-
-            const string deviceBLESupportedString = "BLESupported";
-            const string deviceBLENotSupportedString = "BLENotSupported";
-            const string deviceInitializedString = "Initialized";
-            const string deviceDeInitializedString = "DeInitialized";
-            const string deviceErrorString = "Error";
-            const string deviceServiceAdded = "ServiceAdded";
-            const string deviceStartedAdvertising = "StartedAdvertising";
-            const string deviceStoppedAdvertising = "StoppedAdvertising";
-            const string deviceDiscoveredPeripheral = "DiscoveredPeripheral";
-            const string deviceRetrievedConnectedPeripheral = "RetrievedConnectedPeripheral";
-            const string deviceConnectedPeripheral = "ConnectedPeripheral";
-            const string deviceDisconnectedPeripheral = "DisconnectedPeripheral";
-            const string deviceDiscoveredService = "DiscoveredService";
-            const string deviceDiscoveredCharacteristic = "DiscoveredCharacteristic";
-            const string deviceDidWriteCharacteristic = "DidWriteCharacteristic";
+	
+	private void iOSBluetoothLEMessage(string message)
+	{
+		if (message != null)
+		{
+			Debug.Log(message);
+			
+			string[] parts = message.Split(new char[] { '~' });
+			
+			const string deviceBLESupportedString = "BLESupported";
+			const string deviceBLENotSupportedString = "BLENotSupported";
+			const string deviceInitializedString = "Initialized";
+			const string deviceDeInitializedString = "DeInitialized";
+			const string deviceErrorString = "Error";
+			const string deviceServiceAdded = "ServiceAdded";
+			const string deviceStartedAdvertising = "StartedAdvertising";
+			const string deviceStoppedAdvertising = "StoppedAdvertising";
+			const string deviceDiscoveredPeripheral = "DiscoveredPeripheral";
+			const string deviceRetrievedConnectedPeripheral = "RetrievedConnectedPeripheral";
+			const string deviceConnectedPeripheral = "ConnectedPeripheral";
+			const string deviceDisconnectedPeripheral = "DisconnectedPeripheral";
+			const string deviceDiscoveredService = "DiscoveredService";
+			const string deviceDiscoveredCharacteristic = "DiscoveredCharacteristic";
+			const string deviceDidWriteCharacteristic = "DidWriteCharacteristic";
             const string deviceDidUpdateNotificationStateForCharacteristic = "DidUpdateNotificationStateForCharacteristic";
             const string deviceDidUpdateValueForCharacteristic = "DidUpdateValueForCharacteristic";
 
@@ -820,13 +826,13 @@ public class CommSocket : MonoBehaviour
             }
             else if (message.Length >= deviceDiscoveredPeripheral.Length && message.Substring(0, deviceDiscoveredPeripheral.Length) == deviceDiscoveredPeripheral)
             {
-                if (parts.Length >= 3)
+                if (parts.Length >= 4)
                 {
                     CommDevice foundDevice = new CommDevice();
                     foundDevice.type = CommDevice.Type.BLE;
-                    foundDevice.name = parts[1];
-                    foundDevice.address = parts[2];
-                    foundDevice.args.Add(parts[0]);
+                    foundDevice.name = parts[2];
+                    foundDevice.address = parts[3];
+                    foundDevice.args.Add(parts[1]);
 
                     for (int i = 0; i < foundDevices.Count; i++)
                     {
@@ -846,8 +852,11 @@ public class CommSocket : MonoBehaviour
             }
             else if (message.Length >= deviceDisconnectedPeripheral.Length && message.Substring(0, deviceDisconnectedPeripheral.Length) == deviceDisconnectedPeripheral)
             {
-                close();
-                OnErrorClosed.Invoke();
+				if(_isBleOpen)
+				{
+					close();
+					OnErrorClosed.Invoke();
+				}                
             }
             else if (message.Length >= deviceDiscoveredService.Length && message.Substring(0, deviceDiscoveredService.Length) == deviceDiscoveredService)
             {
