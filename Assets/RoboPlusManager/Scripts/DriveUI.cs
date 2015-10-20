@@ -66,10 +66,12 @@ public class DriveUI : ControlUI
     float _sign4 = 1f;
     void Update()
     {
+        
         if (uiJointMode.isOn)
         {
             if (_presentPosition != null)
             {
+                /*
                 _presentPosition.value += (int)_sign1;
                 if (_presentPosition.value <= _presentPosition.minValue)
                 {
@@ -81,12 +83,14 @@ public class DriveUI : ControlUI
                     _presentPosition.value = _presentPosition.maxValue;
                     _sign1 = -1f;
                 }
+                */
 
                 RefreshPresentPosition();
             }            
 
             if (_presentJointSpeed != null)
             {
+                /*
                 _presentJointSpeed.value += (int)_sign3;
                 if (_presentJointSpeed.value <= _presentJointSpeed.minValue)
                 {
@@ -98,6 +102,7 @@ public class DriveUI : ControlUI
                     _presentJointSpeed.value = _presentJointSpeed.maxValue;
                     _sign3 = -1f;
                 }
+                */
 
                 RefreshPresentJointSpeed();
             }
@@ -106,6 +111,7 @@ public class DriveUI : ControlUI
         {
             if (_presentWheelSpeed != null)
             {
+                /*
                 _presentWheelSpeed.value += (int)_sign4;
                 if (_presentWheelSpeed.value <= _presentWheelSpeed.minValue)
                 {
@@ -117,6 +123,7 @@ public class DriveUI : ControlUI
                     _presentWheelSpeed.value = _presentWheelSpeed.maxValue;
                     _sign4 = -1f;
                 }
+                */
 
                 RefreshPresentWheelSpeed();
             }
@@ -124,6 +131,7 @@ public class DriveUI : ControlUI
 
         if (_presentLoad != null)
         {
+            /*
             _presentLoad.value += (int)_sign2;
             if (_presentLoad.value <= _presentLoad.minValue)
             {
@@ -135,9 +143,10 @@ public class DriveUI : ControlUI
                 _presentLoad.value = _presentLoad.maxValue;
                 _sign2 = -1f;
             }
+            */
 
             RefreshPresentLoadValue();
-        }
+        }        
     }
 
     protected override void OnUpdateUIInfo()
@@ -160,7 +169,7 @@ public class DriveUI : ControlUI
         _moving = info.GetUIItem("Moving");
         _presentLoad = info.GetUIItem("PresentLoad");
         _wheelSpeed = info.GetUIItem("WheelSpeed");
-        _presentWheelSpeed = info.GetUIItem("PresentWheelSpeed");
+        _presentWheelSpeed = info.GetUIItem("PresentWheelSpeed");        
 
         _preventEvent = true;        
 
@@ -245,6 +254,13 @@ public class DriveUI : ControlUI
 
             RefreshJointSpeedValue();
             RefreshPresentJointSpeed();
+
+            if(commProduct != null)
+            {
+                commProduct.AddReadItem(_presentPosition);
+                commProduct.AddReadItem(_presentJointSpeed);
+                commProduct.AddReadItem(_presentLoad);
+            }
         }
 
         if (uiWheelMode.isOn)
@@ -254,6 +270,13 @@ public class DriveUI : ControlUI
 
             RefreshWheelSpeedValue();
             RefreshPresentWheelSpeed();
+
+            if (commProduct != null)
+            {
+                commProduct.RemoveReadItem(_presentPosition);
+                commProduct.RemoveReadItem(_presentJointSpeed);
+                commProduct.RemoveReadItem(_presentLoad);
+            }            
         }
     }
 
@@ -384,8 +407,8 @@ public class DriveUI : ControlUI
 
         if (uiJointMode.isOn)
         {
-            _cwAngleLimit.Reset();
-            _ccwAngleLimit.Reset();
+            _cwAngleLimit.value = _cwAngleLimit.defaultValue;
+            _ccwAngleLimit.value = _ccwAngleLimit.defaultValue;
         }
 
         RefreshModeView();
@@ -449,6 +472,7 @@ public class DriveUI : ControlUI
             if (dialValue != _goalPosition.value)
             {
                 _goalPosition.value = dialValue;
+                commProduct.SetWriteItem(_goalPosition);
                 RefreshGoalPosition();
             }
         }
@@ -511,6 +535,7 @@ public class DriveUI : ControlUI
             if (inputValue != _goalPosition.value)
             {
                 _goalPosition.value = inputValue;
+                commProduct.AddWriteItem(_goalPosition);
                 RefreshGoalPosition();
             }
         }

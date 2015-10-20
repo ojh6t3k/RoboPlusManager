@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using System;
@@ -12,47 +13,38 @@ public class CommProtocol : MonoBehaviour
         DXL,
         DXL2
     }
-    private enum INSTRUCTION
-    {
-        None = 0x00,
-        Ping = 0x01,
-        Read = 0x02,
-        Write = 0x03,
-        RegWrite = 0x04,
-        Action = 0x05,
-        FactoryReset = 0x06,
-        Reset = 0x07,
-        Status = 0x55,
-        SyncRead = 0x82,
-        SyncWrite = 0x83,
-        BulkRead = 0x92,
-        BulkWrite = 0x93,
-    }
-    private enum PROCESS
+    public enum QUERY
     {
         None,
-        ReadProductInfo
+        Ping,
+        AskWho,
+        Read,
+        Write
     }
-    public enum ERROR
+    private class Context
     {
-        Instruction,
-        TxFailed,
-        Busy,
-        CRC,
-        NotPaired,
-        ShortLength,
-        Timeout
+        public bool errorRetry = false;        
+        public QUERY query = QUERY.None;
+        public byte id;
+        public byte instruction;
+        public List<byte> parameters = new List<byte>();
+        public float timeout = 0.1f;
+    }
+    public class Result
+    {
+        public QUERY query;
+        public byte id;
+        public bool busy = false;
+        public bool txFail = false;
+        public bool timeout = false;
+        public bool rxFail = false;
+        public byte statusError = 0;
+        public ushort address;
+        public List<byte> parameters = new List<byte>();
     }
     [Serializable]
-    public class ErrorEvent : UnityEvent<byte, ERROR> { }
-    [Serializable]
-    public class StatusEvent : UnityEvent<byte, byte> { }
-    [Serializable]
-    public class PingEvent : UnityEvent<byte> { }
-    [Serializable]
-    public class ProductInfoEvent : UnityEvent<byte, ushort, byte> { }
-    [Serializable]
-    public class ReadEvent : UnityEvent<byte, ushort, byte[]> { }
+    public class ResultEvent : UnityEvent<Result> { }
+
         
     public static readonly byte BROADCAST_ID = 254;
     public static readonly byte CM_ID = 200;
@@ -60,26 +52,13 @@ public class CommProtocol : MonoBehaviour
 
 
     public VERSION version = VERSION.DXL2;
-    public float timeout = 1f;
     public CommSocket socket;
     public bool debug = false;
 
-    public ErrorEvent OnError;
-    public StatusEvent OnStatus;
-    public PingEvent OnPing;
-    public ProductInfoEvent OnProductInfo;
-    public ReadEvent OnRead;
+    public ResultEvent OnResult;
 
     private bool _socketOpen = false;
-    private bool _sendInstruction = false;    
-    private float _time;
-    private List<byte> _rcvBytes = new List<byte>();
-
-    // Context
-    private byte _id;
-    private PROCESS _process = PROCESS.None;
-    private INSTRUCTION _instruction = INSTRUCTION.None;
-    private List<byte> _parameters = new List<byte>();
+    private List<Context> _contexts = new List<Context>();
 
     void Awake()
     {
@@ -89,8 +68,6 @@ public class CommProtocol : MonoBehaviour
             socket.OnErrorClosed.AddListener(OnSocketClose);
             socket.OnClose.AddListener(OnSocketClose);
         }
-
-        OnError.AddListener(ErrorHandler);
     }
 
 	// Use this for initialization
@@ -101,177 +78,151 @@ public class CommProtocol : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-    {
-        if(_sendInstruction && _socketOpen)
-        {
-            byte[] data = socket.Read();
-            if(data != null)
-            {
-                if(data.Length > 0)
-                {
-                    _rcvBytes.AddRange(data);
-                    if (version == VERSION.CM)
-                    {
-                    }
-                    else if (version == VERSION.DXL)
-                    {
-                    }
-                    else if (version == VERSION.DXL2)
-                    {
-                        while (_rcvBytes.Count >= 4)
-                        {
-                            if (_rcvBytes[0] == 0xff && _rcvBytes[1] == 0xff && _rcvBytes[2] == 0xfd && _rcvBytes[3] == 0x00)
-                                break;
-
-                            _rcvBytes.RemoveAt(0);
-                        }
-
-                        if (_rcvBytes.Count >= 10)
-                        {
-                            byte id = _rcvBytes[4];
-                            ushort length = Bytes2Word(_rcvBytes[5], _rcvBytes[6]);
-                            if (_rcvBytes.Count >= (length + 7))
-                            {                                
-                                ushort crc = Bytes2Word(_rcvBytes[length + 5], _rcvBytes[length + 6]);
-                                ushort crc2 = GetCRC(_rcvBytes.GetRange(0, length + 5).ToArray());
-                                if (crc == crc2)
-                                {
-                                    if((_id == id) && (_rcvBytes[7] == (byte)INSTRUCTION.Status))
-                                    {
-                                        _sendInstruction = false;
-                                        if (debug)
-                                        {
-                                            string debugString = "RX:";
-                                            for (int i = 0; i < (length + 7); i++)
-                                                debugString += string.Format(" {0:X}", _rcvBytes[i]);
-                                            Debug.Log(debugString);
-                                        }
-
-                                        if (_process == PROCESS.None)
-                                        {
-                                            if (_instruction == INSTRUCTION.Ping)
-                                            {
-                                                OnPing.Invoke(id);
-                                            }
-                                            else if (_instruction == INSTRUCTION.Read)
-                                            {
-                                                ushort address = Bytes2Word(_rcvBytes[9], _rcvBytes[10]);
-                                                byte[] result = _rcvBytes.GetRange(0, length + 7).ToArray();
-                                                OnRead.Invoke(id, address, result);
-                                            }
-
-                                            byte error = _rcvBytes[8];
-                                            OnStatus.Invoke(id, error);
-                                        }
-                                        else if (_process == PROCESS.ReadProductInfo)
-                                        {
-                                            if (_instruction == INSTRUCTION.Ping)
-                                            {
-                                                _process = PROCESS.None;
-                                                ushort model = Bytes2Word(_rcvBytes[9], _rcvBytes[10]);
-                                                byte ver = _rcvBytes[11];
-                                                OnProductInfo.Invoke(id, model, ver);
-                                            }
-                                        }                                        
-                                    }
-                                    else
-                                    {
-                                        _rcvBytes.RemoveRange(0, length + 7);
-                                        OnError.Invoke(_id, ERROR.NotPaired);
-                                    }
-                                }
-                                else
-                                {
-                                    _rcvBytes.RemoveRange(0, length + 7);
-                                    OnError.Invoke(_id, ERROR.CRC);
-                                }
-                            }
-                        }
-                    }
-                }                
-            }
-            
-            if (_time > timeout)
-            {
-                _sendInstruction = false;
-                _process = PROCESS.None;
-                if (_rcvBytes.Count > 0)
-                    OnError.Invoke(_id, ERROR.ShortLength);
-
-                OnError.Invoke(_id, ERROR.Timeout);
-            }
-            else
-                _time += Time.deltaTime;
-        }
+    {        
 	}
 
     public void Ping(byte id)
     {
-        if(_sendInstruction)
+        if (socket == null || !_socketOpen)
         {
-            OnError.Invoke(id, ERROR.Busy);
+            Result result = new Result();
+            result.query = QUERY.Ping;
+            result.id = id;
+            result.txFail = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        _id = id;
-        _instruction = INSTRUCTION.Ping;
-        _parameters.Clear();
+        if (_contexts.Count > 0)
+        {
+            Result result = new Result();
+            result.query = QUERY.Ping;
+            result.id = id;
+            result.busy = true;
+            OnResult.Invoke(result);
+            return;
+        }
 
-        SendInstruction();
+        if (version == VERSION.CM)
+        {
+
+        }
+        else if (version == VERSION.DXL)
+        {
+            Context context = new Context();
+            context.query = QUERY.Ping;
+            context.id = id;
+            context.instruction = 0x01; //ping
+            _contexts.Add(context);
+        }
+        else if (version == VERSION.DXL2)
+        {
+            Context context = new Context();
+            context.query = QUERY.Ping;
+            context.id = id;
+            context.instruction = 0x01; //ping
+            _contexts.Add(context);
+        }
+
+        StartCoroutine(Process());
     }
 
-    public void ReadProductInfo(byte id)
+    public void AskWho(byte id)
     {
-        if (_sendInstruction)
+        if (socket == null || !_socketOpen)
         {
-            OnError.Invoke(id, ERROR.Busy);
+            Result result = new Result();
+            result.query = QUERY.AskWho;
+            result.id = id;
+            result.txFail = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        _process = PROCESS.ReadProductInfo;
-        if(version == VERSION.CM)
+        if (_contexts.Count > 0)
+        {
+            Result result = new Result();
+            result.query = QUERY.AskWho;
+            result.id = id;
+            result.busy = true;
+            OnResult.Invoke(result);
+            return;
+        }
+
+        if (version == VERSION.CM)
         {
 
         }
-        else if(version == VERSION.DXL)
+        else if (version == VERSION.DXL)
         {
+            Context context = new Context();
+            context.query = QUERY.AskWho;
+            context.id = id;
+            context.instruction = 0x02; //read
+            context.parameters.Add(0); // address 0
+            context.parameters.Add(3); // length 3
+            _contexts.Add(context);
+        }
+        else if (version == VERSION.DXL2)
+        {
+            Context context = new Context();
+            context.query = QUERY.AskWho;
+            context.id = id;
+            context.instruction = 0x01; //ping
+            _contexts.Add(context);
+        }
 
-        }
-        else if(version == VERSION.DXL2)
-        {
-            Ping(id);
-        }
+        StartCoroutine(Process());
     }
 
     public void Read(byte id, ushort address, ushort length)
     {
-        if (_sendInstruction)
+        if (socket == null || !_socketOpen || length == 0)
         {
-            OnError.Invoke(id, ERROR.Busy);
+            Result result = new Result();
+            result.query = QUERY.Read;
+            result.id = id;
+            result.txFail = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        if (length == 0)
+        if (_contexts.Count > 0)
         {
-            OnError.Invoke(id, ERROR.Instruction);
+            Result result = new Result();
+            result.query = QUERY.Read;
+            result.id = id;
+            result.busy = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        _id = id;
-        _instruction = INSTRUCTION.Read;
-        _parameters.Clear();
-        if (version == VERSION.DXL2)
+        if (version == VERSION.CM)
         {
-            _parameters.AddRange(Word2Bytes(address));
-            _parameters.AddRange(Word2Bytes(length));
-        }            
-        else
+
+        }
+        else if (version == VERSION.DXL)
         {
-            _parameters.Add((byte)address);
-            _parameters.Add((byte)length);
+            Context context = new Context();
+            context.query = QUERY.Read;
+            context.id = id;
+            context.instruction = 0x02; //read
+            context.parameters.Add((byte)address);
+            context.parameters.Add((byte)length);
+            _contexts.Add(context);
+        }
+        else if (version == VERSION.DXL2)
+        {
+            Context context = new Context();
+            context.query = QUERY.Read;
+            context.id = id;
+            context.instruction = 0x02; //read
+            context.parameters.AddRange(Word2Bytes(address));
+            context.parameters.AddRange(Word2Bytes(length));
+            _contexts.Add(context);
         }
 
-        SendInstruction();
+        StartCoroutine(Process());
     }
 
     public void Write(byte id, ushort address, byte parameter)
@@ -286,28 +237,52 @@ public class CommProtocol : MonoBehaviour
 
     public void Write(byte id, ushort address, byte[] parameters)
     {
-        if (_sendInstruction)
+        if (socket == null || !_socketOpen || parameters == null)
         {
-            OnError.Invoke(id, ERROR.Busy);
+            Result result = new Result();
+            result.query = QUERY.Write;
+            result.id = id;
+            result.txFail = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        if(parameters == null)
+        if (_contexts.Count > 0)
         {
-            OnError.Invoke(id, ERROR.Instruction);
+            Result result = new Result();
+            result.query = QUERY.Write;
+            result.id = id;
+            result.busy = true;
+            OnResult.Invoke(result);
             return;
         }
 
-        _id = id;
-        _instruction = INSTRUCTION.Write;
-        _parameters.Clear();
-        if (version == VERSION.DXL2)
-            _parameters.AddRange(Word2Bytes(address));
-        else
-            _parameters.Add((byte)address);
-        _parameters.AddRange(parameters);
+        if (version == VERSION.CM)
+        {
 
-        SendInstruction();
+        }
+        else if (version == VERSION.DXL)
+        {
+            Context context = new Context();
+            context.query = QUERY.Write;
+            context.id = id;
+            context.instruction = 0x03; //write
+            context.parameters.Add((byte)address);
+            context.parameters.AddRange(parameters);
+            _contexts.Add(context);
+        }
+        else if (version == VERSION.DXL2)
+        {
+            Context context = new Context();
+            context.query = QUERY.Write;
+            context.id = id;
+            context.instruction = 0x03; //write
+            context.parameters.AddRange(Word2Bytes(address));
+            context.parameters.AddRange(parameters);
+            _contexts.Add(context);
+        }
+
+        StartCoroutine(Process());
     }
 
     private void OnSocketOpen()
@@ -318,64 +293,266 @@ public class CommProtocol : MonoBehaviour
     private void OnSocketClose()
     {
         _socketOpen = false;
-        _sendInstruction = false;
+        StopCoroutine(Process());
+        
+        if(_contexts.Count > 0)
+        {
+            Result result = new Result();
+            result.query = _contexts[0].query;
+            result.id = _contexts[0].id;
+            result.txFail = true;
+            OnResult.Invoke(result);
+
+            _contexts.Clear();
+        }
     }
 
-    public void SendInstruction()
+    private IEnumerator Process()
     {
-        if(socket == null || !_socketOpen)
+        yield return new WaitForEndOfFrame(); // waste one frame
+
+        float time;
+        List<byte> sendPacket = new List<byte>();
+        List<byte> rcvBytes = new List<byte>();
+
+        Result result = new Result();
+        result.query = _contexts[0].query;
+        result.id = _contexts[0].id;
+
+        while (_contexts.Count > 0)
         {
-            OnError.Invoke(_id, ERROR.TxFailed);
-            return;
+            result.rxFail = false;
+            result.timeout = false;
+            result.statusError = 0;
+            rcvBytes.Clear();
+            time = 0f;
+
+            if (version == VERSION.CM)
+            {
+            }
+            else if (version == VERSION.DXL)
+            {
+                sendPacket.AddRange(new byte[] { 0xff, 0xff });
+                sendPacket.Add(_contexts[0].id);                
+                sendPacket.Add((byte)(_contexts[0].parameters.Count + 2));
+                sendPacket.Add(_contexts[0].instruction);
+                if (_contexts[0].parameters.Count > 0)
+                    sendPacket.AddRange(_contexts[0].parameters.ToArray());
+                sendPacket.Add(GetChecksum(sendPacket.GetRange(2, _contexts[0].parameters.Count + 3).ToArray()));
+            }
+            else if (version == VERSION.DXL2)
+            {
+                sendPacket.AddRange(new byte[] { 0xff, 0xff, 0xfd, 0x00 });
+                sendPacket.Add(_contexts[0].id);
+                sendPacket.AddRange(Word2Bytes((ushort)(_contexts[0].parameters.Count + 3)));
+                sendPacket.Add(_contexts[0].instruction);
+                if (_contexts[0].parameters.Count > 0)
+                    sendPacket.AddRange(_contexts[0].parameters.ToArray());
+                sendPacket.AddRange(Word2Bytes(GetCRC(sendPacket.ToArray())));
+            }
+
+            socket.Write(sendPacket.ToArray());
+            if (debug)
+            {
+                string debugString = "TX:";
+                for (int i = 0; i < sendPacket.Count; i++)
+                {
+                    if(version == VERSION.CM)
+                        debugString += string.Format(" {0:s}", sendPacket[i]);
+                    else
+                        debugString += string.Format(" {0:X}", sendPacket[i]);
+                }
+                Debug.Log(debugString);
+            }
+
+            if(_contexts[0].id != BROADCAST_ID)
+            {
+                while (true)
+                {
+                    byte[] data = socket.Read();
+                    if (data != null)
+                    {
+                        if (data.Length > 0)
+                        {
+                            rcvBytes.AddRange(data);
+                            if (version == VERSION.CM)
+                            {
+                            }
+                            else if (version == VERSION.DXL)
+                            {
+                                while (rcvBytes.Count >= 2)
+                                {
+                                    if (rcvBytes[0] == 0xff && rcvBytes[1] == 0xff)
+                                        break;
+
+                                    rcvBytes.RemoveAt(0);
+                                }
+
+                                if (rcvBytes.Count >= 6)
+                                {
+                                    byte id = rcvBytes[2];
+                                    byte length = rcvBytes[3];
+                                    if (rcvBytes.Count >= (length + 4))
+                                    {
+                                        byte checksum = rcvBytes[length + 3];
+                                        byte checksum2 = GetChecksum(rcvBytes.GetRange(2, length + 1).ToArray());
+                                        if (checksum == checksum2)
+                                        {
+                                            if (_contexts[0].id == id)
+                                            {
+                                                if (debug)
+                                                {
+                                                    string debugString = "RX:";
+                                                    for (int i = 0; i < (length + 4); i++)
+                                                        debugString += string.Format(" {0:X}", rcvBytes[i]);
+                                                    Debug.Log(debugString);
+                                                }
+
+                                                if (_contexts.Count == 1) // Last
+                                                {
+                                                    if (_contexts[0].query == QUERY.AskWho)
+                                                    {
+                                                        if (_contexts[0].instruction == 0x02) // read
+                                                        {
+                                                            result.address = 0;
+                                                            result.parameters.AddRange(rcvBytes.GetRange(5, 3).ToArray());
+                                                        }
+                                                    }
+                                                    else if (_contexts[0].query == QUERY.Read)
+                                                    {
+                                                        if (_contexts[0].instruction == 0x02) // read
+                                                        {
+                                                            result.address = _contexts[0].parameters[0];
+                                                            result.parameters.AddRange(rcvBytes.GetRange(5, length - 2).ToArray());
+                                                        }
+                                                    }
+                                                }
+
+                                                result.statusError = rcvBytes[4];
+                                                result.rxFail = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                result.rxFail = true;
+                                                rcvBytes.RemoveRange(0, length + 4);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result.rxFail = true;
+                                            rcvBytes.RemoveRange(0, length + 4);
+                                        }
+                                    }
+                                }
+                            }
+                            else if (version == VERSION.DXL2)
+                            {
+                                while (rcvBytes.Count >= 4)
+                                {
+                                    if (rcvBytes[0] == 0xff && rcvBytes[1] == 0xff && rcvBytes[2] == 0xfd && rcvBytes[3] == 0x00)
+                                        break;
+
+                                    rcvBytes.RemoveAt(0);
+                                }
+
+                                if (rcvBytes.Count >= 10)
+                                {
+                                    byte id = rcvBytes[4];
+                                    ushort length = Bytes2Word(rcvBytes[5], rcvBytes[6]);
+                                    if (rcvBytes.Count >= (length + 7))
+                                    {
+                                        ushort crc = Bytes2Word(rcvBytes[length + 5], rcvBytes[length + 6]);
+                                        ushort crc2 = GetCRC(rcvBytes.GetRange(0, length + 5).ToArray());
+                                        if (crc == crc2)
+                                        {
+                                            if (_contexts[0].id == id && rcvBytes[7] == 0x55)
+                                            {
+                                                if (debug)
+                                                {
+                                                    string debugString = "RX:";
+                                                    for (int i = 0; i < (length + 7); i++)
+                                                        debugString += string.Format(" {0:X}", rcvBytes[i]);
+                                                    Debug.Log(debugString);
+                                                }
+
+                                                if (_contexts.Count == 1) // Last
+                                                {
+                                                    if (_contexts[0].query == QUERY.AskWho)
+                                                    {
+                                                        if (_contexts[0].instruction == 0x01) // ping
+                                                        {
+                                                            result.address = 0;
+                                                            result.parameters.AddRange(rcvBytes.GetRange(9, 3).ToArray());
+                                                        }
+                                                    }
+                                                    else if (_contexts[0].query == QUERY.Read)
+                                                    {
+                                                        if (_contexts[0].instruction == 0x02) // read
+                                                        {
+                                                            result.address = Bytes2Word(_contexts[0].parameters[0], _contexts[0].parameters[1]);
+                                                            result.parameters.AddRange(rcvBytes.GetRange(9, length - 4).ToArray());
+                                                        }
+                                                    }
+                                                }
+
+                                                result.statusError = rcvBytes[8];
+                                                result.rxFail = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                result.rxFail = true;
+                                                rcvBytes.RemoveRange(0, length + 7);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result.rxFail = true;
+                                            rcvBytes.RemoveRange(0, length + 7);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (time > _contexts[0].timeout)
+                    {
+                        result.timeout = true;
+                        if (rcvBytes.Count > 0)
+                            result.rxFail = true;
+
+                        break;
+                    }
+                    else
+                        time += Time.deltaTime;
+
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+
+            _contexts.RemoveAt(0);
+            while (_contexts.Count > 0)
+            {
+                if (result.rxFail || result.timeout)
+                {
+                    if (_contexts[0].errorRetry)
+                        break;
+                    else
+                        _contexts.RemoveAt(0);
+                }
+                else
+                {
+                    if (_contexts[0].errorRetry)
+                        _contexts.RemoveAt(0);
+                    else
+                        break;
+                }
+            }            
         }
 
-        List<byte> packet = new List<byte>();
-        if(version == VERSION.CM)
-        {
-
-        }
-        else if(version == VERSION.DXL)
-        {
-            packet.AddRange(new byte[] { 0xff, 0xff });
-        }
-        else if (version == VERSION.DXL2)
-        {
-            packet.AddRange(new byte[] { 0xff, 0xff, 0xfd, 0x00 });
-            packet.Add(_id);
-            packet.AddRange(Word2Bytes((ushort)(_parameters.Count + 3)));
-            packet.Add((byte)_instruction);
-            if (_parameters.Count > 0)
-                packet.AddRange(_parameters.ToArray());
-            packet.AddRange(Word2Bytes(GetCRC(packet.ToArray())));
-        }
-
-        if(packet.Count == 0)
-        {
-            OnError.Invoke(_id, ERROR.Instruction);
-            return;
-        }
-
-        _rcvBytes.Clear();
-        socket.Write(packet.ToArray());
-        if(debug)
-        {
-            string debugString = "TX:";
-            for (int i = 0; i < packet.Count; i++)
-                debugString += string.Format(" {0:X}", packet[i]);
-            Debug.Log(debugString);
-        }
-
-        if (_id != BROADCAST_ID)
-        {
-            _time = 0f;
-            _sendInstruction = true;
-        }        
-    }
-
-    private void ErrorHandler(byte id, ERROR error)
-    {
-        if (debug)
-            Debug.Log("Error: " + error);
+        OnResult.Invoke(result);
     }
 
     public static byte[] Word2Bytes(ushort word)
@@ -386,6 +563,15 @@ public class CommProtocol : MonoBehaviour
     public static ushort Bytes2Word(byte low, byte high)
     {
         return (ushort)((high << 8) + low);
+    }
+
+    private static byte GetChecksum(byte[] bytes)
+    {
+        byte checksum = 0;
+        for (int i = 0; i < bytes.Length; i++)
+            checksum += bytes[i];
+
+        return (byte)~checksum;
     }
     
     private static ushort GetCRC(byte[] bytes)

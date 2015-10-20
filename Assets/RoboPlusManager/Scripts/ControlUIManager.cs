@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ControlUIManager : MonoBehaviour
 {
+    public CommProduct commProduct;
 	public ControlUI defaultUI;
 	public ControlUI[] uiList;
 
@@ -43,8 +44,9 @@ public class ControlUIManager : MonoBehaviour
 					if(ui.uiClass.Equals(value.uiClass) == true)
 					{
 						ui.active = true;
-						ui.uiInfo = value;
-						_selectedUI = ui;
+                        ui.commProduct = commProduct;
+                        ui.uiInfo = value;                        
+                        _selectedUI = ui;
 						break;
 					}
 				}

@@ -12,14 +12,16 @@ public class CommProduct : MonoBehaviour
     public UnityEvent OnConnected;
     public UnityEvent OnConnectionFailed;
     public UnityEvent OnDisconnected;
+    public UnityEvent OnLostConnection;
+    public UnityEvent OnNoResponse;
 
     private byte _id = 0xff;
     private ushort _model = 0xffff;
     private byte _version = 0xff;
     private bool _connected = false;
-    private static readonly int RETRY_NUM = 3;
-    private int _retryNum = 0;
+    private bool _run = false;
     private List<ControlItemInfo> _writeItems = new List<ControlItemInfo>();
+    private List<ControlItemInfo> _readItems = new List<ControlItemInfo>();
 
     // Use this for initialization
     void Start ()
@@ -47,6 +49,10 @@ public class CommProduct : MonoBehaviour
         {
             return _id;
         }
+        set
+        {
+            _id = (byte)value;
+        }
     }
 
     public int version
@@ -65,13 +71,6 @@ public class CommProduct : MonoBehaviour
         }
     }
 
-    public void Clear()
-    {
-        Disconnect();
-        _id = 0xff;
-        productInfo = null;
-    }
-
     public void Connect()
     {
         Connect(_id);
@@ -82,151 +81,219 @@ public class CommProduct : MonoBehaviour
         if (_connected)
             return;
 
-        if(commProtocol == null)
+        if(commProtocol == null || id > CommProtocol.MAX_ID)
         {
-            OnConnectionFailed.Invoke();
-            return;
-        }
-
-        if(id > CommProtocol.MAX_ID)
-        {
+            Debug.Log(string.Format("ID:{0:d} Connection Failed", id));
             OnConnectionFailed.Invoke();
             return;
         }
 
         _id = (byte)id;
-
-        commProtocol.OnError.AddListener(OnProtocolError);
-        commProtocol.OnStatus.AddListener(OnProtocolStatus);
-        commProtocol.OnPing.AddListener(OnProtocolPing);
-        commProtocol.OnProductInfo.AddListener(OnProtocolProductInfo);
-        commProtocol.OnRead.AddListener(OnProtocolRead);
-
-        commProtocol.ReadProductInfo(_id);
+        commProtocol.OnResult.AddListener(OnProtocolResult);
+        commProtocol.Ping(_id);
     }
 
     public void Disconnect()
     {
-        _writeItems.Clear();
+        disconnect();
 
-        if (commProtocol != null)
-        {
-            commProtocol.OnError.RemoveListener(OnProtocolError);
-            commProtocol.OnStatus.RemoveListener(OnProtocolStatus);
-            commProtocol.OnPing.RemoveListener(OnProtocolPing);
-            commProtocol.OnProductInfo.RemoveListener(OnProtocolProductInfo);
-            commProtocol.OnRead.RemoveListener(OnProtocolRead);
-        }
-
-        if (!_connected)
-            OnConnectionFailed.Invoke();
-        else
-        {
-            _connected = false;
-            OnDisconnected.Invoke();
-        }        
+        Debug.Log(string.Format("ID:{0:d} Disconnect", _id));
+        _id = 0xff;
+        productInfo = null;
+        OnDisconnected.Invoke();
     }
 
-    public void Ping()
+    private void disconnect()
+    {
+        Stop();
+        _connected = false;
+        _writeItems.Clear();
+        productInfo = null;
+
+        if (commProtocol != null)
+            commProtocol.OnResult.RemoveListener(OnProtocolResult);
+    }
+
+    public void Run()
     {
         if (!_connected)
             return;
 
+        _run = true;
         commProtocol.Ping(_id);
     }
 
-    public void PlayMelody(int index)
+    public void Stop()
     {
-        ControlUIInfo ui = productInfo.GetControlUIInfo("MusicUI");
-        ControlItemInfo melodyIndex = ui.GetUIItem("MelodyIndex");
-        melodyIndex.value = index;
-        ControlItemInfo musicTime = ui.GetUIItem("MusicTime");
-        musicTime.value = 255;
-
-        _writeItems.Add(musicTime);
-        _writeItems.Add(melodyIndex);
-
-        OnProtocolStatus(_id, 0);
+        _run = false;
     }
 
-    public void MoveServo(int pos)
+    public void ClearItem()
     {
-        ControlUIInfo ui = productInfo.GetControlUIInfo("AuxDeviceUI");
-        ControlItemInfo servoMode = ui.GetUIItem("ServoMode3");
-        servoMode.value = 1;
-        ControlItemInfo servoPos = ui.GetUIItem("ServoPos3");
-        servoPos.value = pos;
-        ControlItemInfo servoSpeed = ui.GetUIItem("ServoSpeed3");
-        servoSpeed.value = 1023;
-
-        _writeItems.Add(servoMode);
-        _writeItems.Add(servoPos);
-
-        OnProtocolStatus(_id, 0);
+        _writeItems.Clear();
+        _readItems.Clear();
     }
 
-    private void OnProtocolError(byte id, CommProtocol.ERROR error)
+    public void SetWriteItem(ControlItemInfo item)
     {
-        if (id != _id)
+        _writeItems.Clear();
+        _writeItems.Add(item);
+    }
+
+    public void AddWriteItem(ControlItemInfo item)
+    {
+        _writeItems.Add(item);
+    }
+
+    public void AddReadItem(ControlItemInfo item)
+    {
+        _readItems.Add(item);
+    }
+
+    public void RemoveReadItem(ControlItemInfo item)
+    {
+        _readItems.Remove(item);
+    }
+
+    private void OnProtocolResult(CommProtocol.Result result)
+    {
+        if (result.id != _id)
             return;
 
-        if(error == CommProtocol.ERROR.Timeout)
+        if(result.txFail)
         {
-            if (_retryNum == 0)
-                Disconnect();
+            if (_connected)
+            {
+                disconnect();
+                Debug.Log(string.Format("ID:{0:d} Lost Connection", _id));
+                OnLostConnection.Invoke();
+            }
             else
             {
-                _retryNum--;
-                commProtocol.SendInstruction();
-            }                
+                Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
+                OnConnectionFailed.Invoke();
+            }
         }
-    }
-
-    private void OnProtocolStatus(byte id, byte error)
-    {
-        if (id != _id)
-            return;
 
         if (_connected)
         {
-            if(_writeItems.Count > 0)
+            if (result.rxFail || result.timeout)
             {
-                if(_writeItems[0].bytes == 1)
-                    commProtocol.Write(_id, (ushort)_writeItems[0].address, (byte)_writeItems[0].value);
-                else if(_writeItems[0].bytes == 2)
-                    commProtocol.Write(_id, (ushort)_writeItems[0].address, (ushort)_writeItems[0].value);
-
-                _writeItems.RemoveAt(0);
+                Debug.Log(string.Format("ID:{0:d} No Response", _id));
+                OnNoResponse.Invoke();
             }
-        }            
-    }
+            else
+            {
+                if (result.query == CommProtocol.QUERY.Read)
+                {
+                    foreach (ControlItemInfo item in _readItems)
+                    {
+                        int index = item.address - result.address;
+                        if((index + item.bytes - 1) < result.parameters.Count)
+                        {
+                            if (item.bytes == 1)
+                                item.value = result.parameters[index];
+                            else if (item.bytes == 2)
+                                item.value = CommProtocol.Bytes2Word(result.parameters[index], result.parameters[index + 1]);
+                        }                        
+                    }
+                }
 
-    private void OnProtocolPing(byte id)
-    {
-        if (id != _id)
-            return;
-    }
+                if (_run)
+                {
+                    if(_writeItems.Count > 0)
+                    {
+                        if (_writeItems[0].bytes == 1)
+                            commProtocol.Write(_id, (ushort)_writeItems[0].address, (byte)_writeItems[0].value);
+                        else if (_writeItems[0].bytes == 2)
+                            commProtocol.Write(_id, (ushort)_writeItems[0].address, (ushort)_writeItems[0].value);
 
-    private void OnProtocolProductInfo(byte id, ushort model, byte ver)
-    {
-        if (id != _id)
-            return;
-
-        if(!_connected)
+                        _writeItems.RemoveAt(0);
+                    }
+                    else if(_readItems.Count > 0)
+                    {
+                        int minAddr = 0xffff;
+                        int maxAddr = -1;
+                        foreach(ControlItemInfo item in _readItems)
+                        {
+                            minAddr = Mathf.Min(minAddr, item.address);
+                            maxAddr = Mathf.Max(maxAddr, item.address + item.bytes - 1);
+                        }
+                        int bytes = maxAddr - minAddr + 1;
+                        if (bytes > 0)
+                            commProtocol.Read(_id, (ushort)minAddr, (ushort)bytes);
+                    }
+                    else
+                        commProtocol.Ping(_id);
+                }
+            }
+        }
+        else
         {
-            _model = model;
-            _version = ver;
-            if (productManager != null)
-                productInfo = productManager.GetProductInfo(_model);
+            if (result.rxFail || result.timeout)
+            {
+                Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
+                OnConnectionFailed.Invoke();
+            }
+            else
+            {
+                if(result.query == CommProtocol.QUERY.Ping)
+                    commProtocol.AskWho(_id);
+                else if(result.query == CommProtocol.QUERY.AskWho)
+                {
+                    _model = CommProtocol.Bytes2Word(result.parameters[0], result.parameters[1]);
+                    _version = result.parameters[2];
+                    bool tryUpdate = false;
+                    if (productManager != null)
+                    {
+                        productInfo = productManager.GetProductInfo(_model);
+                        if(productInfo != null)
+                        {
+                            int minAddr = 0xffff;
+                            int maxAddr = -1;
+                            foreach (ControlUIInfo uiInfo in productInfo.uiList)
+                            {
+                                foreach(ControlItemInfo uiItem in uiInfo.uiItems)
+                                {
+                                    minAddr = Mathf.Min(minAddr, uiItem.address);
+                                    maxAddr = Mathf.Max(maxAddr, uiItem.address + uiItem.bytes - 1);
+                                }
+                            }
+                            int bytes = maxAddr - minAddr + 1;
+                            if (bytes > 0)
+                            {
+                                tryUpdate = true;
+                                commProtocol.Read(_id, (ushort)minAddr, (ushort)bytes);
+                            }
+                        }                        
+                    }
+                                        
+                    if(!tryUpdate)
+                    {
+                        _connected = true;
+                        Debug.Log(string.Format("ID:{0:d} Connected", _id));
+                        OnConnected.Invoke();
+                    }       
+                }
+                else if(result.query == CommProtocol.QUERY.Read)
+                {
+                    foreach (ControlUIInfo uiInfo in productInfo.uiList)
+                    {
+                        foreach (ControlItemInfo uiItem in uiInfo.uiItems)
+                        {
+                            int index = uiItem.address - result.address;
+                            if (uiItem.bytes == 1)
+                                uiItem.value = result.parameters[index];
+                            else if (uiItem.bytes == 2)
+                                uiItem.value = CommProtocol.Bytes2Word(result.parameters[index], result.parameters[index + 1]);
+                        }
+                    }
 
-            _connected = true;
-            OnConnected.Invoke();
-        }        
-    }
-
-    private void OnProtocolRead(byte id, ushort address, byte[] parameters)
-    {
-        if (id != _id)
-            return;
+                    _connected = true;
+                    Debug.Log(string.Format("ID:{0:d} Connected", _id));
+                    OnConnected.Invoke();
+                }
+            }            
+        }
     }
 }

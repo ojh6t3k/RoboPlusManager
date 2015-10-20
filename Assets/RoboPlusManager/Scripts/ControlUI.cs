@@ -8,11 +8,12 @@ public class ControlUI : MonoBehaviour
 {
 	private ControlUIInfo _uiInfo;
 	private bool _active = false;
+    private CommProduct _commProduct = null;
 
+    protected virtual void OnSetCommProduct() { }
 	protected virtual void OnUpdateUIInfo() {}
 
-
-	void Awake()
+    void Awake()
 	{
 		active = _active;
 	}
@@ -35,8 +36,30 @@ public class ControlUI : MonoBehaviour
 		{
 			_active = value;
 			this.gameObject.SetActive(_active);
-		}
+            if(_active == false)
+            {
+                if(_commProduct != null)
+                {
+                    _commProduct.ClearItem();
+                    _commProduct = null;
+                    OnSetCommProduct();
+                }                
+            }
+        }
 	}
+
+    public CommProduct commProduct
+    {
+        get
+        {
+            return _commProduct;
+        }
+        set
+        {
+            _commProduct = value;
+            OnSetCommProduct();
+        }
+    }
 
 	public ControlUIInfo uiInfo
 	{

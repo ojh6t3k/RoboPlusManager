@@ -23,11 +23,6 @@ public class ControlItemInfo
     public int minValue;
     public int maxValue;
     public int value;
-
-	public void Reset()
-	{
-		value = defaultValue;
-	}
 }
 
 [Serializable]
@@ -250,8 +245,6 @@ public class ProductManager : MonoBehaviour
                                     item.maxValue *= 256;
                                 item.maxValue--;
                             }
-
-                            item.Reset();
 
                             if(continueList.Count > 1)
                                 item.name += string.Format("{0:d}", continueList[l]);

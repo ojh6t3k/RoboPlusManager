@@ -104,10 +104,10 @@ public class CommunicationUI : ControlUI
 
 	public void OnReset()
 	{
-		_baudrate.Reset();
-		_id.Reset();
-		_returnDelay.Reset();
-		_returnLevel.Reset();
+		_baudrate.value = _baudrate.defaultValue;
+		_id.value = _id.defaultValue;
+		_returnDelay.value = _returnDelay.defaultValue;
+		_returnLevel.value = _returnLevel.defaultValue;
 
 		uiID.Value = _id.value;
 		uiReturnDelay.Value = _returnDelay.value;
