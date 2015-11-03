@@ -52,103 +52,69 @@ public class AlarmUI : ControlUI
     private ControlItemInfo _led;
 
     private bool _preventEvent = false;
+    private bool _initializing;
 
-    void Update()
+
+    #region Override
+    protected override void OnInitialize()
     {
+        uiVoltageShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiAngleShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiOverheatingShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiRangeShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiChecksumShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiOverloadShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+        uiInstructionShutdown.onValueChanged.AddListener(OnChangedAlramShutdown);
+
+        uiVoltageLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiAngleLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiOverheatingLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiRangeLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiChecksumLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiOverloadLED.onValueChanged.AddListener(OnChangedAlramLED);
+        uiInstructionLED.onValueChanged.AddListener(OnChangedAlramLED);
+
+        uiLED.onValueChanged.AddListener(OnChangedLED);
+        uiLEDColor.onValueChanged.AddListener(OnChangedLEDColor);
+
+        uiLowVoltage.onValueChanged.AddListener(OnChangedLowVoltage);
+        uiHighVoltage.onValueChanged.AddListener(OnChangedHighVoltage);
+        uiLowVoltageInput.OnChangedValue.AddListener(OnChangedLowVoltageInput);
+        uiHighVoltageInput.OnChangedValue.AddListener(OnChangedHighVoltageInput);
+
+        uiHighTemperature.onValueChanged.AddListener(OnChangedHighTemperature);
+        uiHighTemperatureInput.OnChangedValue.AddListener(OnChangedHighTemperatureInput);
+
+        uiReset.onClick.AddListener(OnReset);
+        uiSave.onClick.AddListener(OnSave);
     }
 
-    protected override void OnUpdateUIInfo()
+    protected override void OnSetUiInfo()
     {
         ControlUIInfo info = uiInfo;
 
         _preventEvent = true;
+        _initializing = true;
 
         _alramShutdown = info.GetUIItem("AlramShutdown");
-        _voltageLowLimit = info.GetUIItem("VoltageLowLimit");
-        _voltageHighLimit = info.GetUIItem("VoltageHighLimit");
-        _voltage = info.GetUIItem("Voltage");
-        _temperatureHighLimit = info.GetUIItem("TemperatureHighLimit");
-        _temperature = info.GetUIItem("Temperature");
+        _uiAlarmShutdown = _alramShutdown.value;
+ 
+        _voltageLowLimit = info.GetUIItem("VoltageLowLimit");        
+        _uiLowVoltageLimit = _voltageLowLimit.value;
+
+        _voltageHighLimit = info.GetUIItem("VoltageHighLimit");        
+        _uiHighVoltageLimit = _voltageHighLimit.value;
+
+        _voltage = info.GetUIItem("Voltage");        
+        _uiCurrentVoltage = _voltage.value;
+
+        _temperatureHighLimit = info.GetUIItem("TemperatureHighLimit");        
+        _uiHighTemperatureLimit = _temperatureHighLimit.value;
+
+        _temperature = info.GetUIItem("Temperature");        
+        _uiCurrentTemperature = _temperature.value;
+        
         _led = info.GetUIItem("LED");
-
-        if ((_alramShutdown.value & 1) == 1)
-            uiVoltageShutdown.isOn = true;
-        else
-            uiVoltageShutdown.isOn = false;
-        if ((_alramShutdown.value & 2) == 2)
-            uiAngleShutdown.isOn = true;
-        else
-            uiAngleShutdown.isOn = false;
-        if ((_alramShutdown.value & 4) == 4)
-            uiOverheatingShutdown.isOn = true;
-        else
-            uiOverheatingShutdown.isOn = false;
-        if ((_alramShutdown.value & 8) == 8)
-            uiRangeShutdown.isOn = true;
-        else
-            uiRangeShutdown.isOn = false;
-        if ((_alramShutdown.value & 16) == 16)
-            uiChecksumShutdown.isOn = true;
-        else
-            uiChecksumShutdown.isOn = false;
-        if ((_alramShutdown.value & 32) == 32)
-            uiOverloadShutdown.isOn = true;
-        else
-            uiOverloadShutdown.isOn = false;
-        if ((_alramShutdown.value & 64) == 64)
-            uiInstructionShutdown.isOn = true;
-        else
-            uiInstructionShutdown.isOn = false;
-
-        uiLowVoltage.minValue = _voltageLowLimit.minValue;
-        uiLowVoltage.maxValue = _voltageLowLimit.maxValue;
-        uiLowVoltage.wholeNumbers = true;
-        uiLowVoltage.value = _voltageLowLimit.value;
-
-        uiHighVoltage.minValue = _voltageHighLimit.minValue;
-        uiHighVoltage.maxValue = _voltageHighLimit.maxValue;
-        uiHighVoltage.wholeNumbers = true;
-        uiHighVoltage.value = _voltageHighLimit.value;
-
-        uiCurrentVoltage.minValue = _voltage.minValue;
-        uiCurrentVoltage.maxValue = _voltage.maxValue;
-        uiCurrentVoltage.wholeNumbers = true;
-        uiCurrentVoltage.value = _voltage.value;
-
-        uiLowVoltageInput.minValue = _voltageLowLimit.minValue;
-        uiLowVoltageInput.maxValue = _voltageLowLimit.maxValue;
-        uiLowVoltageInput.unitValue = 1;
-        uiLowVoltageInput.format = "f0";
-        uiLowVoltageInput.Value = _voltageLowLimit.value;
-
-        uiHighVoltageInput.minValue = _voltageHighLimit.minValue;
-        uiHighVoltageInput.maxValue = _voltageHighLimit.maxValue;
-        uiHighVoltageInput.unitValue = 1;
-        uiHighVoltageInput.format = "f0";
-        uiHighVoltageInput.Value = _voltageHighLimit.value;
-
-        uiLowVoltageValue.text = string.Format("{0:f1}", _voltageLowLimit.value * 0.1f);
-        uiCurrentVoltageValue.text = string.Format("{0:f1}", _voltage.value * 0.1f);
-        uiHighVoltageValue.text = string.Format("{0:f1}", _voltageHighLimit.value * 0.1f);
-
-        uiHighTemperature.minValue = _temperatureHighLimit.minValue;
-        uiHighTemperature.maxValue = _temperatureHighLimit.maxValue;
-        uiHighTemperature.wholeNumbers = true;
-        uiHighTemperature.value = _temperatureHighLimit.value;
-
-        uiCurrentTemperature.minValue = _temperature.minValue;
-        uiCurrentTemperature.maxValue = _temperature.maxValue;
-        uiCurrentTemperature.wholeNumbers = true;
-        uiCurrentTemperature.value = _temperature.value;
-
-        uiHighTemperatureInput.minValue = _temperatureHighLimit.minValue;
-        uiHighTemperatureInput.maxValue = _temperatureHighLimit.maxValue;
-        uiHighTemperatureInput.unitValue = 1;
-        uiHighTemperatureInput.format = "f0";
-        uiHighTemperatureInput.Value = _temperatureHighLimit.value;
-
-        uiCurrentTemperatureValue.text = string.Format("{0:f0}", _temperature.value);
-        uiHighTemperatureValue.text = string.Format("{0:f0}", _temperatureHighLimit.value);
 
         if (info.version == 1)
         {
@@ -165,39 +131,8 @@ public class AlarmUI : ControlUI
             uiLEDColorText.gameObject.SetActive(false);
 
             _alramLED = info.GetUIItem("AlramLED");
-            if ((_alramLED.value & 1) == 1)
-                uiVoltageLED.isOn = true;
-            else
-                uiVoltageLED.isOn = false;
-            if ((_alramLED.value & 2) == 2)
-                uiAngleLED.isOn = true;
-            else
-                uiAngleLED.isOn = false;
-            if ((_alramLED.value & 4) == 4)
-                uiOverheatingLED.isOn = true;
-            else
-                uiOverheatingLED.isOn = false;
-            if ((_alramLED.value & 8) == 8)
-                uiRangeLED.isOn = true;
-            else
-                uiRangeLED.isOn = false;
-            if ((_alramLED.value & 16) == 16)
-                uiChecksumLED.isOn = true;
-            else
-                uiChecksumLED.isOn = false;
-            if ((_alramLED.value & 32) == 32)
-                uiOverloadLED.isOn = true;
-            else
-                uiOverloadLED.isOn = false;
-            if ((_alramLED.value & 64) == 64)
-                uiInstructionLED.isOn = true;
-            else
-                uiInstructionLED.isOn = false;
-
-            if (_led.value == 1)
-                uiLED.isOn = true;
-            else
-                uiLED.isOn = false;
+            _uiAlarmLED = _alramLED.value;
+            _uiLED = _led.value;
         }
         else if(info.version == 2)
         {
@@ -213,264 +148,551 @@ public class AlarmUI : ControlUI
             uiLEDColor.gameObject.SetActive(true);
             uiLEDColorText.gameObject.SetActive(true);
 
-            int value = _led.value;
-            int n = 0;
-            while(value > 0)
-            {
-                value /= 2;
-                n++;
-            }
-            uiLEDColor.value = n;
+            _uiLEDColor = _led.value;
         }
 
         uiSave.interactable = false;
+
+        _preventEvent = false;
+        _initializing = false;
+    }
+
+    protected override void OnSetCommProduct()
+    {
+        commProduct.AddReadItem(_alramShutdown);
+        commProduct.AddReadItem(_voltageLowLimit);
+        commProduct.AddReadItem(_voltageHighLimit);
+        commProduct.AddReadItem(_voltage);
+        commProduct.AddReadItem(_temperatureHighLimit);
+        commProduct.AddReadItem(_temperature);
+        commProduct.AddReadItem(_led);
+
+        if (uiInfo.version == 1)
+            commProduct.AddReadItem(_alramLED);
+    }
+
+    protected override void OnUpdateUI()
+    {
+        bool modify = false;
+        _preventEvent = true;
+
+        modify |= _alramShutdown.modify;
+        modify |= _voltageLowLimit.modify;
+        modify |= _voltageHighLimit.modify;
+        modify |= _temperatureHighLimit.modify;
+
+        if (_alramShutdown.update)
+            _uiAlarmShutdown = _alramShutdown.value;
+
+        if(_voltageLowLimit.update)
+            _uiLowVoltageLimit = _voltageLowLimit.value;
+
+        if (_voltageHighLimit.update)
+            _uiHighVoltageLimit = _voltageHighLimit.value;
+
+        if (_voltage.update)
+            _uiCurrentVoltage = _voltage.value;
+
+        if (_temperatureHighLimit.update)
+            _uiHighTemperatureLimit = _temperatureHighLimit.value;
+
+        if (_temperature.update)
+            _uiCurrentTemperature = _temperature.value;
+
+        if (uiInfo.version == 1)
+        {
+            modify |= _alramLED.modify;
+
+            if (_alramLED.update)
+                _uiAlarmLED = _alramLED.value;
+
+            if (_led.update)
+                _uiLED = _led.value;
+        }
+        else if(uiInfo.version == 2)
+        {
+            if (_led.update)
+                _uiLEDColor = _led.value;
+        }
+
+        uiSave.interactable = modify;
         _preventEvent = false;
     }
 
-    public void OnChangedAlramShutdown()
+    protected override void OnWriteDone()
+    {
+    }
+    #endregion
+
+    #region Event
+    private void OnChangedAlramShutdown(bool value)
     {
         if (_preventEvent)
             return;
 
-        if (uiVoltageShutdown.isOn == true)
-            _alramShutdown.value |= 1;
-        else
-            _alramShutdown.value &= (255 - 1);
+        _alramShutdown.writeValue = _uiAlarmShutdown;
+    }
 
-        if (uiAngleShutdown.isOn == true)
-            _alramShutdown.value |= 2;
-        else
-            _alramShutdown.value &= (255 - 2);
+    private void OnChangedAlramLED(bool value)
+    {
+        if (_preventEvent)
+            return;
 
-        if (uiOverheatingShutdown.isOn == true)
-            _alramShutdown.value |= 4;
-        else
-            _alramShutdown.value &= (255 - 4);
-
-        if (uiRangeShutdown.isOn == true)
-            _alramShutdown.value |= 8;
-        else
-            _alramShutdown.value &= (255 - 8);
-
-        if (uiChecksumShutdown.isOn == true)
-            _alramShutdown.value |= 16;
-        else
-            _alramShutdown.value &= (255 - 16);
-
-        if (uiOverloadShutdown.isOn == true)
-            _alramShutdown.value |= 32;
-        else
-            _alramShutdown.value &= (255 - 32);
-
-        if (uiInstructionShutdown.isOn == true)
-            _alramShutdown.value |= 64;
-        else
-            _alramShutdown.value &= (255 - 64);
+        _alramLED.writeValue = _uiAlarmLED;
 
         uiSave.interactable = true;
     }
 
-    public void OnChangedAlramLED()
+    private void OnChangedLED(bool value)
     {
         if (_preventEvent)
             return;
 
-        if (uiVoltageLED.isOn == true)
-            _alramLED.value |= 1;
-        else
-            _alramLED.value &= (255 - 1);
-
-        if (uiAngleLED.isOn == true)
-            _alramLED.value |= 2;
-        else
-            _alramLED.value &= (255 - 2);
-
-        if (uiOverheatingLED.isOn == true)
-            _alramLED.value |= 4;
-        else
-            _alramLED.value &= (255 - 4);
-
-        if (uiRangeLED.isOn == true)
-            _alramLED.value |= 8;
-        else
-            _alramLED.value &= (255 - 8);
-
-        if (uiChecksumLED.isOn == true)
-            _alramLED.value |= 16;
-        else
-            _alramLED.value &= (255 - 16);
-
-        if (uiOverloadLED.isOn == true)
-            _alramLED.value |= 32;
-        else
-            _alramLED.value &= (255 - 32);
-
-        if (uiInstructionLED.isOn == true)
-            _alramLED.value |= 64;
-        else
-            _alramLED.value &= (255 - 64);
-
-        uiSave.interactable = true;
+        _led.writeValue = _uiLED;
+        commProduct.AddWriteItem(_led);
     }
 
-    public void OnChangedLED()
+    private void OnChangedLEDColor(int value)
     {
         if (_preventEvent)
             return;
 
-        if (uiLED.isOn == true)
-            _led.value = 1;
-        else
-            _led.value = 0;
+        _led.writeValue = _uiLEDColor;
+        commProduct.AddWriteItem(_led);
     }
 
-    public void OnChangedLEDColor()
+    private void OnChangedLowVoltage(float value)
     {
         if (_preventEvent)
             return;
 
-        _led.value = 0;
-        for (int i = 0; i < uiLEDColor.value; i++)
-            _led.value |= (0x01 << i);
+        _voltageLowLimit.writeValue = (int)uiLowVoltage.value;
+        _uiLowVoltageLimit = _voltageLowLimit.writeValue;
     }
 
-    public void OnChangedLowVoltage()
+    private void OnChangedHighVoltage(float value)
     {
-        if(uiLowVoltage.value > (uiHighVoltage.value - 1))
-            uiLowVoltage.value = uiHighVoltage.value - 1;
-
         if (_preventEvent)
             return;
 
-        _preventEvent = true;
+        _voltageHighLimit.writeValue = (int)uiHighVoltage.value;
+        _uiHighVoltageLimit = _voltageHighLimit.writeValue;
+    }
 
-        int value = (int)uiLowVoltage.value;
-        if (value != _voltageLowLimit.value)
+    private void OnChangedHighVoltageInput()
+    {
+        if (_preventEvent)
+            return;
+
+        _voltageHighLimit.writeValue = (int)uiHighVoltageInput.Value;
+        _uiHighVoltageLimit = _voltageHighLimit.writeValue;
+    }
+
+    private void OnChangedLowVoltageInput()
+    {
+        if (_preventEvent)
+            return;
+
+        _voltageLowLimit.writeValue = (int)uiLowVoltageInput.Value;
+        _uiLowVoltageLimit = _voltageLowLimit.writeValue;
+    }
+
+    private void OnChangedHighTemperature(float value)
+    {
+        if (_preventEvent)
+            return;
+
+        _temperatureHighLimit.writeValue = (int)uiHighTemperature.value;
+        _uiHighTemperatureLimit = _temperatureHighLimit.writeValue;
+    }
+
+    private void OnChangedHighTemperatureInput()
+    {
+        if (_preventEvent)
+            return;
+
+        _temperatureHighLimit.writeValue = (int)uiHighTemperatureInput.Value;
+        _uiHighTemperatureLimit = _temperatureHighLimit.writeValue;
+    }
+
+    private void OnReset()
+    {
+        if (_preventEvent)
+            return;
+
+        if(_alramShutdown.value != _alramShutdown.defaultValue)
         {
-            _voltageLowLimit.value = value;
+            _alramShutdown.writeValue = _alramShutdown.defaultValue;
+            _uiAlarmShutdown = _alramShutdown.writeValue;
+        }
+
+        if (_voltageLowLimit.value != _voltageLowLimit.defaultValue)
+        {
+            _voltageLowLimit.writeValue = _voltageLowLimit.defaultValue;
+            _uiLowVoltageLimit = _voltageLowLimit.writeValue;
+        }
+
+        if (_voltageHighLimit.value != _voltageHighLimit.defaultValue)
+        {
+            _voltageHighLimit.writeValue = _voltageHighLimit.defaultValue;
+            _uiHighVoltageLimit = _voltageHighLimit.writeValue;
+        }
+
+        if (_temperatureHighLimit.value != _temperatureHighLimit.defaultValue)
+        {
+            _temperatureHighLimit.writeValue = _temperatureHighLimit.defaultValue;
+            _uiHighTemperatureLimit = _temperatureHighLimit.writeValue;
+        }
+
+        if (uiInfo.version == 1)
+        {
+            if (_alramLED.value != _alramLED.defaultValue)
+            {
+                _alramLED.writeValue = _alramLED.defaultValue;
+                _uiAlarmLED = _alramLED.writeValue;
+            }
+        }        
+    }
+
+    private void OnSave()
+    {
+        if (_preventEvent)
+            return;
+
+        commProduct.AddWriteItem(_alramShutdown);
+        commProduct.AddWriteItem(_voltageLowLimit);
+        commProduct.AddWriteItem(_voltageHighLimit);
+        commProduct.AddWriteItem(_voltage);
+        commProduct.AddWriteItem(_temperatureHighLimit);
+
+        if (uiInfo.version == 1)
+        {
+            commProduct.AddWriteItem(_alramLED);
+        }
+    }
+    #endregion
+
+    #region UI Control
+    private int _uiAlarmShutdown
+    {
+        get
+        {
+            int value = 0;
+
+            if (uiVoltageShutdown.isOn)
+                value |= 1;
+            else
+                value &= (255 - 1);
+
+            if (uiAngleShutdown.isOn)
+                value |= 2;
+            else
+                value &= (255 - 2);
+
+            if (uiOverheatingShutdown.isOn)
+                value |= 4;
+            else
+                value &= (255 - 4);
+
+            if (uiRangeShutdown.isOn)
+                value |= 8;
+            else
+                value &= (255 - 8);
+
+            if (uiChecksumShutdown.isOn)
+                value |= 16;
+            else
+                value &= (255 - 16);
+
+            if (uiOverloadShutdown.isOn)
+                value |= 32;
+            else
+                value &= (255 - 32);
+
+            if (uiInstructionShutdown.isOn)
+                value |= 64;
+            else
+                value &= (255 - 64);
+
+            return value;
+        }
+        set
+        {
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if ((value & 1) == 1)
+                uiVoltageShutdown.isOn = true;
+            else
+                uiVoltageShutdown.isOn = false;
+            if ((value & 2) == 2)
+                uiAngleShutdown.isOn = true;
+            else
+                uiAngleShutdown.isOn = false;
+            if ((value & 4) == 4)
+                uiOverheatingShutdown.isOn = true;
+            else
+                uiOverheatingShutdown.isOn = false;
+            if ((value & 8) == 8)
+                uiRangeShutdown.isOn = true;
+            else
+                uiRangeShutdown.isOn = false;
+            if ((value & 16) == 16)
+                uiChecksumShutdown.isOn = true;
+            else
+                uiChecksumShutdown.isOn = false;
+            if ((value & 32) == 32)
+                uiOverloadShutdown.isOn = true;
+            else
+                uiOverloadShutdown.isOn = false;
+            if ((value & 64) == 64)
+                uiInstructionShutdown.isOn = true;
+            else
+                uiInstructionShutdown.isOn = false;
+
+            _preventEvent = backup;
+        }        
+    }
+
+    private int _uiAlarmLED
+    {
+        get
+        {
+            int value = 0;
+
+            if (uiVoltageLED.isOn)
+                value |= 1;
+            else
+                value &= (255 - 1);
+
+            if (uiAngleLED.isOn)
+                value |= 2;
+            else
+                value &= (255 - 2);
+
+            if (uiOverheatingLED.isOn)
+                value |= 4;
+            else
+                value &= (255 - 4);
+
+            if (uiRangeLED.isOn)
+                value |= 8;
+            else
+                value &= (255 - 8);
+
+            if (uiChecksumLED.isOn)
+                value |= 16;
+            else
+                value &= (255 - 16);
+
+            if (uiOverloadLED.isOn)
+                value |= 32;
+            else
+                value &= (255 - 32);
+
+            if (uiInstructionLED.isOn)
+                value |= 64;
+            else
+                value &= (255 - 64);
+
+            return value;
+        }
+        set
+        {
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if ((value & 1) == 1)
+                uiVoltageLED.isOn = true;
+            else
+                uiVoltageLED.isOn = false;
+            if ((value & 2) == 2)
+                uiAngleLED.isOn = true;
+            else
+                uiAngleLED.isOn = false;
+            if ((value & 4) == 4)
+                uiOverheatingLED.isOn = true;
+            else
+                uiOverheatingLED.isOn = false;
+            if ((value & 8) == 8)
+                uiRangeLED.isOn = true;
+            else
+                uiRangeLED.isOn = false;
+            if ((value & 16) == 16)
+                uiChecksumLED.isOn = true;
+            else
+                uiChecksumLED.isOn = false;
+            if ((value & 32) == 32)
+                uiOverloadLED.isOn = true;
+            else
+                uiOverloadLED.isOn = false;
+            if ((value & 64) == 64)
+                uiInstructionLED.isOn = true;
+            else
+                uiInstructionLED.isOn = false;
+
+            _preventEvent = backup;
+        }
+    }
+
+    private int _uiLED
+    {
+        get
+        {
+            if (uiLED.isOn == true)
+                return 1;
+            else
+                return 0;
+        }
+        set
+        {
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if (value == 1)
+                uiLED.isOn = true;
+            else
+                uiLED.isOn = false;
+
+            _preventEvent = backup;
+        }
+    }
+
+    private int _uiLEDColor
+    {
+        get
+        {
+            return uiLEDColor.value;
+        }
+        set
+        {
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            uiLEDColor.value = value;
+
+            _preventEvent = backup;
+        }
+    }
+
+    private int _uiLowVoltageLimit
+    {
+        set
+        {
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if(_initializing)
+            {
+                uiLowVoltage.minValue = _voltageLowLimit.minValue;
+                uiLowVoltage.maxValue = _voltageLowLimit.maxValue;
+                uiLowVoltage.wholeNumbers = true;
+                uiLowVoltageInput.minValue = _voltageLowLimit.minValue;
+                uiLowVoltageInput.maxValue = _voltageLowLimit.maxValue;
+                uiLowVoltageInput.unitValue = 1;
+                uiLowVoltageInput.format = "f0";
+            }
+
+            uiLowVoltage.value = value;
             uiLowVoltageInput.Value = value;
             uiLowVoltageValue.text = string.Format("{0:f1}", value * 0.1f);
-            uiSave.interactable = true;
-        }       
 
-        _preventEvent = false;        
+            _preventEvent = backup;
+        }
     }
 
-    public void OnChangedHighVoltage()
+    private int _uiHighVoltageLimit
     {
-        if (uiHighVoltage.value < (uiLowVoltage.value + 1))
-            uiHighVoltage.value = uiLowVoltage.value + 1;
-
-        if (_preventEvent)
-            return;
-
-        _preventEvent = true;
-
-        int value = (int)uiHighVoltage.value;
-        if (value != _voltageHighLimit.value)
+        set
         {
-            _voltageHighLimit.value = value;
-            uiHighVoltageInput.Value = value;
-            uiHighVoltageValue.text = string.Format("{0:f1}", value * 0.1f);
-            uiSave.interactable = true;
-        }       
+            bool backup = _preventEvent;
+            _preventEvent = true;
 
-        _preventEvent = false;        
-    }
+            if(_initializing)
+            {
+                uiHighVoltage.minValue = _voltageHighLimit.minValue;
+                uiHighVoltage.maxValue = _voltageHighLimit.maxValue;
+                uiHighVoltage.wholeNumbers = true;
+                uiHighVoltageInput.minValue = _voltageHighLimit.minValue;
+                uiHighVoltageInput.maxValue = _voltageHighLimit.maxValue;
+                uiHighVoltageInput.unitValue = 1;
+                uiHighVoltageInput.format = "f0";
+            }
 
-    public void OnChangedHighVoltageInput()
-    {
-        if (uiHighVoltageInput.Value < (uiLowVoltage.value + 1))
-            uiHighVoltageInput.Value = uiLowVoltage.value + 1;
-
-        if (_preventEvent)
-            return;
-
-        _preventEvent = true;
-
-        int value = (int)uiHighVoltageInput.Value;
-        if (value != _voltageHighLimit.value)
-        {
-            _voltageHighLimit.value = value;
             uiHighVoltage.value = value;
-            uiHighVoltageValue.text = string.Format("{0:f1}", value * 0.1f);
-            uiSave.interactable = true;
-        }       
+            uiHighVoltageInput.Value = value;
+            uiHighVoltageValue.text = string.Format("{0:f1}",value * 0.1f);
 
-        _preventEvent = false;        
+            _preventEvent = backup;
+        }
     }
 
-    public void OnChangedLowVoltageInput()
+    private int _uiCurrentVoltage
     {
-        if (uiLowVoltageInput.Value > (uiHighVoltage.value - 1))
-            uiLowVoltageInput.Value = uiHighVoltage.value - 1;
-
-        if (_preventEvent)
-            return;
-
-        _preventEvent = true;
-
-        int value = (int)uiLowVoltageInput.Value;
-        if (value != _voltageLowLimit.value)
+        set
         {
-            _voltageLowLimit.value = value;
-            uiLowVoltage.value = value;
-            uiLowVoltageValue.text = string.Format("{0:f1}", value * 0.1f);
-            uiSave.interactable = true;
-        }       
+            bool backup = _preventEvent;
+            _preventEvent = true;
 
-        _preventEvent = false;        
+            if(_initializing)
+            {
+                uiCurrentVoltage.minValue = _voltage.minValue;
+                uiCurrentVoltage.maxValue = _voltage.maxValue;
+                uiCurrentVoltage.wholeNumbers = true;
+            }
+
+            uiCurrentVoltage.value = value;
+            uiCurrentVoltageValue.text = string.Format("{0:f1}", value * 0.1f);
+
+            _preventEvent = backup;
+        }
     }
 
-    public void OnChangedHighTemperature()
+    private int _uiHighTemperatureLimit
     {
-        if (_preventEvent)
-            return;
-
-        _preventEvent = true;
-
-        int value = (int)uiHighTemperature.value;
-        if (value != _temperatureHighLimit.value)
+        set
         {
-            _temperatureHighLimit.value = value;
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if(_initializing)
+            {
+                uiHighTemperature.minValue = _temperatureHighLimit.minValue;
+                uiHighTemperature.maxValue = _temperatureHighLimit.maxValue;
+                uiHighTemperature.wholeNumbers = true;
+                uiHighTemperatureInput.minValue = _temperatureHighLimit.minValue;
+                uiHighTemperatureInput.maxValue = _temperatureHighLimit.maxValue;
+                uiHighTemperatureInput.unitValue = 1;
+                uiHighTemperatureInput.format = "f0";
+            }
+
+            uiHighTemperature.value = value;
             uiHighTemperatureInput.Value = value;
             uiHighTemperatureValue.text = string.Format("{0:f0}", value);
-            uiSave.interactable = true;
-        }
 
-        _preventEvent = false;
+            _preventEvent = backup;
+        }
     }
 
-    public void OnChangedHighTemperatureInput()
+    private int _uiCurrentTemperature
     {
-        if (_preventEvent)
-            return;
-
-        _preventEvent = true;
-
-        int value = (int)uiHighTemperatureInput.Value;
-        if (value != _temperatureHighLimit.value)
+        set
         {
-            _temperatureHighLimit.value = value;
-            uiHighTemperature.value = value;
-            uiHighTemperatureValue.text = string.Format("{0:f0}", value);
-            uiSave.interactable = true;
+            bool backup = _preventEvent;
+            _preventEvent = true;
+
+            if(_initializing)
+            {
+                uiCurrentTemperature.minValue = _temperature.minValue;
+                uiCurrentTemperature.maxValue = _temperature.maxValue;
+                uiCurrentTemperature.wholeNumbers = true;
+            }
+
+            uiCurrentTemperature.value = value;
+            uiCurrentTemperatureValue.text = string.Format("{0:f0}", value);
+
+            _preventEvent = backup;
         }
-
-        _preventEvent = false;
     }
-
-    public void OnReset()
-    {
-        if (_preventEvent)
-            return;
-    }
-
-    public void OnSave()
-    {
-        if (_preventEvent)
-            return;
-
-        uiSave.interactable = false;
-    }
+    #endregion
 }

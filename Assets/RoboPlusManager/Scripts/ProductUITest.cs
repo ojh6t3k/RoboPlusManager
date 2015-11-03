@@ -47,7 +47,7 @@ public class ProductUITest : MonoBehaviour
 		info.AppendLine(string.Format("-Key: {0}", product.key));
 		info.AppendLine(string.Format("-Type: {0}", product.type));
 		info.AppendLine(string.Format("-Model: {0:d}", product.model));
-		info.AppendLine(string.Format("-Protocol: v{0:f}", product.protocolVersion));
+		info.AppendLine(string.Format("-Protocol: v{0:f}", product.protocol.ToString()));
 		if(product.firmware == null)
 			info.AppendLine("-Not support firmware");
 		else

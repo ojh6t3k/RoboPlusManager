@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Product key="CM530" name="CM-530" type="CM" model="390">
   <Firmware version="16" address="0x08003000"></Firmware>
-  <Control protocol="2.0">
+  <Control protocol="CM">
     <UI icon="TestIcon_3" name="Operate" class="OperateUI" version="1">
       <Item name="AuxLED" address="79" access="rw" save="false" byte="1"></Item>
       <Item name="Button" address="26" access="r" save="false" byte="1"></Item>

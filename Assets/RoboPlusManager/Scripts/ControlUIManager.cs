@@ -35,7 +35,10 @@ public class ControlUIManager : MonoBehaviour
 			_selectedUI = null;
 			defaultUI.active = false;
 			foreach(ControlUI ui in uiList)
-				ui.active = false;
+            {
+                ui.active = false;
+                ui.commProduct = null;
+            }
 
 			if(value != null)
 			{
@@ -43,9 +46,9 @@ public class ControlUIManager : MonoBehaviour
 				{
 					if(ui.uiClass.Equals(value.uiClass) == true)
 					{
-						ui.active = true;
+						ui.active = true;                        
+                        ui.uiInfo = value;
                         ui.commProduct = commProduct;
-                        ui.uiInfo = value;                        
                         _selectedUI = ui;
 						break;
 					}

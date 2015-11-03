@@ -2,7 +2,7 @@
 <Product key="MX28" name="MX-28" type="DXL" model="29">
 	<Firmware version="10"></Firmware>
 	<Calibration version="3"></Calibration>
-	<Control protocol="2.0">
+	<Control protocol="DXL">
     <UI icon="TestIcon_1" name="Information" class="InformationUI" version="1">
       <Item name="ModelNumber" address="0" access="r" save="true" byte="2"></Item>
       <Item name="Version" address="2" access="r" save="true" byte="1"></Item>
@@ -34,10 +34,10 @@
       <Item name="Dgain" address="26" access="rw" save="false" byte="1" default="0"></Item>
     </UI>
     <UI icon="TestIcon_5" name="Torque" class="TorqueUI" version="1">
-      <Item name="MaxTorque" address="14" access="rw" save="true" byte="2" default="1023"></Item>
-      <Item name="TorqueLimit" address="34" access="rw" save="false" byte="2" default="1023"></Item>
-      <Item name="TorqueEnable" address="24" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="Punch" address="48" access="rw" save="false" byte="2" default="0"></Item>
+      <Item name="MaxTorque" address="14" access="rw" save="true" byte="2" default="1023" range="0~1023"></Item>
+      <Item name="TorqueLimit" address="34" access="rw" save="false" byte="2" range="0~1023"></Item>
+      <Item name="TorqueEnable" address="24" access="rw" save="false" byte="1"></Item>
+      <Item name="Punch" address="48" access="rw" save="false" byte="2" range="0~1023"></Item>
     </UI>
     <UI icon="TestIcon_6" name="Alarm" class="AlarmUI" version="1">
       <Item name="TemperatureHighLimit" address="11" access="rw" save="true" byte="1" default="80" range="10~99"></Item>

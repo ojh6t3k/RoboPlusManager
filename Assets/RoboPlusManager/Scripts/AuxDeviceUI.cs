@@ -32,7 +32,7 @@ public class AuxDeviceUI : ControlUI
 
     }
 
-    protected override void OnUpdateUIInfo()
+    protected override void OnSetUiInfo()
     {
         ControlUIInfo info = uiInfo;
 

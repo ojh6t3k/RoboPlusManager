@@ -22,7 +22,16 @@ public class ControlItemInfo
 	public int defaultValue;
     public int minValue;
     public int maxValue;
+    public int writeValue;    
     public int value;
+    public bool update;
+    public bool modify
+    {
+        get
+        {
+            return (writeValue != value);
+        }
+    }
 }
 
 [Serializable]
@@ -59,9 +68,9 @@ public class ProductInfo
 	public float firmwareVersion;
     public int firmwareAddress;
 	public TextAsset calibration;
-	public float calibrationVersion;
-	public float protocolVersion;
-	public ControlUIInfo[] uiList;
+	public float calibrationVersion;    
+	public PROTOCOL protocol;
+    public ControlUIInfo[] uiList;
 
     public ControlUIInfo GetControlUIInfo(string uiClass)
     {
@@ -79,9 +88,12 @@ public class ProductManager : MonoBehaviour
 {
 	public ProductInfo[] productList;
 
-	void Awake()
+    private static ProductManager _manager = null;
+
+    void Awake()
 	{
-		Load();
+        _manager = this;
+        Load();
 	}
 
 	// Use this for initialization
@@ -94,6 +106,14 @@ public class ProductManager : MonoBehaviour
 	{
 	
 	}
+
+    public static ProductManager manager
+    {
+        get
+        {
+            return _manager;
+        }
+    }
 
     public ProductInfo GetProductInfo(int model)
     {
@@ -158,9 +178,17 @@ public class ProductManager : MonoBehaviour
 				product.image = Resources.Load<Sprite>("Product/Image/" + product.key);
 
 				xmlEle = (XmlElement)xml.SelectSingleNode("/Product/Control");
-				product.protocolVersion = float.Parse(xmlEle.Attributes["protocol"].Value);
+                string protocolValue = xmlEle.Attributes["protocol"].Value;
+                if (protocolValue.Equals("CM"))
+                    product.protocol = PROTOCOL.CM;
+                else if (protocolValue.Equals("DXL"))
+                    product.protocol = PROTOCOL.DXL;
+                else if (protocolValue.Equals("DXL2"))
+                    product.protocol = PROTOCOL.DXL2;
+                else
+                    product.protocol = PROTOCOL.UnKnown;
 
-				List<ControlUIInfo> uis = new List<ControlUIInfo>();
+                List<ControlUIInfo> uis = new List<ControlUIInfo>();
 				XmlNodeList xmlNodes = xmlEle.SelectNodes("./UI");
 				for(int j=0; j<xmlNodes.Count; j++)
 				{

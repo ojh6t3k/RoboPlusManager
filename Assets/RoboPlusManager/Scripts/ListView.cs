@@ -97,6 +97,22 @@ public class ListView : MonoBehaviour
 		}
 	}
 
+    public ListItem[] items
+    {
+        get
+        {
+            List<ListItem> list = new List<ListItem>();
+            foreach (Transform item in itemPanel.transform)
+            {
+                ListItem i = item.GetComponent<ListItem>();
+                if(i != null)
+                    list.Add(i);
+            }
+
+            return list.ToArray();
+        }
+    }
+
 	public void ClearItem()
 	{
 		_selectedItem = null;
@@ -142,9 +158,18 @@ public class ListView : MonoBehaviour
 		if(_selectedItem == null)
 			return;
 
-		GameObject.DestroyImmediate(_selectedItem.gameObject);
+		DestroyImmediate(_selectedItem.gameObject);
 
 		_selectedItem = null;
 		_itemNum--;
 	}
+
+    public void RemoveItem(ListItem item)
+    {
+        if (_selectedItem.Equals(item))
+            selectedItem = null;
+
+        DestroyImmediate(item.gameObject);
+        _itemNum--;
+    }
 }

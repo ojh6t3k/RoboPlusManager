@@ -7,7 +7,7 @@ public class DefaultUI : ControlUI
 {
 	public Text uiText;
 
-	protected override void OnUpdateUIInfo()
+	protected override void OnSetUiInfo()
 	{
 		ControlUIInfo info = uiInfo;
 		if(info != null)

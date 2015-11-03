@@ -10,13 +10,18 @@ public class ControlUI : MonoBehaviour
 	private bool _active = false;
     private CommProduct _commProduct = null;
 
+    protected virtual void OnInitialize() { }
     protected virtual void OnSetCommProduct() { }
-	protected virtual void OnUpdateUIInfo() {}
+	protected virtual void OnSetUiInfo() { }
+    protected virtual void OnUpdateUI() { }
+    protected virtual void OnWriteDone() { }
 
     void Awake()
 	{
 		active = _active;
-	}
+
+        OnInitialize();
+    }
 
 	public string uiClass
 	{
@@ -36,15 +41,6 @@ public class ControlUI : MonoBehaviour
 		{
 			_active = value;
 			this.gameObject.SetActive(_active);
-            if(_active == false)
-            {
-                if(_commProduct != null)
-                {
-                    _commProduct.ClearItem();
-                    _commProduct = null;
-                    OnSetCommProduct();
-                }                
-            }
         }
 	}
 
@@ -56,8 +52,20 @@ public class ControlUI : MonoBehaviour
         }
         set
         {
+            if(_commProduct != null)
+            {
+                _commProduct.ClearItem();
+                _commProduct.OnReadUpdate.RemoveListener(OnUpdateUI);
+                _commProduct.OnWriteCompleted.RemoveListener(OnWriteDone);
+            }
+
             _commProduct = value;
-            OnSetCommProduct();
+            if (_commProduct != null)
+            {
+                OnSetCommProduct();
+                _commProduct.OnReadUpdate.AddListener(OnUpdateUI);
+                _commProduct.OnWriteCompleted.AddListener(OnWriteDone);
+            }
         }
     }
 
@@ -70,7 +78,8 @@ public class ControlUI : MonoBehaviour
 		set
 		{
 			_uiInfo = value;
-			OnUpdateUIInfo();
+            if(_uiInfo != null)
+                OnSetUiInfo();
 		}
 	}
 

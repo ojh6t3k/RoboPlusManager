@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Product key="XL320" name="XL-320" type="DXL" model="350">
 	<Firmware version="10"></Firmware>
-	<Control protocol="2.0">
+	<Control protocol="DXL2">
     <UI icon="TestIcon_1" name="Information" class="InformationUI" version="1">
       <Item name="ModelNumber" address="0" access="r" save="true" byte="2" default="29"></Item>
       <Item name="Version" address="2" access="r" save="true" byte="1" default="10"></Item>
@@ -15,7 +15,7 @@
     <UI icon="TestIcon_3" name="Drive" class="DriveUI" version="3" param="-150~150,0~114">
       <Item name="CWAngleLimit" address="6" access="rw" save="true" byte="2" default="0" range="0~1023"></Item>
       <Item name="CCWAngleLimit" address="8" access="rw" save="true" byte="2" default="1023" range="0~1023"></Item>
-      <Item name="DriveMode" address="11" access="rw" save="true" byte="2" default="2"></Item>
+      <Item name="DriveMode" address="11" access="rw" save="true" byte="1" default="2"></Item>
       <Item name="GoalPosition" address="30" access="rw" save="false" byte="2" range="0~1023"></Item>
       <Item name="JointSpeed" address="32" access="rw" save="false" byte="2" range="0~1023"></Item>
       <Item name="WheelSpeed" address="32" access="rw" save="false" byte="2" range="0~2047"></Item>
@@ -24,12 +24,12 @@
       <Item name="PresentJointSpeed" address="39" access="r" save="false" byte="2" range="0~1023"></Item>
       <Item name="PresentWheelSpeed" address="39" access="r" save="false" byte="2" range="0~2047"></Item>
       <Item name="PresentLoad" address="41" access="r" save="false" byte="2" range="0~2047"></Item>
-      <Item name="Moving" address="46" access="r" save="false" byte="1"></Item>
+      <Item name="Moving" address="49" access="r" save="false" byte="1"></Item>
     </UI>
     <UI icon="TestIcon_5" name="Torque" class="TorqueUI" version="2">
-      <Item name="MaxTorque" address="15" access="rw" save="true" byte="2" default="1023"></Item>
-      <Item name="TorqueEnable" address="24" access="rw" save="false" byte="1" default="0"></Item>
-      <Item name="Punch" address="51" access="rw" save="false" byte="2" default="0"></Item>
+      <Item name="MaxTorque" address="15" access="rw" save="true" byte="2" default="1023" range="0~1023"></Item>
+      <Item name="TorqueEnable" address="24" access="rw" save="false" byte="1"></Item>
+      <Item name="Punch" address="51" access="rw" save="false" byte="2" range="0~1023"></Item>
     </UI>
     <UI icon="TestIcon_6" name="Alarm" class="AlarmUI" version="2">
       <Item name="TemperatureHighLimit" address="12" access="rw" save="true" byte="1" default="70" range="10~99"></Item>

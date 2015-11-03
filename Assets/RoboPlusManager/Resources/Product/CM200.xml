@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Product key="CM200" name="CM-200" type="CM" model="370">
 	<Firmware version="16" address="0x08002000"></Firmware>
-	<Control protocol="2.0">
+	<Control protocol="DXL2">
     <UI icon="TestIcon_2" name="Operate" class="OperateUI" version="3">
       <Item name="SleepTimer" address="76" access="rw" save="false" byte="1"></Item>
       <Item name="ButtonCount" address="25" access="r" save="false" byte="1"></Item>
