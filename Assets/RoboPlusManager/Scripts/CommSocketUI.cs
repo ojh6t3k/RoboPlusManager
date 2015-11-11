@@ -1,22 +1,30 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 
-[RequireComponent(typeof(CommSocket))]
 public class CommSocketUI : MonoBehaviour
 {
+    public CommSocket socket;
     public ListView uiDeviceList;
     public ListItem uiDeviceItem;
+    public Button uiOpen;
+    public Button uiSearch;
+    public GameObject messageRoot;
+    public GameObject messageConnecting;
+    public GameObject messageConnectionFailed;
+//    public GameObject message
 
-    private CommSocket _socket;
     private bool _preventEvent = false;
     
 
     void Awake()
     {
-        _socket = GetComponent<CommSocket>();
-        _socket.OnFoundDevice.AddListener(OnFoundDevice);
-        _socket.OnSearchCompleted.AddListener(OnSearchCompleted);
+        socket.OnFoundDevice.AddListener(OnFoundDevice);
+        socket.OnSearchCompleted.AddListener(OnSearchCompleted);
+
+        uiDeviceList.OnChangedSelection.AddListener(OnChangedDevice);
+        uiOpen.onClick.AddListener(OnClickOpen);
+        uiSearch.onClick.AddListener(OnClickSearch);
     }
 
 	// Use this for initialization
@@ -31,42 +39,36 @@ public class CommSocketUI : MonoBehaviour
 	
 	}
 
-    public void OnWriteTest()
+    public void ShowUI()
     {
-        _socket.Write(new byte[] { 0, 1, 2, 3, 4, 5 });
+        OnClickSearch();
     }
 
-    public void OnSearch()
-    {
-        uiDeviceList.ClearItem();
-        _socket.Search();
-    }
-
-    public void OnChangedDevice()
+    private void OnChangedDevice()
     {
         if (_preventEvent)
             return;
 
         ListItem selected = uiDeviceList.selectedItem;
         if(selected != null)
-            _socket.device = new CommDevice((CommDevice)selected.data);
+            socket.device = new CommDevice((CommDevice)selected.data);
     }
 
     private void OnFoundDevice()
     {
-        for(int i=uiDeviceList.itemCount; i<_socket.foundDevices.Count; i++)
+        for(int i=uiDeviceList.itemCount; i<socket.foundDevices.Count; i++)
         {
             ListItem item = GameObject.Instantiate(uiDeviceItem);
-            item.textList[0].text = _socket.foundDevices[i].type.ToString();
-            item.textList[1].text = _socket.foundDevices[i].name;
-            item.data = _socket.foundDevices[i];
+            item.textList[0].text = socket.foundDevices[i].type.ToString();
+            item.textList[1].text = socket.foundDevices[i].name;
+            item.data = socket.foundDevices[i];
             uiDeviceList.AddItem(item);
         }
 
         _preventEvent = true;
-        for(int i=0; i<_socket.foundDevices.Count; i++)
+        for(int i=0; i<socket.foundDevices.Count; i++)
         {
-            if(_socket.device.Equals(_socket.foundDevices[i]))
+            if(socket.device.Equals(socket.foundDevices[i]))
             {
                 uiDeviceList.selectedIndex = i;
                 break;
@@ -77,6 +79,18 @@ public class CommSocketUI : MonoBehaviour
 
     private void OnSearchCompleted()
     {
+        uiSearch.interactable = true;
+    }
 
+    private void OnClickOpen()
+    {
+        socket.Open();
+    }
+
+    private void OnClickSearch()
+    {
+        uiDeviceList.ClearItem();
+        uiSearch.interactable = false;
+        socket.Search();
     }
 }

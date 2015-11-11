@@ -9,10 +9,10 @@ using UnityEngine.UI;
 [Serializable]
 public class LanguageInfo
 {
+    public string name;
 	public string iso3code;
 	public Font font;
-	public Image uiImage;
-	public Text uiText;
+	public Sprite image;
 
 	[HideInInspector]
 	public Hashtable table;
@@ -25,8 +25,6 @@ public class LocalizationManager : MonoBehaviour
 {
 	public TextAsset table;
 	public string newLineText = "{/n}";
-	public Image uiImage;
-	public Text uiText;
 	public LanguageInfo[] languages;
 
 	[HideInInspector]
@@ -86,11 +84,13 @@ public class LocalizationManager : MonoBehaviour
 		}
 
 		foreach(LanguageInfo lang in languages)
-		{
-			if(lang.uiText != null)
-				lang.uiText.text = (string)lang.table["Language"];
-		}
-	}
+            lang.name = (string)lang.table["Language"];
+
+        if (languages.Length > 0)
+            currentLanguage = languages[0].iso3code;
+
+        ApplyLanguage();
+    }
 
 	public string currentLanguage
 	{
@@ -123,21 +123,21 @@ public class LocalizationManager : MonoBehaviour
 
 			if(_currentLanguage == null)
 				return;
-
-			if(uiImage != null && _currentLanguage.uiImage != null)
-				uiImage.sprite = _currentLanguage.uiImage.sprite;
-
-			if(uiText != null && _currentLanguage.uiText != null)
-				uiText.text = _currentLanguage.uiText.text;
-
-			LocalizedText[] textList = GameObject.FindObjectsOfType<LocalizedText>();
-			foreach(LocalizedText lt in textList)
-			{
-				if(_currentLanguage.table.ContainsKey(lt.key) == true)
-					lt.Refresh((string)_currentLanguage.table[lt.key], _currentLanguage.font);
-			}
 		}
 	}
+
+    public void ApplyLanguage()
+    {
+        if (_currentLanguage == null)
+            return;
+
+        LocalizedText[] textList = GameObject.FindObjectsOfType<LocalizedText>();
+        foreach (LocalizedText lt in textList)
+        {
+            if (_currentLanguage.table.ContainsKey(lt.key) == true)
+                lt.Refresh((string)_currentLanguage.table[lt.key], _currentLanguage.font);
+        }
+    }
 
 	public string GetLocalizedText(string key)
 	{
