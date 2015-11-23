@@ -80,6 +80,7 @@ public class CommSocket : MonoBehaviour
     public List<CommDevice> foundDevices = new List<CommDevice>();
     [SerializeField]
     public CommDevice device;
+    public int serialBaudrate = 57600;
     public float searchTimeout = 5f;
 
     public UnityEvent OnOpen;
@@ -416,6 +417,11 @@ public class CommSocket : MonoBehaviour
 #endregion
 
 #region Public
+    public void SetSerialBaudrate(int baudrate)
+    {
+        serialBaudrate = baudrate;
+    }
+
     public void Open()
     {
         CancelSearch();
@@ -920,7 +926,7 @@ public class CommSocket : MonoBehaviour
             _serialPort.PortName = device.address;        
             try
             {
-                _serialPort.BaudRate = int.Parse(device.args[0]);
+                _serialPort.BaudRate = serialBaudrate;
                 _serialPort.Open();
                 _threadOnOpen = true;
                 openTry = true;

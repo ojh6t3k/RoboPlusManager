@@ -1,5 +1,5 @@
 key	eng	kor	jpn	zho	fre	deu
-Language	English	한국어	日本語	中国	français	Deutsch
-Test1	Hello	안녕하세요.	こんにちは	您好	Bonjour	Hallo
-Test2	Nice to meet you.{/n}See you next .	반갑습니다.{/n}다음에 봅시다.	始めまして。{/n}あなたの隣を参照してください。	很高兴认识你。{/n}再见。	Enchanté de faire votre connaissance.{/n}À la prochaine.	Nett, dich zu treffen.{/n}Bis zum nächsten.
-Test3	A total of {0:d} {1:d} the people	총 {0:d}중에 {1:d}명	合計{0:d} {1:d}人	共有{0:d} {1:d}人	Un total de {0:d} {1:d} les personnes	Eine Gesamtzahl von {0:d} {1:d} die Menschen
+Language	English	한국어				
+SELECT PRODUCT	Select product to manage	관리할 제품 선택				
+SELECT TASK	Select task to manage	관리할 작업 선택				
+SELECT PART	Select part to manage	관리할 부품 선택				

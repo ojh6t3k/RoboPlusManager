@@ -86,6 +86,16 @@ public class CommProtocol : MonoBehaviour
     {        
 	}
 
+    public void SetProtocolDXL()
+    {
+        protocol = PROTOCOL.DXL;
+    }
+
+    public void SetProtocolDXL2()
+    {
+        protocol = PROTOCOL.DXL2;
+    }
+
     public static CommProtocol instance
     {
         get
@@ -280,10 +290,10 @@ public class CommProtocol : MonoBehaviour
 
         while(true)
         {
-            while (_contexts.Count > 0)
-            {                
-                yield return new WaitForEndOfFrame(); // waste one frame
+            yield return new WaitForEndOfFrame(); // waste one frame
 
+            while (_contexts.Count > 0)
+            {
                 float time = 0f;
                 sendPacket.Clear();
                 rcvBytes.Clear();
@@ -512,8 +522,6 @@ public class CommProtocol : MonoBehaviour
 
                 OnResult.Invoke(result);
             }
-
-            yield return new WaitForEndOfFrame(); // waste one frame
         }
     }
 

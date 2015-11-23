@@ -22,6 +22,11 @@ public class LocalizedText : MonoBehaviour
 	
 	}
 
+    void OnEnable()
+    {
+        ApplyLanguage();
+    }
+
 	public string text
 	{
 		get
@@ -31,25 +36,13 @@ public class LocalizedText : MonoBehaviour
 	}
 
 
-	public void Refresh()
+    public void ApplyLanguage()
 	{
 		if(LocalizationManager.manager == null)
 			return;
 
 		_text = LocalizationManager.manager.GetLocalizedText(key);
 		Font font = LocalizationManager.manager.font;
-
-		if(uiText != null)
-		{
-			uiText.text = text;
-			if(font != null)
-				uiText.font = font;
-		}
-	}
-
-	public void Refresh(string text, Font font)
-	{
-		_text = text;
 
 		if(uiText != null)
 		{

@@ -7,24 +7,38 @@ public class CommSocketUI : MonoBehaviour
     public CommSocket socket;
     public ListView uiDeviceList;
     public ListItem uiDeviceItem;
-    public Button uiOpen;
+    public Button[] uiShows;
+    public Button[] uiCloses;
+    public Button uiOpens;
     public Button uiSearch;
     public GameObject messageRoot;
     public GameObject messageConnecting;
     public GameObject messageConnectionFailed;
-//    public GameObject message
 
     private bool _preventEvent = false;
     
 
     void Awake()
     {
+ //       socket.OnOpen.AddListener(OnOpen);
+ //       socket.OnOpenFailed.AddListener(OnOpenFailed);
         socket.OnFoundDevice.AddListener(OnFoundDevice);
         socket.OnSearchCompleted.AddListener(OnSearchCompleted);
 
         uiDeviceList.OnChangedSelection.AddListener(OnChangedDevice);
-        uiOpen.onClick.AddListener(OnClickOpen);
-        uiSearch.onClick.AddListener(OnClickSearch);
+        foreach(Button btn in uiShows)
+        {
+            if(btn != null)
+                btn.onClick.AddListener(OnClickShow);
+        }
+        foreach (Button btn in uiCloses)
+        {
+            if (btn != null)
+                btn.onClick.AddListener(OnClickClose);
+        }
+        uiOpens.onClick.AddListener(OnClickOpen);
+        if (uiSearch != null)
+            uiSearch.onClick.AddListener(OnClickSearch);
     }
 
 	// Use this for initialization
@@ -39,7 +53,7 @@ public class CommSocketUI : MonoBehaviour
 	
 	}
 
-    public void ShowUI()
+    private void OnClickShow()
     {
         OnClickSearch();
     }
@@ -85,6 +99,11 @@ public class CommSocketUI : MonoBehaviour
     private void OnClickOpen()
     {
         socket.Open();
+    }
+
+    private void OnClickClose()
+    {
+        socket.Close();
     }
 
     private void OnClickSearch()

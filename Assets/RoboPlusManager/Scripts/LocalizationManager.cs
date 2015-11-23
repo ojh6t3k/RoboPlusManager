@@ -131,12 +131,10 @@ public class LocalizationManager : MonoBehaviour
         if (_currentLanguage == null)
             return;
 
+
         LocalizedText[] textList = GameObject.FindObjectsOfType<LocalizedText>();
         foreach (LocalizedText lt in textList)
-        {
-            if (_currentLanguage.table.ContainsKey(lt.key) == true)
-                lt.Refresh((string)_currentLanguage.table[lt.key], _currentLanguage.font);
-        }
+            lt.ApplyLanguage();
     }
 
 	public string GetLocalizedText(string key)

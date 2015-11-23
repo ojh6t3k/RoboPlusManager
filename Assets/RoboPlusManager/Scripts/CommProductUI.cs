@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text;
 
@@ -16,8 +16,13 @@ public class CommProductUI : MonoBehaviour
     public Button uiFind;
     public ListView uiProductList;
     public ListItem uiProductItem;
+    public GameObject uiMessageRoot;
+    public GameObject uiMessageSearching;
+    public Text uiSearchingStatus;
 
     private CommProduct _product;
+    private bool _cancelAutoConnect = false;
+    private bool _findChildProduct = false;
 
     void Awake()
     {
@@ -40,6 +45,33 @@ public class CommProductUI : MonoBehaviour
 	
 	}
 
+    public void SetFindChildren(bool enable)
+    {
+        _findChildProduct = enable;
+    }
+
+    public void CommOpen()
+    {
+        uiFind.interactable = true;
+    }
+
+    public void CommClose()
+    {
+        foreach (ListItem item in uiProductList.items)
+        {
+            CommProduct product = (CommProduct)item.data;
+            product.Disconnect();
+        }
+
+        uiFind.interactable = false;
+        OnChangedSelectedProduct();
+    }
+
+    public void CancelAddProduct()
+    {
+        _cancelAutoConnect = true;
+    }
+
     private void AddProduct(int id)
     {
         CommProduct product = Instantiate(prefab);
@@ -49,20 +81,27 @@ public class CommProductUI : MonoBehaviour
         product.OnConnectionFailed.AddListener(OnConnectionFailed);
         product.OnDisconnected.AddListener(OnDisconnected);
         product.OnLostConnection.AddListener(OnDisconnected);
-        product.AutoConnect(id);
+
+        if (_findChildProduct)
+            product.AutoConnect(id);
+        else
+            product.Connect(id);
     }
 
     private void RemoveProduct(CommProduct product)
     {
-        foreach(ListItem item in uiProductList.items)
+        if (product == null)
+            return;
+
+        foreach (ListItem item in uiProductList.items)
         {
             if(item.data.Equals(product))
             {
-                uiProductList.RemoveItem(item);
+                uiProductList.RemoveItem(item);                
                 DestroyImmediate(product.gameObject);
                 break;
             }
-        }        
+        }
     }
 
     private void OnChangedSelectedProduct()
@@ -142,8 +181,22 @@ public class CommProductUI : MonoBehaviour
     }
 
     private void OnFind()
-    {        
-        AddProduct((int)uiStartID.Value);
+    {
+        CommClose();
+
+        if (uiStartID != null)
+            AddProduct((int)uiStartID.Value);
+        else
+        {
+            if (_findChildProduct)
+                AddProduct(0);
+            else
+                AddProduct(200);
+        }
+
+        _cancelAutoConnect = false;
+        uiMessageRoot.SetActive(true);
+        uiMessageSearching.SetActive(true);
     }
 
     private void OnConnected(CommProduct product)
@@ -165,11 +218,27 @@ public class CommProductUI : MonoBehaviour
 
     private void OnConnectionFailed(CommProduct product)
     {
-        RemoveProduct(product);        
+        if(product.isAutoConnect)
+        {
+            uiSearchingStatus.text = string.Format("ID: {0:d}", product.id);
+            if (_cancelAutoConnect)
+            {
+                product.CancelAutoConnect();
+                DestroyImmediate(product.gameObject);
+                uiFind.interactable = true;
+            }
+        }
+        else
+        {
+            DestroyImmediate(product.gameObject);
+            uiFind.interactable = true;
+            uiMessageRoot.SetActive(false);
+            uiMessageSearching.SetActive(false);
+        }
     }
 
     private void OnDisconnected(CommProduct product)
-    {
+    {   
         RemoveProduct(product);
     }
 

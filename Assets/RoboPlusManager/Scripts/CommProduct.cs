@@ -81,10 +81,23 @@ public class CommProduct : MonoBehaviour
         }
     }
 
+    public bool isAutoConnect
+    {
+        get
+        {
+            return _autoConnect;
+        }
+    }
+
     public void AutoConnect(int id)
     {
         _autoConnect = true;
         Connect(id);
+    }
+
+    public void CancelAutoConnect()
+    {
+        _autoConnect = false;
     }
 
     public void Connect(int id)
@@ -202,11 +215,10 @@ public class CommProduct : MonoBehaviour
                 else
                 {
                     Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
-                    if(_autoConnect)
+                    OnConnectionFailed.Invoke(this);
+                    if (_autoConnect)
                         Connect(_id + 1);
-                    else
-                        OnConnectionFailed.Invoke(this);
-                }                
+                }
             }
             else
             {
