@@ -23,7 +23,6 @@ public class CommProduct : MonoBehaviour
     private ushort _model = 0xffff;
     private byte _version = 0xff;
     private bool _connected = false;
-    private bool _autoConnect = false;
     private bool _run = false;
     private List<ControlItemInfo> _writeItems = new List<ControlItemInfo>();
     private List<ControlItemInfo> _readItems = new List<ControlItemInfo>();
@@ -81,25 +80,6 @@ public class CommProduct : MonoBehaviour
         }
     }
 
-    public bool isAutoConnect
-    {
-        get
-        {
-            return _autoConnect;
-        }
-    }
-
-    public void AutoConnect(int id)
-    {
-        _autoConnect = true;
-        Connect(id);
-    }
-
-    public void CancelAutoConnect()
-    {
-        _autoConnect = false;
-    }
-
     public void Connect(int id)
     {
         if (_connected)
@@ -107,16 +87,14 @@ public class CommProduct : MonoBehaviour
 
         if (CommProtocol.instance == null)
         {
-            _autoConnect = false;
-            Debug.Log("Can not find CommProtocol!");
+      //      Debug.Log("Can not find CommProtocol!");
             OnConnectionFailed.Invoke(this);
             return;
         }
 
         if (id > CommProtocol.MAX_ID)
         {
-            _autoConnect = false;
-            Debug.Log(string.Format("{0:d} is invalid ID!", id));
+       //     Debug.Log(string.Format("{0:d} is invalid ID!", id));
             OnConnectionFailed.Invoke(this);
             return;
         }
@@ -129,7 +107,7 @@ public class CommProduct : MonoBehaviour
     {
         disconnect();
 
-        Debug.Log(string.Format("ID:{0:d} Disconnect", _id));
+      //  Debug.Log(string.Format("ID:{0:d} Disconnect", _id));
         _id = 0xff;
         productInfo = null;
         OnDisconnected.Invoke(this);
@@ -194,12 +172,12 @@ public class CommProduct : MonoBehaviour
             if (_connected)
             {
                 disconnect();
-                Debug.Log(string.Format("ID:{0:d} Lost Connection", _id));
+         //       Debug.Log(string.Format("ID:{0:d} Lost Connection", _id));
                 OnLostConnection.Invoke(this);
             }
             else
             {
-                Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
+         //       Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
                 OnConnectionFailed.Invoke(this);
             }
         }
@@ -209,15 +187,13 @@ public class CommProduct : MonoBehaviour
             {
                 if (_connected)
                 {
-                    Debug.Log(string.Format("ID:{0:d} No Response", _id));
+           //         Debug.Log(string.Format("ID:{0:d} No Response", _id));
                     OnNoResponse.Invoke(this);
                 }
                 else
                 {
-                    Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
+           //         Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
                     OnConnectionFailed.Invoke(this);
-                    if (_autoConnect)
-                        Connect(_id + 1);
                 }
             }
             else
@@ -292,8 +268,7 @@ public class CommProduct : MonoBehaviour
                         if (!tryUpdate)
                         {
                             _connected = true;
-                            _autoConnect = false;
-                            Debug.Log(string.Format("ID:{0:d} Connected", _id));
+                //            Debug.Log(string.Format("ID:{0:d} Connected", _id));
                             OnConnected.Invoke(this);
                         }
                     }
@@ -320,8 +295,7 @@ public class CommProduct : MonoBehaviour
                         }
 
                         _connected = true;
-                        _autoConnect = false;
-                        Debug.Log(string.Format("ID:{0:d} Connected", _id));
+                //        Debug.Log(string.Format("ID:{0:d} Connected", _id));
                         OnConnected.Invoke(this);
                     }
                 }

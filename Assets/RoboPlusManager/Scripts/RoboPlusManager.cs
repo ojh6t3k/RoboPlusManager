@@ -103,7 +103,6 @@ public class RoboPlusManager : MonoBehaviour
 
     public void CommSocketClose()
     {
-        ui.commProduct.CommClose();
         socket.Close();
         OnCommSocketClose();
     }
@@ -124,7 +123,7 @@ public class RoboPlusManager : MonoBehaviour
                 btn.gameObject.SetActive(true);
         }
 
-        ui.commProduct.CommOpen();
+        ui.commProduct.SetFindEnable(true);
     }
 
     private void OnCommSocketOpenFailed()
@@ -145,6 +144,9 @@ public class RoboPlusManager : MonoBehaviour
             if (btn != null)
                 btn.gameObject.SetActive(false);
         }
+
+        ui.commProduct.ClearProduct();
+        ui.commProduct.SetFindEnable(false);
     }
 
     private void OnCommSocketErrorClose()

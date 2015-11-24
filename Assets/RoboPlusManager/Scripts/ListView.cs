@@ -166,11 +166,11 @@ public class ListView : MonoBehaviour
 
     public void RemoveItem(ListItem item)
     {
-        if (_selectedItem == null)
-            return;
-
-        if (_selectedItem.Equals(item))
-            selectedItem = null;
+        if(_selectedItem != null)
+        {
+            if (_selectedItem.Equals(item))
+                selectedItem = null;
+        }
 
         DestroyImmediate(item.gameObject);
         _itemNum--;

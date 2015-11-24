@@ -62,6 +62,7 @@ public class CommProtocol : MonoBehaviour
 
     private bool _socketOpen = false;
     private List<Context> _contexts = new List<Context>();
+    private Coroutine _processCoroutine = null;
 
     void Awake()
     {
@@ -263,14 +264,18 @@ public class CommProtocol : MonoBehaviour
     private void OnSocketOpen()
     {
         _socketOpen = true;
-        StartCoroutine(Process());
+        _processCoroutine = StartCoroutine(Process());
     }
 
     private void OnSocketClose()
     {
         _socketOpen = false;
-        StopCoroutine(Process());
-        
+        if(_processCoroutine != null)
+        {
+            StopCoroutine(_processCoroutine);
+            _processCoroutine = null;
+        }
+
         if(_contexts.Count > 0)
         {
             Result result = new Result();

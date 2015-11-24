@@ -112,7 +112,7 @@ public class UartService extends Service
 				broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic, gatt.getDevice().getAddress());
 
 				byte[] value = characteristic.getValue();
-				Log("==R: ", value);
+				Log.i(TAG, "onCharacteristicRead " + value);
 			}
 		}
 
@@ -122,7 +122,7 @@ public class UartService extends Service
 			broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic, gatt.getDevice().getAddress());
 
 			byte[] value = characteristic.getValue();
-			Log("--R: ", value);
+			Log.i(TAG, "onCharacteristicChanged " + value);
 
 			synchronized (mReceivedMap)
 			{
@@ -143,6 +143,7 @@ public class UartService extends Service
 		{
 			super.onCharacteristicWrite(gatt, characteristic, status);
 			mWritable = true;
+			Log.i(TAG, "onCharacteristicWrite");
 		}
 	};
 
@@ -312,7 +313,7 @@ public class UartService extends Service
 			return;
 		}
 
-		Log("T:" + value.length + ":", value);
+		Log.i(TAG, "BLE Write:" + value.length + ":" + value);
 		for (int i = 0; i < buffer20.size(); i++)
 		{
 			byte[] txValue = buffer20.get(i);
@@ -364,11 +365,12 @@ public class UartService extends Service
 		return ret;
 	}
 
-	public int avaliable()
+	public int available()
 	{
 		int count = 0;
+		
 		synchronized (mReceivedMap)
-		{
+		{			
 			if (mAddress == null)
 			{
 				Iterator<String> iterator = mReceivedMap.keySet().iterator();
@@ -376,11 +378,12 @@ public class UartService extends Service
 				{
 					mAddress = iterator.next();
 				}
-			}
+			}			
 
 			if (mReceivedMap.get(mAddress) != null)
-			{
+			{	
 				count = mReceivedMap.get(mAddress).size();
+				Log.d(TAG, "Avaliable: " + count);
 			}
 		}
 		return count;
@@ -405,8 +408,7 @@ public class UartService extends Service
 				byte data = mReceivedMap.get(mAddress).get(0);
 				mReceivedMap.get(mAddress).remove(0);
 
-				byte b = data;
-				return b;
+				return data;
 			}
 		}
 

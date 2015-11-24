@@ -12,7 +12,6 @@ public class CommProductUI : MonoBehaviour
     public ListView uiControlTable;
     public ListItem uiControlItem;
     public ControlUIManager uiManager;
-    public UpdownValue uiStartID;
     public Button uiFind;
     public ListView uiProductList;
     public ListItem uiProductItem;
@@ -21,8 +20,8 @@ public class CommProductUI : MonoBehaviour
     public Text uiSearchingStatus;
 
     private CommProduct _product;
-    private bool _cancelAutoConnect = false;
     private bool _findChildProduct = false;
+    private bool _cancelFind = false;
 
     void Awake()
     {
@@ -45,17 +44,17 @@ public class CommProductUI : MonoBehaviour
 	
 	}
 
-    public void SetFindChildren(bool enable)
+    public void SetFindChildProduct(bool enable)
     {
         _findChildProduct = enable;
     }
 
-    public void CommOpen()
+    public void SetFindEnable(bool enable)
     {
-        uiFind.interactable = true;
+        uiFind.interactable = enable;
     }
 
-    public void CommClose()
+    public void ClearProduct()
     {
         foreach (ListItem item in uiProductList.items)
         {
@@ -63,13 +62,12 @@ public class CommProductUI : MonoBehaviour
             product.Disconnect();
         }
 
-        uiFind.interactable = false;
         OnChangedSelectedProduct();
     }
 
-    public void CancelAddProduct()
+    public void CancelFind()
     {
-        _cancelAutoConnect = true;
+        _cancelFind = true;
     }
 
     private void AddProduct(int id)
@@ -81,11 +79,7 @@ public class CommProductUI : MonoBehaviour
         product.OnConnectionFailed.AddListener(OnConnectionFailed);
         product.OnDisconnected.AddListener(OnDisconnected);
         product.OnLostConnection.AddListener(OnDisconnected);
-
-        if (_findChildProduct)
-            product.AutoConnect(id);
-        else
-            product.Connect(id);
+        product.Connect(id);
     }
 
     private void RemoveProduct(CommProduct product)
@@ -182,19 +176,9 @@ public class CommProductUI : MonoBehaviour
 
     private void OnFind()
     {
-        CommClose();
-
-        if (uiStartID != null)
-            AddProduct((int)uiStartID.Value);
-        else
-        {
-            if (_findChildProduct)
-                AddProduct(0);
-            else
-                AddProduct(200);
-        }
-
-        _cancelAutoConnect = false;
+        ClearProduct();
+        _cancelFind = false;
+        AddProduct(CommProtocol.CM_ID);
         uiMessageRoot.SetActive(true);
         uiMessageSearching.SetActive(true);
     }
@@ -213,32 +197,45 @@ public class CommProductUI : MonoBehaviour
         item.data = product;
         uiProductList.AddItem(item);
 
-        AddProduct(product.id + 1);
+        if (_findChildProduct && !_cancelFind && (product.id < (CommProtocol.MAX_ID - 1)))
+        {
+            uiSearchingStatus.text = string.Format("ID: {0:d}", product.id);
+            if (product.id == CommProtocol.CM_ID)
+                AddProduct(0);
+            else if (product.id == (CommProtocol.CM_ID - 1))
+                AddProduct(CommProtocol.CM_ID + 1);
+            else
+                AddProduct(product.id + 1);
+        }
+        else
+        {
+            uiMessageRoot.SetActive(false);
+            uiMessageSearching.SetActive(false);
+        }
     }
 
     private void OnConnectionFailed(CommProduct product)
     {
-        if(product.isAutoConnect)
+        if(_findChildProduct && !_cancelFind && (product.id < (CommProtocol.MAX_ID - 1)))
         {
             uiSearchingStatus.text = string.Format("ID: {0:d}", product.id);
-            if (_cancelAutoConnect)
-            {
-                product.CancelAutoConnect();
-                DestroyImmediate(product.gameObject);
-                uiFind.interactable = true;
-            }
+            if (product.id == CommProtocol.CM_ID)
+                product.Connect(0);
+            else if(product.id == (CommProtocol.CM_ID - 1))
+                product.Connect(CommProtocol.CM_ID + 1);
+            else
+                product.Connect(product.id + 1);
         }
         else
         {
             DestroyImmediate(product.gameObject);
-            uiFind.interactable = true;
             uiMessageRoot.SetActive(false);
             uiMessageSearching.SetActive(false);
         }
     }
 
     private void OnDisconnected(CommProduct product)
-    {   
+    {
         RemoveProduct(product);
     }
 

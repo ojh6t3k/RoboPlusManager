@@ -24,6 +24,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.robotis.bluetooth.UartService;
@@ -262,10 +263,14 @@ public class CommBluetooth
 					close();
 				}
 			}
+			else
+			{
+				_bleService.writeRXCharacteristic(data);
+			}
 		}
 	}
 	
-	public int Avaliable()
+	public int Available()
 	{
 		if(_isOpen)
 		{
@@ -285,7 +290,7 @@ public class CommBluetooth
 			}
 			else
 			{
-				
+				return _bleService.available();
 			}
 		}
 		
@@ -296,6 +301,7 @@ public class CommBluetooth
 	{
 		if(_isOpen)
 		{
+			Log.d(_logTag, "Read");
 			if(_InStream != null)
 			{
 				try
@@ -314,7 +320,16 @@ public class CommBluetooth
 			}
 			else
 			{
-				
+				int count = _bleService.available();
+				Log.d(_logTag, "BLE Read Count: " + count);
+				if(count > 0)
+				{
+					byte[] data = new byte[count];
+					for(int i=0; i<count; i++)
+						data[i] = (Byte)_bleService.read();
+					
+					return data;
+				}
 			}
 		}
 		
@@ -355,7 +370,8 @@ public class CommBluetooth
 		intentFilter.addAction(UartService.ACTION_GATT_SERVICES_DISCOVERED);
 		intentFilter.addAction(UartService.ACTION_DATA_AVAILABLE);
 		intentFilter.addAction(UartService.DEVICE_DOES_NOT_SUPPORT_UART);
-		_context.registerReceiver(_serviceReceiver, intentFilter);
+		LocalBroadcastManager.getInstance(_context).registerReceiver(_serviceReceiver, intentFilter);
+	//	_context.registerReceiver(_serviceReceiver, intentFilter);
 	}
 	
 	private void close()
@@ -372,7 +388,8 @@ public class CommBluetooth
 			
 			try
 			{
-				_context.unregisterReceiver(_serviceReceiver);
+				LocalBroadcastManager.getInstance(_context).unregisterReceiver(_serviceReceiver);
+		//		_context.unregisterReceiver(_serviceReceiver);
 			}
 			catch (Exception e)
 			{			
@@ -462,7 +479,23 @@ public class CommBluetooth
 			else if (action.equals(UartService.ACTION_GATT_DISCONNECTED))
 			{
 				Log.d(_logTag, "ACTION_GATT_DISCONNECTED");
+				if(_isOpen)
+				{
+					_isErrorClose = true;
+					_errorMessage = "BLE Disconnected";					
+				}
 				close();
+				
+				if(_isErrorClose)
+				{
+					UnityPlayer.UnitySendMessage(_unityObject, _unityMethodErrorClose, _errorMessage);
+					_isErrorClose = false;
+					_errorMessage = "";
+				}
+				else
+				{
+					UnityPlayer.UnitySendMessage(_unityObject, _unityMethodOpenFailed, "BLE gatt server disconnected!");
+				}
 			}
 			else if (action.equals(UartService.ACTION_GATT_SERVICES_DISCOVERED))
 			{
@@ -540,7 +573,7 @@ public class CommBluetooth
 				{
 					close();
 					_isErrorClose = true;
-					_errorMessage = "Device Disconnected";
+					_errorMessage = "Device Disconnected";					
 				}
 				
 				if(_isErrorClose)

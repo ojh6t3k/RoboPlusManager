@@ -640,8 +640,10 @@ public class CommSocket : MonoBehaviour
 #if UNITY_ANDROID
                 if (_androidBluetooth != null)
                 {
-                    if(_androidBluetooth.Call<int>("Available") > 0)
+                    if (_androidBluetooth.Call<int>("Available") > 0)
                         return _androidBluetooth.Call<byte[]>("Read");
+                    else
+                        return null;
                 }
 #endif
             }
@@ -652,6 +654,8 @@ public class CommSocket : MonoBehaviour
                 {
                     if (_androidBluetooth.Call<int>("Available") > 0)
                         return _androidBluetooth.Call<byte[]>("Read");
+                    else
+                        return null;
                 }
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX || UNITY_IOS)
                 if(_bleInitialized && _isBleOpen)
@@ -937,7 +941,7 @@ public class CommSocket : MonoBehaviour
             }
 #endif
         }
-        else if (device.type == CommDevice.Type.BT)
+        else if (_device.type == CommDevice.Type.BT)
         {
 #if UNITY_ANDROID
             if (_androidBluetooth != null)
@@ -960,7 +964,7 @@ public class CommSocket : MonoBehaviour
             }
 #endif
         }
-        else if (device.type == CommDevice.Type.BLE)
+        else if (_device.type == CommDevice.Type.BLE)
         {
 #if UNITY_ANDROID
             if (_androidBluetooth != null)
