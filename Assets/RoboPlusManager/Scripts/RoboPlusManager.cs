@@ -107,6 +107,11 @@ public class RoboPlusManager : MonoBehaviour
         OnCommSocketClose();
     }
 
+    public void ApplicationLoadLevel(string levelName)
+    {
+        Application.LoadLevel(levelName);
+    }
+
     private void OnCommSocketOpen()
     {
         ui.messageRoot.SetActive(false);
