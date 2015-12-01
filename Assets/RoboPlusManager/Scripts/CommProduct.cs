@@ -187,12 +187,12 @@ public class CommProduct : MonoBehaviour
             {
                 if (_connected)
                 {
-           //         Debug.Log(string.Format("ID:{0:d} No Response", _id));
+                    Debug.Log(string.Format("ID:{0:d} No Response", _id));
                     OnNoResponse.Invoke(this);
                 }
                 else
                 {
-           //         Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
+                    Debug.Log(string.Format("ID:{0:d} Connection Failed", _id));
                     OnConnectionFailed.Invoke(this);
                 }
             }

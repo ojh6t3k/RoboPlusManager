@@ -666,6 +666,8 @@ public class CommSocket : MonoBehaviour
                         _rcvBuffer.Clear();
                         return bytes;
                     }
+                    else
+                        return null;
                 }
 #endif
             }
