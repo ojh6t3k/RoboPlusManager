@@ -294,7 +294,9 @@ public class CommProtocol : MonoBehaviour
         List<byte> rcvBytes = new List<byte>();
 
         while(true)
-        {            
+        {
+			yield return new WaitForEndOfFrame(); // waste one frame
+
             while (_contexts.Count > 0)
             {
                 float time = 0f;
@@ -526,8 +528,6 @@ public class CommProtocol : MonoBehaviour
                 OnResult.Invoke(result);
                 yield return new WaitForEndOfFrame(); // waste one frame
             }
-
-            yield return new WaitForEndOfFrame(); // waste one frame
         }
     }
 

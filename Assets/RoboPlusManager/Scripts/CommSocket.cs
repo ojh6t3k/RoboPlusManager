@@ -777,15 +777,16 @@ public class CommSocket : MonoBehaviour
 		string methodName = Marshal.PtrToStringAuto(arg1);
 		string message = Marshal.PtrToStringAuto(arg2);
 
-		Debug.Log(string.Format("iOS Message: {0}, {1}", methodName, message));
-		_gameObject.SendMessage(methodName, message);
+	//	Debug.Log(string.Format("iOS Message: {0}, {1}", methodName, message));
+		if(Application.isPlaying)
+			_gameObject.SendMessage(methodName, message);
 	}
 	
 	private void iOSBluetoothLEMessage(string message)
 	{
 		if (message != null)
 		{
-			Debug.Log(message);
+	//		Debug.Log(message);
 			
 			string[] parts = message.Split(new char[] { '~' });
 			
@@ -861,8 +862,11 @@ public class CommSocket : MonoBehaviour
             }
             else if (message.Length >= deviceConnectedPeripheral.Length && message.Substring(0, deviceConnectedPeripheral.Length) == deviceConnectedPeripheral)
             {
-            }
-            else if (message.Length >= deviceDisconnectedPeripheral.Length && message.Substring(0, deviceDisconnectedPeripheral.Length) == deviceDisconnectedPeripheral)
+				_isBleOpen = true;
+				_rcvBuffer.Clear();
+				OnOpen.Invoke();
+			}
+			else if (message.Length >= deviceDisconnectedPeripheral.Length && message.Substring(0, deviceDisconnectedPeripheral.Length) == deviceDisconnectedPeripheral)
             {
 				if(_isBleOpen)
 				{
@@ -880,9 +884,7 @@ public class CommSocket : MonoBehaviour
                 {
                     if(_bleInitialized)
                     {
-                        _iOSBluetoothLESubscribeCharacteristic(uuid, BleUUID.service, BleUUID.rxCharacteristic);
-                        _isBleOpen = true;
-                        OnOpen.Invoke();
+						_iOSBluetoothLESubscribeCharacteristic(uuid, BleUUID.service, BleUUID.rxCharacteristic);
                         return;
                     }                    
                 }
@@ -905,12 +907,12 @@ public class CommSocket : MonoBehaviour
 
     private void iOSBluetoothLEData(string base64Data)
     {
-        iOSDataDecoding(string.Empty, base64Data);
+		iOSDataDecoding(string.Empty, base64Data);
     }
 
     public void iOSDataDecoding(string characteristic, string base64Data)
     {
-        if (base64Data != null)
+		if (base64Data != null)
         {
             byte[] base64Bytes = Convert.FromBase64String(base64Data);
             if (base64Bytes.Length > 0)
